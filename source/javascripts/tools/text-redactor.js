@@ -256,7 +256,7 @@ function render() {
     const kept = state.kept.has(keyOf(s));
     const mark = document.createElement("mark");
     mark.dataset.key = keyOf(s);
-    mark.className = kept ? "kept" : "";
+    mark.className = kept ? "kept" : styleSelect.value === "blocks" ? "block" : "";
     mark.title = kept ? `Kept (${s.tag}). Click to hide.` : `${s.tag}. Click to keep.`;
     mark.textContent = kept ? text.slice(s.start, s.end) : s.sub;
     frag.append(mark);

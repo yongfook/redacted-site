@@ -671,6 +671,11 @@ textarea:focus {
   cursor: pointer;
 }
 
+/* Block characters in the same color as the background make one solid bar. */
+.output mark.block {
+  color: var(--black);
+}
+
 .output mark.kept {
   background: none;
   color: var(--black);
