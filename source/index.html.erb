@@ -1,0 +1,69 @@
+---
+title:
+---
+
+<section class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Free &middot; Private &middot; In your browser</p>
+    <h1>
+      Hide what matters.<br>
+      Keep it <span class="bar">on your device</span>.
+    </h1>
+    <p class="lede">
+      Free redaction tools powered by AI models that run locally in your browser.
+      Your files never leave your computer. No uploads, no accounts, no servers reading your data.
+    </p>
+    <a href="#tools" class="button">Browse the tools</a>
+  </div>
+</section>
+
+<section id="tools" class="tools">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Tools</h2>
+      <p><%= data.tools.size %> tools in progress</p>
+    </div>
+
+    <ul class="grid">
+      <% data.tools.each_with_index do |tool, i| %>
+        <li class="card">
+          <div class="card-top">
+            <span class="card-num"><%= format("%02d", i + 1) %></span>
+            <span class="card-input"><%= tool.input %></span>
+          </div>
+          <h3><%= tool.name %></h3>
+          <p><%= tool.description %></p>
+          <div class="card-foot">
+            <span class="card-model"><%= tool.model %></span>
+            <span class="soon">Coming soon</span>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+</section>
+
+<section id="how" class="how">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>How it works</h2>
+    </div>
+    <ol class="steps">
+      <li>
+        <span class="step-num">01</span>
+        <h3>The model comes to you</h3>
+        <p>When you open a tool, a small AI model downloads once and is cached by your browser.</p>
+      </li>
+      <li>
+        <span class="step-num">02</span>
+        <h3>Your file stays put</h3>
+        <p>Detection runs on your device with WebGPU or WebAssembly. Nothing is sent to a server.</p>
+      </li>
+      <li>
+        <span class="step-num">03</span>
+        <h3>You make the call</h3>
+        <p>Review every suggested redaction, add your own, then export a clean copy.</p>
+      </li>
+    </ol>
+  </div>
+</section>

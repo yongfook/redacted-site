@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><%= current_page.data.title ? "#{current_page.data.title} — #{config[:site_name]}" : "#{config[:site_name]} — Free in-browser redaction tools" %></title>
+    <meta name="description" content="<%= current_page.data.description || config[:site_description] %>">
+    <link rel="canonical" href="<%= config[:site_url] %><%= current_page.url %>">
+    <meta property="og:title" content="<%= config[:site_name] %>">
+    <meta property="og:description" content="<%= config[:site_description] %>">
+    <meta property="og:url" content="<%= config[:site_url] %><%= current_page.url %>">
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="#000000">
+    <link rel="icon" href="<%= image_path "favicon.svg" %>" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <%= stylesheet_link_tag "site" %>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="wrap">
+        <a href="/" class="logo" aria-label="[REDACTED] home">[REDACTED]</a>
+        <nav class="nav">
+          <a href="#tools">Tools</a>
+          <a href="#how">How it works</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <%= yield %>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span class="logo logo-small">[REDACTED]</span>
+        <p>Free tools. No uploads. No accounts. &copy; <%= Time.now.year %> redacted.to</p>
+      </div>
+    </footer>
+  </body>
+</html>
