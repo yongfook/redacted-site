@@ -1,14 +1,14 @@
-- name: PDF Redactor
-  slug: pdf-redactor
-  input: PDF
-  description: Find names, emails, account numbers and addresses in a PDF, then burn in true black-bar redactions. The hidden text is removed, not just covered.
-  model: Named-entity recognition
-
 - name: Text Redactor
   slug: text-redactor
   live: true
   input: Text
   description: Paste any text and get back a clean copy with personal data masked. Choose what to hide, from names to dates to IDs.
+  model: Named-entity recognition
+
+- name: PDF Redactor
+  slug: pdf-redactor
+  input: PDF
+  description: Find names, emails, account numbers and addresses in a PDF, then burn in true black-bar redactions. The hidden text is removed, not just covered.
   model: Named-entity recognition
 
 - name: Face Blur
