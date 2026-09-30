@@ -12,12 +12,16 @@ Free redaction tools that run in the browser with local AI models. Built with Mi
 
 The landing page grid comes from `data/tools.yml`.
 
-## Deploy (Cloudflare Pages)
+## Deploy (Cloudflare Workers)
+
+The output directory is set in `wrangler.toml` (`assets.directory = "./build"`).
+
+In the Cloudflare dashboard (Workers & Pages → Create → Import a repository):
 
 - Build command: `bundle exec middleman build`
-- Build output directory: `build`
-- Ruby version: from `.ruby-version` (or set `RUBY_VERSION` env var)
+- Deploy command: `npx wrangler deploy`
+- The Worker name must match `name` in `wrangler.toml` (`redacted-site`)
 
 Or deploy from your machine:
 
-    bundle exec middleman build && npx wrangler pages deploy
+    bundle exec middleman build && npx wrangler deploy
