@@ -65,6 +65,18 @@ a {
   padding: 4px 10px;
 }
 
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.tagline {
+  font-family: var(--mono);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
 .logo-small {
   font-size: 14px;
 }
@@ -111,6 +123,7 @@ a {
   background: var(--black);
   color: var(--black);
   padding: 0 0.12em;
+  white-space: nowrap;
   transition: color 0.25s ease;
   cursor: default;
 }
@@ -340,6 +353,18 @@ a {
   }
   .nav {
     gap: 16px;
+  }
+  .brand {
+    gap: 10px;
+  }
+  .tagline {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav {
+    display: none;
   }
 }
 
