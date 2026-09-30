@@ -187,6 +187,7 @@ a {
 }
 
 .card {
+  position: relative;
   display: flex;
   flex-direction: column;
   padding: 24px;
@@ -196,9 +197,24 @@ a {
   transition: background 0.15s ease, color 0.15s ease;
 }
 
-.card:hover {
+.card.is-soon {
+  opacity: 0.25;
+}
+
+.card:not(.is-soon):hover {
   background: var(--black);
   color: var(--white);
+}
+
+.card-link {
+  text-decoration: none;
+}
+
+/* Make the whole card clickable */
+.card-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
 }
 
 .card-top,
@@ -233,9 +249,9 @@ a {
   color: #333;
 }
 
-.card:hover p,
-.card:hover .card-num,
-.card:hover .card-model {
+.card:not(.is-soon):hover p,
+.card:not(.is-soon):hover .card-num,
+.card:not(.is-soon):hover .card-model {
   color: #bbb;
 }
 

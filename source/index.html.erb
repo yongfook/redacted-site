@@ -21,21 +21,27 @@ title:
   <div class="wrap">
     <div class="section-head">
       <h2>Tools</h2>
-      <p><%= data.tools.size %> tools in progress</p>
+      <p><%= data.tools.count(&:live) %> live &middot; <%= data.tools.count { |t| !t.live } %> coming soon</p>
     </div>
 
     <ul class="grid">
       <% data.tools.each_with_index do |tool, i| %>
-        <li class="card">
+        <li class="card<%= " is-soon" unless tool.live %>">
           <div class="card-top">
             <span class="card-num"><%= format("%02d", i + 1) %></span>
             <span class="card-input"><%= tool.input %></span>
           </div>
-          <h3><%= tool.name %></h3>
+          <h3>
+            <% if tool.live %>
+              <a href="/tools/<%= tool.slug %>/" class="card-link"><%= tool.name %></a>
+            <% else %>
+              <%= tool.name %>
+            <% end %>
+          </h3>
           <p><%= tool.description %></p>
           <div class="card-foot">
             <span class="card-model"><%= tool.model %></span>
-            <span class="soon">Coming soon</span>
+            <span class="soon"><%= tool.live ? "Open &rarr;" : "Coming soon" %></span>
           </div>
         </li>
       <% end %>
