@@ -6,6 +6,7 @@
 
 - name: Text Redactor
   slug: text-redactor
+  live: true
   input: Text
   description: Paste any text and get back a clean copy with personal data masked. Choose what to hide, from names to dates to IDs.
   model: Named-entity recognition

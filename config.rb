@@ -14,6 +14,7 @@ page "/*.txt", layout: false
 import_file File.expand_path("_headers", config[:source]), "/_headers"
 
 configure :build do
-  activate :asset_hash
+  # Tool scripts load each other and a worker by relative URL, so keep their names.
+  activate :asset_hash, ignore: [%r{^javascripts/tools/}], rewrite_ignore: [%r{^/?javascripts/tools/}]
   activate :minify_css
 end
