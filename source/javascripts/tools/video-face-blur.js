@@ -13,8 +13,10 @@ import {
 } from "https://cdn.jsdelivr.net/npm/mediabunny@1.61.0/dist/bundles/mediabunny.min.mjs";
 import { padBox, cover } from "./blur-core.js";
 import { Tracker, boxAt } from "./video-core.js";
+import { busy, idle, note } from "./busy.js";
 
 const SAMPLE = "/samples/office-meeting.mp4";
+const READY = "The face model runs on this device. Choose a video to start.";
 const MAX_SECONDS = 10 * 60;
 const MAX_SIDE = 1920; // Larger videos are made smaller to 1080p.
 const DETECT_FPS = 8; // Frames per second to run face detection on.
@@ -43,6 +45,8 @@ const strengthControl = $("strength-control");
 const keepAudio = $("keep-audio");
 const download = $("download");
 const original = $("original");
+const downloadNote = $("download-note");
+const modelBar = $("model");
 
 const state = {
   file: null,
@@ -65,6 +69,16 @@ const waiting = new Map();
 let requestId = 0;
 
 worker.onmessage = ({ data }) => {
+  if (data.type === "ready") {
+    modelBar.dataset.state = "ready";
+    if (!state.input) setStatus(READY);
+    return;
+  }
+  if (data.type === "error" && data.id === undefined) {
+    modelBar.dataset.state = "error";
+    setStatus(`Could not load the face model. ${data.message} Reload the page to try again.`, "error");
+    return;
+  }
   const done = waiting.get(data.id);
   if (!done) return;
   if (data.type === "result") {
@@ -139,6 +153,7 @@ async function openFile(file) {
   scrubber.value = 0;
   people.replaceChildren();
   download.disabled = true;
+  note(downloadNote);
   drop.hidden = true;
   editor.hidden = false;
 
@@ -355,7 +370,8 @@ original.addEventListener("keyup", () => showOriginal(false));
 download.addEventListener("click", async () => {
   if (state.busy || !state.input) return;
   state.busy = true;
-  download.disabled = true;
+  busy(download, "Making video…");
+  note(downloadNote);
   video.pause();
 
   const big = Math.max(state.width, state.height) > MAX_SIDE;
@@ -394,8 +410,7 @@ download.addEventListener("click", async () => {
     }
     const lostAudio = keepAudio.checked && conversion.discardedTracks.some((d) => d.track.type === "audio");
 
-    conversion.onProgress = (p) => setStatus(`Making the video… ${Math.round(p * 100)}%`, "busy");
-    setStatus("Making the video…", "busy");
+    conversion.onProgress = (p) => busy(download, `Making video… ${Math.round(p * 100)}%`);
     await conversion.execute();
 
     const blob = new Blob([output.target.buffer], { type: "video/mp4" });
@@ -404,14 +419,15 @@ download.addEventListener("click", async () => {
     a.download = `${state.file.name.replace(/\.[^.]+$/, "") || "video"}-blurred.mp4`;
     a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-    setStatus(
+    note(
+      downloadNote,
       `Done. Your video is downloaded.${lostAudio ? " The audio could not be converted in this browser, so the video has no sound." : ""}`
     );
   } catch (err) {
-    setStatus(`Could not make the video. ${(err && err.message) || err}`, "error");
+    note(downloadNote, `Could not make the video. ${(err && err.message) || err}`, "error");
   } finally {
     state.busy = false;
-    download.disabled = false;
+    idle(download);
   }
 });
 
@@ -427,7 +443,7 @@ function reset() {
   editor.hidden = true;
   drop.hidden = false;
   fileInput.value = "";
-  setStatus("");
+  setStatus(modelBar.dataset.state === "ready" ? READY : "");
 }
 
 fileInput.addEventListener("change", () => openFile(fileInput.files[0]));

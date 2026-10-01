@@ -1,9 +1,11 @@
 // Face Blur: find faces in a photo and blur, pixelate or cover them.
 // Everything happens in this tab. The photo is never uploaded.
 import { padBox, cover } from "./blur-core.js";
+import { busy, idle, note } from "./busy.js";
 
 const MAX_PIXELS = 16_000_000; // iOS Safari cannot draw larger canvases.
 const SAMPLE = "/samples/solvay-1927.jpg";
+const READY = "The face model runs on this device. Choose a photo to start.";
 
 const $ = (id) => document.getElementById(id);
 const drop = $("drop");
@@ -17,6 +19,8 @@ const strength = $("strength");
 const strengthControl = $("strength-control");
 const download = $("download");
 const original = $("original");
+const downloadNote = $("download-note");
+const modelBar = $("model");
 
 const state = {
   image: null, // ImageBitmap or canvas with the photo at working size
@@ -34,7 +38,17 @@ const state = {
 const worker = new Worker(new URL("./face-blur-worker.js", import.meta.url), { type: "module" });
 
 worker.onmessage = ({ data }) => {
+  if (data.type === "ready") {
+    modelBar.dataset.state = "ready";
+    if (!state.image) setStatus(READY);
+    return;
+  }
   if (data.id !== undefined && data.id !== state.requestId) return;
+  if (data.type === "error" && data.id === undefined) {
+    modelBar.dataset.state = "error";
+    setStatus(`Could not load the face model. ${data.message} Reload the page to try again.`, "error");
+    return;
+  }
   if (data.type === "progress") {
     setStatus(`Looking for faces… ${Math.round((data.done / data.total) * 100)}%`, "busy");
   } else if (data.type === "result") {
@@ -73,12 +87,12 @@ async function openFile(file) {
 
 async function useBitmap(bitmap) {
   let { width, height } = bitmap;
-  let note = "";
+  let sizeNote = "";
   if (width * height > MAX_PIXELS) {
     const k = Math.sqrt(MAX_PIXELS / (width * height));
     width = Math.floor(width * k);
     height = Math.floor(height * k);
-    note = ` The photo was reduced to ${width} × ${height} pixels.`;
+    sizeNote = ` The photo was reduced to ${width} × ${height} pixels.`;
   }
   canvas.width = width;
   canvas.height = height;
@@ -91,7 +105,8 @@ async function useBitmap(bitmap) {
 
   state.image = work;
   state.faces = [];
-  state.note = note;
+  state.sizeNote = sizeNote;
+  note(downloadNote);
   showEditor();
   render();
 
@@ -114,7 +129,7 @@ function reset() {
   editor.hidden = true;
   drop.hidden = false;
   fileInput.value = "";
-  setStatus("");
+  setStatus(modelBar.dataset.state === "ready" ? READY : "");
 }
 
 fileInput.addEventListener("change", () => openFile(fileInput.files[0]));
@@ -177,14 +192,14 @@ function drawBoxes() {
 function updateStatus() {
   const total = state.faces.length;
   const on = state.faces.filter((f) => f.on).length;
-  const note = state.note || "";
+  const sizeNote = state.sizeNote || "";
   if (!total) {
-    setStatus(`No faces found. Drag on the photo to add a box.${note}`);
+    setStatus(`No faces found. Drag on the photo to add a box.${sizeNote}`);
   } else {
     const kept = total - on;
     setStatus(
       `${on} of ${total} ${total === 1 ? "area" : "areas"} hidden${kept ? ` · ${kept} shown` : ""}. ` +
-        `Click a box to show or hide it. Drag on the photo to add a box.${note}`
+        `Click a box to show or hide it. Drag on the photo to add a box.${sizeNote}`
     );
   }
 }
@@ -304,14 +319,18 @@ original.addEventListener("keyup", () => showOriginal(false));
 download.addEventListener("click", () => {
   state.showOriginal = false;
   render();
+  busy(download, "Saving photo…");
+  note(downloadNote);
   const ext = { "image/jpeg": "jpg", "image/webp": "webp", "image/png": "png" }[state.type];
   canvas.toBlob(
     (blob) => {
+      idle(download);
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
       a.download = `${state.name}-blurred.${ext}`;
       a.click();
       setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+      note(downloadNote, "Done. Your photo is downloaded.");
     },
     state.type,
     0.92

@@ -16,6 +16,13 @@ description: Blur every face in a video. Faces are found and tracked in your bro
 
 <section class="tool">
   <div class="wrap">
+    <div class="model-bar" id="model" data-state="loading">
+      <div class="model-text">
+        <strong>AI detection</strong>
+        <span class="status" id="status" role="status" aria-live="polite">Loading the face model…</span>
+      </div>
+    </div>
+
     <div class="drop" id="drop">
       <p class="drop-title">Drop a video here</p>
       <p class="drop-text">or choose a file. MP4, MOV or WebM, up to 10 minutes.</p>
@@ -27,8 +34,6 @@ description: Blur every face in a video. Faces are found and tracked in your bro
         <button type="button" id="sample" class="button button-outline">Try an example video</button>
       </div>
     </div>
-
-    <p class="status" id="status" role="status" aria-live="polite"></p>
 
     <div class="editor" id="editor" hidden>
       <div class="controls control-row">
@@ -73,6 +78,7 @@ description: Blur every face in a video. Faces are found and tracked in your bro
           <button type="button" id="original" class="button button-outline">Hold to see original</button>
           <button type="button" id="download" class="button" disabled>Download video</button>
         </div>
+        <p class="download-note" id="download-note" role="status" aria-live="polite"></p>
       </div>
 
       <div class="control">

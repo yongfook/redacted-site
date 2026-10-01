@@ -4,6 +4,7 @@
 import * as pdfjs from "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.3.289/build/pdf.min.mjs";
 import { CATEGORIES, MODEL_PREF, collectSpans, parseTerms } from "./pii-spans.js";
 import { pageText, spanToRects, mergeRects } from "./pdf-core.js";
+import { busy, idle, note } from "./busy.js";
 
 pdfjs.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.3.289/build/pdf.worker.min.mjs";
 const PDF_LIB = "https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.esm.min.js";
@@ -22,6 +23,7 @@ const chips = $("categories");
 const customInput = $("custom");
 const download = $("download");
 const original = $("original");
+const downloadNote = $("download-note");
 const loadButton = $("load");
 const modelStatus = $("model-status");
 const modelBar = $("model");
@@ -140,6 +142,7 @@ async function openFile(file) {
   state.name = file.name.replace(/\.pdf$/i, "") || "document";
   state.off.clear();
   state.pages = [];
+  note(downloadNote);
   pagesEl.replaceChildren();
   showEditor();
 
@@ -445,7 +448,8 @@ original.addEventListener("keyup", () => showOriginal(false));
 download.addEventListener("click", async () => {
   if (state.busy || !state.doc) return;
   state.busy = true;
-  download.disabled = true;
+  busy(download, "Making PDF…");
+  note(downloadNote);
   try {
     const { PDFDocument } = await import(PDF_LIB);
     const out = await PDFDocument.create();
@@ -453,7 +457,7 @@ download.addEventListener("click", async () => {
     const ctx = canvas.getContext("2d");
 
     for (const page of state.pages) {
-      setStatus(`Making page ${page.n} of ${state.pages.length}…`, "busy");
+      busy(download, `Making PDF… ${page.n}/${state.pages.length}`);
       const { width, height } = page.viewport;
       let scale = EXPORT_DPI / 72;
       if (width * height * scale * scale > MAX_EXPORT_PIXELS) scale = Math.sqrt(MAX_EXPORT_PIXELS / (width * height));
@@ -486,11 +490,11 @@ download.addEventListener("click", async () => {
     a.download = `${state.name}-redacted.pdf`;
     a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-    updateStatus();
+    note(downloadNote, "Done. Your redacted PDF is downloaded.");
   } catch (err) {
-    setStatus(`Could not make the PDF. ${(err && err.message) || err}`, "error");
+    note(downloadNote, `Could not make the PDF. ${(err && err.message) || err}`, "error");
   } finally {
     state.busy = false;
-    download.disabled = false;
+    idle(download);
   }
 });
