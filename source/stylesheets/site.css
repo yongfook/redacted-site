@@ -869,6 +869,7 @@ textarea:focus {
 
 .editor {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 20px;
 }
 
@@ -1030,4 +1031,98 @@ textarea:focus {
     padding: 12px;
     gap: 28px;
   }
+}
+
+/* Video Face Blur */
+
+.player {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.player .button {
+  padding: 8px 16px;
+  font-size: 14px;
+  min-width: 80px;
+}
+
+.player input[type="range"] {
+  flex: 1;
+  min-width: 0;
+  accent-color: var(--black);
+}
+
+.time {
+  font-family: var(--mono);
+  font-size: 13px;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.checkbox span:last-child {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+}
+
+.checkbox input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--black);
+}
+
+.people {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.people:empty::before {
+  content: "Faces show here after the scan.";
+  font-size: 14px;
+  color: var(--grey);
+}
+
+.person {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px 6px 6px;
+  background: var(--white);
+  border: 1px solid var(--black);
+  text-align: left;
+  font: inherit;
+}
+
+.person canvas {
+  width: 44px;
+  height: 44px;
+  display: block;
+}
+
+.person span {
+  display: grid;
+  line-height: 1.25;
+}
+
+.person strong {
+  font-size: 14px;
+}
+
+.person small,
+.person em {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-style: normal;
+}
+
+.person[aria-pressed="true"] {
+  background: var(--black);
+  color: var(--white);
+}
+
+.person[aria-pressed="false"] em {
+  text-decoration: underline;
 }

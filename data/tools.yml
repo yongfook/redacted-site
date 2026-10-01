@@ -21,6 +21,7 @@
 
 - name: Video Face Blur
   slug: video-face-blur
+  live: true
   input: Video
   description: Track faces frame by frame and blur them through a whole clip. Export the result without an upload.
   model: Face detection + tracking

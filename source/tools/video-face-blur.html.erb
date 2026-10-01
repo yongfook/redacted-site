@@ -1,0 +1,102 @@
+---
+title: Video Face Blur
+description: Blur every face in a video. Faces are found and tracked in your browser, and the new video keeps its sound. Your video is never uploaded.
+---
+
+<section class="tool-hero">
+  <div class="wrap">
+    <%= partial "partials/brand" %>
+    <h1>Video Face Blur</h1>
+    <p class="lede">
+      Find and blur every face in a video. Face detection and tracking run on your device.
+      Your video is never uploaded.
+    </p>
+  </div>
+</section>
+
+<section class="tool">
+  <div class="wrap">
+    <div class="drop" id="drop">
+      <p class="drop-title">Drop a video here</p>
+      <p class="drop-text">or choose a file. MP4, MOV or WebM, up to 10 minutes.</p>
+      <div class="drop-actions">
+        <label class="button">
+          Choose a video
+          <input type="file" id="file" accept="video/*,.mp4,.mov,.m4v,.webm,.mkv" class="visually-hidden">
+        </label>
+        <button type="button" id="sample" class="button button-outline">Try an example video</button>
+      </div>
+    </div>
+
+    <p class="status" id="status" role="status" aria-live="polite"></p>
+
+    <div class="editor" id="editor" hidden>
+      <div class="controls control-row">
+        <div class="control">
+          <span class="control-label">Style</span>
+          <div class="chips" id="style">
+            <button type="button" class="chip" data-value="blur" aria-pressed="true">Blur</button>
+            <button type="button" class="chip" data-value="pixelate" aria-pressed="false">Pixelate</button>
+            <button type="button" class="chip" data-value="box" aria-pressed="false">Black box</button>
+          </div>
+        </div>
+        <label class="control" id="strength-control">
+          <span class="control-label">Strength</span>
+          <input type="range" id="strength" min="1" max="10" value="8">
+        </label>
+        <div class="control">
+          <span class="control-label">Shape</span>
+          <div class="chips" id="shape">
+            <button type="button" class="chip" data-value="oval" aria-pressed="true">Oval</button>
+            <button type="button" class="chip" data-value="rect" aria-pressed="false">Rectangle</button>
+          </div>
+        </div>
+        <label class="control checkbox">
+          <span class="control-label">Sound</span>
+          <span><input type="checkbox" id="keep-audio" checked> Keep audio</span>
+        </label>
+      </div>
+
+      <div class="stage">
+        <canvas id="canvas" aria-label="Video preview with faces hidden"></canvas>
+        <video id="video" playsinline preload="auto" hidden></video>
+      </div>
+
+      <div class="player">
+        <button type="button" id="play" class="button button-outline">Play</button>
+        <input type="range" id="scrubber" min="0" max="1" step="0.01" value="0" aria-label="Position in video">
+        <span id="time" class="time">0:00 / 0:00</span>
+      </div>
+
+      <div class="control">
+        <span class="control-label">People</span>
+        <div class="people" id="people"></div>
+      </div>
+
+      <div class="editor-foot">
+        <button type="button" id="new" class="text-button">Use another video</button>
+        <div class="editor-actions">
+          <button type="button" id="original" class="button button-outline">Hold to see original</button>
+          <button type="button" id="download" class="button" disabled>Download video</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div>
+        <h3>Private by design</h3>
+        <p>The page has no server code. The face model, <a href="https://github.com/opencv/opencv_zoo/tree/main/models/face_detection_yunet" target="_blank" rel="noopener">YuNet</a> from OpenCV (MIT license), runs on your device. <a href="https://mediabunny.dev" target="_blank" rel="noopener">Mediabunny</a> reads and writes the video in your browser.</p>
+      </div>
+      <div>
+        <h3>Check before you share</h3>
+        <p>Faces that are very small, turned away or moving fast can be missed for a moment. Play the preview to the end. The new video also does not keep the original's location and date data.</p>
+      </div>
+      <div>
+        <h3>Speed</h3>
+        <p>Scanning and making the video take about one to two times the video's length on a laptop. Phones are slower. Videos larger than 1080p are made smaller to 1080p.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script type="module" src="/javascripts/tools/video-face-blur.js"></script>

@@ -1,11 +1,9 @@
 // Face Blur: find faces in a photo and blur, pixelate or cover them.
 // Everything happens in this tab. The photo is never uploaded.
+import { padBox, cover } from "./blur-core.js";
 
 const MAX_PIXELS = 16_000_000; // iOS Safari cannot draw larger canvases.
 const SAMPLE = "/samples/solvay-1927.jpg";
-
-// Grow the detected face box to also cover hair, ears and chin.
-const PAD = { x: 0.18, top: 0.35, bottom: 0.12 };
 
 const $ = (id) => document.getElementById(id);
 const drop = $("drop");
@@ -51,11 +49,7 @@ worker.onmessage = ({ data }) => {
 };
 
 function padFace(f) {
-  const x = Math.max(0, f.x - f.w * PAD.x);
-  const y = Math.max(0, f.y - f.h * PAD.top);
-  const right = Math.min(canvas.width, f.x + f.w * (1 + PAD.x));
-  const bottom = Math.min(canvas.height, f.y + f.h * (1 + PAD.bottom));
-  return { x, y, w: right - x, h: bottom - y, on: true, manual: false };
+  return { ...padBox(f, canvas.width, canvas.height), on: true, manual: false };
 }
 
 // Loading a photo
@@ -151,59 +145,14 @@ $("new").addEventListener("click", reset);
 
 // Rendering
 
-const small = document.createElement("canvas");
-const smallCtx = small.getContext("2d");
-const canFilter = "filter" in ctx;
-
 function render() {
   if (!state.image) return;
   ctx.drawImage(state.image, 0, 0);
   if (!state.showOriginal) {
-    for (const f of state.faces) if (f.on) cover(f);
+    const options = { style: state.style, strength: +strength.value, shape: state.shape };
+    for (const f of state.faces) if (f.on) cover(ctx, state.image, f, options);
   }
   drawBoxes();
-}
-
-function cover(f) {
-  const x = Math.round(f.x);
-  const y = Math.round(f.y);
-  const w = Math.max(1, Math.round(f.w));
-  const h = Math.max(1, Math.round(f.h));
-
-  ctx.save();
-  ctx.beginPath();
-  if (state.shape === "oval") ctx.ellipse(x + w / 2, y + h / 2, w / 2, h / 2, 0, 0, Math.PI * 2);
-  else ctx.rect(x, y, w, h);
-  ctx.clip();
-
-  if (state.style === "box") {
-    ctx.fillStyle = "#000";
-    ctx.fillRect(x, y, w, h);
-  } else {
-    // Shrink the face to a few pixels, then stretch it back. The detail is
-    // gone for good, so the result cannot be sharpened back.
-    const level = +strength.value; // 1 (light) to 10 (strong)
-    const across = state.style === "pixelate" ? 22 - level * 1.6 : 13 - level;
-    const sw = Math.max(2, Math.round(across));
-    const sh = Math.max(2, Math.round((across * h) / w));
-    small.width = sw;
-    small.height = sh;
-    smallCtx.imageSmoothingEnabled = true;
-    smallCtx.drawImage(state.image, x, y, w, h, 0, 0, sw, sh);
-
-    if (state.style === "pixelate") {
-      ctx.imageSmoothingEnabled = false;
-      ctx.drawImage(small, 0, 0, sw, sh, x, y, w, h);
-      ctx.imageSmoothingEnabled = true;
-    } else {
-      if (canFilter) ctx.filter = `blur(${Math.round(w / sw / 2.5)}px)`;
-      // Draw a little larger so the blur has no soft edge inside the shape.
-      const m = w / sw;
-      ctx.drawImage(small, 0, 0, sw, sh, x - m, y - m, w + 2 * m, h + 2 * m);
-      ctx.filter = "none";
-    }
-  }
-  ctx.restore();
 }
 
 function drawBoxes() {
