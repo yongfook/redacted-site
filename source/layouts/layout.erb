@@ -3,13 +3,26 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><%= current_page.data.title ? "#{current_page.data.title} — #{config[:site_name]}" : "#{config[:site_name]} — Free in-browser redaction tools" %></title>
-    <meta name="description" content="<%= current_page.data.description || config[:site_description] %>">
-    <link rel="canonical" href="<%= config[:site_url] %><%= current_page.url %>">
-    <meta property="og:title" content="<%= config[:site_name] %>">
-    <meta property="og:description" content="<%= config[:site_description] %>">
-    <meta property="og:url" content="<%= config[:site_url] %><%= current_page.url %>">
+    <% page_title = current_page.data.title ? "#{current_page.data.title} — #{config[:site_name]}" : "#{config[:site_name]} — Free in-browser redaction tools" %>
+    <% page_description = current_page.data.description || config[:site_description] %>
+    <% page_url = "#{config[:site_url]}#{current_page.url}" %>
+    <% og_image = "#{config[:site_url]}#{image_path "og.png"}" %>
+    <title><%= page_title %></title>
+    <meta name="description" content="<%= page_description %>">
+    <link rel="canonical" href="<%= page_url %>">
+    <meta property="og:site_name" content="<%= config[:site_name] %>">
+    <meta property="og:title" content="<%= page_title %>">
+    <meta property="og:description" content="<%= page_description %>">
+    <meta property="og:url" content="<%= page_url %>">
     <meta property="og:type" content="website">
+    <meta property="og:image" content="<%= og_image %>">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="REDACTED logo. Free Data Redaction Tools. No File Uploads.">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<%= page_title %>">
+    <meta name="twitter:description" content="<%= page_description %>">
+    <meta name="twitter:image" content="<%= og_image %>">
     <meta name="theme-color" content="#000000">
     <link rel="icon" href="<%= image_path "favicon.svg" %>" type="image/svg+xml">
     <link rel="preconnect" href="https://fonts.googleapis.com">
