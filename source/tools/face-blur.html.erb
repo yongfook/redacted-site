@@ -1,0 +1,87 @@
+---
+title: Face Blur
+description: Blur, pixelate or black out every face in a photo. Face detection runs in your browser. Your photo is never uploaded.
+---
+
+<section class="tool-hero">
+  <div class="wrap">
+    <%= partial "partials/brand" %>
+    <h1>Face Blur</h1>
+    <p class="lede">
+      Hide every face in a photo in seconds.
+      Face detection runs on your device. Your photo is never uploaded.
+    </p>
+  </div>
+</section>
+
+<section class="tool">
+  <div class="wrap">
+    <div class="drop" id="drop">
+      <p class="drop-title">Drop a photo here</p>
+      <p class="drop-text">or paste it, or choose a file. JPG, PNG and WebP.</p>
+      <div class="drop-actions">
+        <label class="button">
+          Choose a photo
+          <input type="file" id="file" accept="image/*" class="visually-hidden">
+        </label>
+        <button type="button" id="sample" class="button button-outline">Try an example photo</button>
+      </div>
+    </div>
+
+    <p class="status" id="status" role="status" aria-live="polite"></p>
+
+    <div class="editor" id="editor" hidden>
+      <div class="controls control-row">
+        <div class="control">
+          <span class="control-label">Style</span>
+          <div class="chips" id="style">
+            <button type="button" class="chip" data-value="blur" aria-pressed="true">Blur</button>
+            <button type="button" class="chip" data-value="pixelate" aria-pressed="false">Pixelate</button>
+            <button type="button" class="chip" data-value="box" aria-pressed="false">Black box</button>
+          </div>
+        </div>
+        <label class="control" id="strength-control">
+          <span class="control-label">Strength</span>
+          <input type="range" id="strength" min="1" max="10" value="8">
+        </label>
+        <div class="control">
+          <span class="control-label">Shape</span>
+          <div class="chips" id="shape">
+            <button type="button" class="chip" data-value="oval" aria-pressed="true">Oval</button>
+            <button type="button" class="chip" data-value="rect" aria-pressed="false">Rectangle</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="stage">
+        <canvas id="canvas" aria-label="Photo with faces hidden"></canvas>
+        <div class="boxes" id="boxes"></div>
+      </div>
+
+      <div class="editor-foot">
+        <button type="button" id="new" class="text-button">Use another photo</button>
+        <div class="editor-actions">
+          <button type="button" id="original" class="button button-outline">Hold to see original</button>
+          <button type="button" id="download" class="button" disabled>Download photo</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div>
+        <h3>Private by design</h3>
+        <p>The page has no server code. The face model, <a href="https://github.com/opencv/opencv_zoo/tree/main/models/face_detection_yunet" target="_blank" rel="noopener">YuNet</a> from OpenCV (MIT license), is 230 KB and runs on your device.</p>
+      </div>
+      <div>
+        <h3>Check before you share</h3>
+        <p>Very small, turned or covered faces can be missed. Look at the whole photo. Drag on it to hide anything else, such as a name badge or a reflection.</p>
+      </div>
+      <div>
+        <h3>Location data removed</h3>
+        <p>The downloaded photo is a new file. It does not keep the original's metadata, such as GPS location, camera model and date.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script type="module" src="/javascripts/tools/face-blur.js"></script>

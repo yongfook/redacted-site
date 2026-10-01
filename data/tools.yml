@@ -5,17 +5,18 @@
   description: Paste any text and get back a clean copy with personal data masked. Choose what to hide, from names to dates to IDs.
   model: Named-entity recognition
 
+- name: Face Blur
+  slug: face-blur
+  live: true
+  input: Image
+  description: Detect every face in a photo and blur, pixelate or black it out. Click a face to keep it visible.
+  model: Face detection
+
 - name: PDF Redactor
   slug: pdf-redactor
   input: PDF
   description: Find names, emails, account numbers and addresses in a PDF, then burn in true black-bar redactions. The hidden text is removed, not just covered.
   model: Named-entity recognition
-
-- name: Face Blur
-  slug: face-blur
-  input: Image
-  description: Detect every face in a photo and blur, pixelate or black it out. Click a face to keep it visible.
-  model: Face detection
 
 - name: Video Face Blur
   slug: video-face-blur
