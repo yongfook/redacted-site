@@ -84,7 +84,9 @@ const RULES = [
   {
     // Hostnames that only exist inside a company network.
     tag: "HOST",
-    re: /\b(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+(?:internal|local|localdomain|corp|lan|intranet|private|home\.arpa|svc\.cluster\.local|ec2\.internal|compute\.internal)\b/gi,
+    // A space after the last dot is allowed when there is an earlier dot:
+    // text read from screenshots often has one there ("db.prod. internal").
+    re: /\b(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\. )?(?:internal|local|localdomain|corp|lan|intranet|private|home\.arpa|svc\.cluster\.local|ec2\.internal|compute\.internal)\b/gi,
   },
 ];
 

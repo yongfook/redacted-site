@@ -99,7 +99,11 @@ export function linesText(lines) {
   const parts = [];
   lines.forEach((line, li) => {
     line.words.forEach((w, wi) => {
-      if (wi) text += " ";
+      // OCR often splits "prod.internal" at the dot. Join a word to the one
+      // before when there is almost no gap and the first ends with a dot.
+      const prev = line.words[wi - 1];
+      const tight = prev && /\.$/.test(prev.text) && /^[a-z0-9]/.test(w.text) && w.x - (prev.x + prev.w) < w.h * 0.35;
+      if (wi && !tight) text += " ";
       parts.push({ line: li, word: w, start: text.length, end: text.length + w.text.length });
       text += w.text;
     });
@@ -328,4 +332,9 @@ function strongest(found) {
     if (!kept.some((k) => overlap(c, k) / Math.min(area(c), area(k)) > 0.3)) kept.push(c);
   }
   return kept;
+}
+
+// @usernames and handles, such as @maya_chen. The @ stays visible.
+export function usernameSpans(text) {
+  return [...text.matchAll(/(?<![\w.])@([A-Za-z][\w.-]{1,30}[A-Za-z0-9])/g)].map((m) => ({ tag: "USERNAME", start: m.index + 1, end: m.index + m[0].length }));
 }

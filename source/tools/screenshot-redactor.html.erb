@@ -1,14 +1,14 @@
 ---
-title: Chat Screenshot Anonymizer
-description: Hide names, faces, profile pictures, phone numbers and links in chat screenshots from WhatsApp, Telegram, iMessage, Signal and Slack. Give people fake names. Runs in your browser. Nothing is uploaded.
+title: Screenshot Redactor
+description: Hide emails, phone numbers, names, usernames, API keys, passwords and faces in screenshots before you share them. Text reading and detection run in your browser. Nothing is uploaded.
 ---
 
 <section class="tool-hero">
   <div class="wrap">
     <%= partial "partials/brand" %>
-    <h1>Chat Screenshot Anonymizer</h1>
+    <h1>Screenshot Redactor</h1>
     <p class="lede">
-      Share a chat screenshot without showing who is in it. Names become fake names, and faces, numbers and links are hidden.
+      Drop in a screenshot. The tool reads the text on the screen and covers emails, phone numbers, names, usernames, keys and faces.
       Your screenshot is never uploaded.
     </p>
   </div>
@@ -25,8 +25,8 @@ description: Hide names, faces, profile pictures, phone numbers and links in cha
     </div>
 
     <div class="drop" id="drop">
-      <p class="drop-title">Drop a chat screenshot here</p>
-      <p class="drop-text">or paste it, or choose a file. WhatsApp, Telegram, iMessage, Signal, Slack and more.</p>
+      <p class="drop-title">Drop a screenshot here</p>
+      <p class="drop-text">or paste it, or choose a file. From a computer or a phone.</p>
       <div class="drop-actions">
         <label class="button">
           Choose a screenshot
@@ -34,7 +34,7 @@ description: Hide names, faces, profile pictures, phone numbers and links in cha
         </label>
         <button type="button" id="sample" class="button button-outline">Try an example screenshot</button>
       </div>
-      <p class="drop-alt">Have the chat as text, such as a WhatsApp export? Use the <a href="/tools/chat-text-anonymizer/">Chat Text Anonymizer</a>. Not a chat? Use the <a href="/tools/screenshot-redactor/">Screenshot Redactor</a>.</p>
+      <p class="drop-alt">Is it a chat? The <a href="/tools/chat-screenshot-anonymizer/">Chat Screenshot Anonymizer</a> also finds sender names and gives people fake names.</p>
     </div>
 
     <div class="editor" id="editor" hidden>
@@ -47,25 +47,24 @@ description: Hide names, faces, profile pictures, phone numbers and links in cha
           <div class="control">
             <span class="control-label">Style</span>
             <div class="chips" id="style">
-              <button type="button" class="chip" data-value="fake" aria-pressed="true">Fake names</button>
+              <button type="button" class="chip" data-value="box" aria-pressed="true">Black box</button>
               <button type="button" class="chip" data-value="blur" aria-pressed="false">Blur</button>
               <button type="button" class="chip" data-value="pixelate" aria-pressed="false">Pixelate</button>
-              <button type="button" class="chip" data-value="box" aria-pressed="false">Black box</button>
             </div>
           </div>
-          <label class="control" id="strength-control">
+          <label class="control" id="strength-control" hidden>
             <span class="control-label">Strength</span>
             <input type="range" id="strength" min="1" max="10" value="8">
           </label>
           <label class="control grow">
             <span class="control-label">Always hide these words</span>
-            <input type="text" id="custom" placeholder="Nicknames, team names, places" autocomplete="off">
+            <input type="text" id="custom" placeholder="Project names, hosts, account IDs" autocomplete="off">
           </label>
         </div>
       </div>
 
-      <div class="stage stage-screenshot">
-        <canvas id="canvas" aria-label="Screenshot with names and faces hidden"></canvas>
+      <div class="stage">
+        <canvas id="canvas" aria-label="Screenshot with private details hidden"></canvas>
         <div class="boxes" id="boxes"></div>
       </div>
 
@@ -81,12 +80,12 @@ description: Hide names, faces, profile pictures, phone numbers and links in cha
 
     <div class="notes">
       <div>
-        <h3>Fake names that stay the same</h3>
-        <p>Each person gets one fake name in the colors of the app, so the screenshot still reads like a real chat. Choose Blur or Black box to hide names instead.</p>
+        <h3>What it covers</h3>
+        <p>Emails, phone numbers, names, places, links, @usernames, IP addresses, card and bank numbers, API keys, tokens and passwords, faces and profile pictures.</p>
       </div>
       <div>
         <h3>Check before you share</h3>
-        <p>Text reading can miss small, faint or stylized text, and names written in lowercase. Read the whole screenshot, click a box to change it, and drag to hide anything else.</p>
+        <p>Text reading can miss small, faint or stylized text. Read the whole screenshot, click a box to change it, and drag to hide anything else, such as a logo or a map.</p>
       </div>
       <div>
         <h3>Private by design</h3>
@@ -96,4 +95,4 @@ description: Hide names, faces, profile pictures, phone numbers and links in cha
   </div>
 </section>
 
-<script type="module" src="/javascripts/tools/chat-screenshot-anonymizer.js"></script>
+<script type="module" src="/javascripts/tools/screenshot-redactor.js"></script>

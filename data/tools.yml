@@ -55,6 +55,14 @@
   description: Hide names, faces, profile pictures, phone numbers and links in chat screenshots from WhatsApp, Telegram, iMessage and more.
   model: OCR + face + entity detection
 
+- name: Screenshot Redactor
+  slug: screenshot-redactor
+  landing: true
+  live: true
+  input: Image
+  description: Drop in a screenshot. The tool reads the text on screen and covers emails, phone numbers, usernames and tokens.
+  model: OCR + face + entity detection
+
 - name: Redaction Checker
   slug: redaction-checker
   landing: true
@@ -70,13 +78,6 @@
   input: Any file
   description: Remove GPS location, camera details, author names and edit history from photos and documents.
   model: No model needed
-
-- name: Screenshot Redactor
-  slug: screenshot-redactor
-  landing: true
-  input: Image
-  description: Drop in a screenshot. The tool reads the text on screen and covers emails, phone numbers, usernames and tokens.
-  model: OCR + entity detection
 
 - name: License Plate Blur
   slug: plate-blur
