@@ -1269,7 +1269,7 @@ textarea:focus {
 
 .soon-facts {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   margin: 0;
   border: 1px solid var(--black);
   border-top: 0;
@@ -1328,7 +1328,12 @@ textarea:focus {
   color: var(--white);
 }
 
+/* Phones: one fact per row. */
 @media (max-width: 600px) {
+  .soon-facts {
+    grid-template-columns: 1fr;
+  }
+
   .soon-facts div + div {
     border-left: 0;
   }
