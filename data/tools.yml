@@ -88,6 +88,7 @@
 - name: ID Document Redactor
   slug: id-redactor
   landing: true
+  grid_name: ID Redactor
   input: Image
   description: Mask the sensitive fields on passports, driving licenses and ID cards, such as numbers, birth dates and machine-readable zones.
   model: Layout detection + OCR
