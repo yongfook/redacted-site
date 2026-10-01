@@ -354,16 +354,8 @@ a {
   .nav {
     gap: 16px;
   }
-  .brand {
-    gap: 10px;
-  }
-  .tagline {
-    font-size: 11px;
-  }
-}
-
-@media (max-width: 480px) {
-  .nav {
+  .tagline,
+  .nav-how {
     display: none;
   }
 }
