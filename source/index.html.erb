@@ -23,6 +23,7 @@ title:
         <li class="card<%= " is-soon" unless tool.live %>">
           <div class="card-top">
             <span class="card-input"><%= tool.input %></span>
+            <% unless tool.live %><span class="soon">Coming soon</span><% end %>
           </div>
           <h3>
             <% if tool.live %>
@@ -34,7 +35,6 @@ title:
           <p><%= tool.description %></p>
           <div class="card-foot">
             <span class="card-model"><%= tool.model %></span>
-            <% unless tool.live %><span class="soon">Coming soon</span><% end %>
           </div>
         </li>
       <% end %>
