@@ -77,6 +77,16 @@ a {
   white-space: nowrap;
 }
 
+.brand-logo {
+  display: block;
+  line-height: 0;
+}
+
+.brand-logo img {
+  height: 34px;
+  width: auto;
+}
+
 .logo-small {
   font-size: 14px;
 }
@@ -395,6 +405,9 @@ a {
   .tagline,
   .nav-how {
     display: none;
+  }
+  .brand-logo img {
+    height: 28px;
   }
 }
 
