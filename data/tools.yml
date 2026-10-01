@@ -1,5 +1,6 @@
 - name: Text Redactor
   slug: text-redactor
+  landing: true
   live: true
   input: Text
   description: Paste any text and get back a clean copy with personal data masked. Choose what to hide, from names to dates to IDs.
@@ -7,6 +8,7 @@
 
 - name: Face Blur
   slug: face-blur
+  landing: true
   live: true
   input: Image
   description: Detect every face in a photo and blur, pixelate or black it out. Click a face to keep it visible.
@@ -14,6 +16,7 @@
 
 - name: PDF Redactor
   slug: pdf-redactor
+  landing: true
   live: true
   input: PDF
   description: Find names, emails, account numbers and addresses in a PDF, then burn in true black-bar redactions. The hidden text is removed, not just covered.
@@ -21,6 +24,7 @@
 
 - name: Video Face Blur
   slug: video-face-blur
+  landing: true
   live: true
   input: Video
   description: Track faces frame by frame and blur them through a whole clip. Export the result without an upload.
@@ -28,6 +32,7 @@
 
 - name: Secrets Scrubber
   slug: secrets-scrubber
+  landing: true
   live: true
   input: Code / Logs
   description: Remove API keys, passwords, tokens, IP addresses and internal hostnames from logs and code before you share them.
@@ -35,6 +40,7 @@
 
 - name: Chat Text Anonymizer
   slug: chat-text-anonymizer
+  landing: false
   live: true
   input: Text
   description: Replace every person in a copied chat or chat export with a consistent fake name, so the conversation still reads correctly.
@@ -42,6 +48,8 @@
 
 - name: Chat Screenshot Anonymizer
   slug: chat-screenshot-anonymizer
+  landing: true
+  grid_name: Chat Anonymizer
   live: true
   input: Screenshot
   description: Hide names, faces, profile pictures, phone numbers and links in chat screenshots from WhatsApp, Telegram, iMessage and more.
@@ -49,6 +57,7 @@
 
 - name: Redaction Checker
   slug: redaction-checker
+  landing: true
   live: true
   input: PDF
   description: Test a redacted PDF for leaks. Find text under black boxes, old revisions and metadata that others missed.
@@ -56,6 +65,7 @@
 
 - name: Metadata Stripper
   slug: metadata-stripper
+  landing: true
   live: true
   input: Any file
   description: Remove GPS location, camera details, author names and edit history from photos and documents.
@@ -63,48 +73,56 @@
 
 - name: Screenshot Redactor
   slug: screenshot-redactor
+  landing: true
   input: Image
   description: Drop in a screenshot. The tool reads the text on screen and covers emails, phone numbers, usernames and tokens.
   model: OCR + entity detection
 
 - name: License Plate Blur
   slug: plate-blur
+  landing: true
   input: Image
   description: Find and hide vehicle license plates in street photos and dashcam stills.
   model: Object detection
 
 - name: ID Document Redactor
   slug: id-redactor
+  landing: true
   input: Image
   description: Mask the sensitive fields on passports, driving licenses and ID cards, such as numbers, birth dates and machine-readable zones.
   model: Layout detection + OCR
 
 - name: Audio Bleeper
   slug: audio-bleeper
+  landing: true
   input: Audio
   description: Transcribe a recording on your device, find names and numbers, and bleep or silence them in the audio.
   model: Speech-to-text
 
 - name: CSV Anonymizer
   slug: csv-anonymizer
+  landing: true
   input: Spreadsheet
   description: Detect columns that hold personal data and mask, hash or fake them. Keep the shape of the data for testing.
   model: Column classifier
 
 - name: Signature Redactor
   slug: signature-redactor
+  landing: true
   input: Image / PDF
   description: Detect handwritten signatures, initials and stamps on scanned pages and cover them.
   model: Object detection
 
 - name: Document Scan Redactor
   slug: scan-redactor
+  landing: true
   input: Image / PDF
   description: Read scanned letters, invoices and forms, then redact personal data straight on the page image.
   model: OCR + entity detection
 
 - name: Street View Cleaner
   slug: street-cleaner
+  landing: true
   input: Image
   description: Blur faces, plates and house numbers together in one pass, for travel and real estate photos.
   model: Multi-object detection
