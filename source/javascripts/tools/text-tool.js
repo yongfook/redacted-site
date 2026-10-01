@@ -2,9 +2,9 @@
 // Chat Text Anonymizer): categories, the optional AI model, the two panes, the
 // replacement styles, copy and download. Each tool calls startTextTool()
 // with its own settings.
-import { CATEGORIES, TAG_CATEGORY, MODEL_PREF, collectSpans, parseTerms } from "./pii-spans.js";
+import { CATEGORIES, TAG_CATEGORY, collectSpans, parseTerms } from "./pii-spans.js";
 import { pseudonymizer } from "./fake-names.js";
-import { startLanguage, saveLanguage, modelFor, fillLanguageSelect } from "./languages.js";
+import { startLanguage, saveLanguage, modelFor, fillLanguageSelect, rememberModel, modelWasOn } from "./languages.js";
 import { downloadName } from "./busy.js";
 
 // options:
@@ -86,9 +86,7 @@ export function startTextTool({
         state.modelReady = true;
         modelBar.dataset.state = "ready";
         modelStatus.textContent = "The model runs on this device.";
-        try {
-          localStorage.setItem(MODEL_PREF, "1");
-        } catch {}
+        rememberModel(modelFor(lang));
       } else if (data.type === "result") {
         if (data.id !== requestId) return;
         state.modelSpans = data.spans;
@@ -113,6 +111,14 @@ export function startTextTool({
       worker.postMessage({ type: "detect", id: requestId, model: model(), text: input.value });
     };
 
+    const startText = modelStatus.textContent;
+    const turnOff = () => {
+      state.modelReady = false;
+      modelBar.dataset.state = "off";
+      loadButton.disabled = false;
+      modelStatus.textContent = startText;
+    };
+
     const loadModel = () => {
       state.modelReady = false;
       modelBar.dataset.state = "loading";
@@ -133,15 +139,18 @@ export function startTextTool({
         state.modelSpans = [];
         state.modelText = null;
         render();
-        // If AI is on, switch to the model for the new language.
-        if (modelBar.dataset.state === "ready" || modelBar.dataset.state === "loading") loadModel();
+        // A model that was turned on before starts again on its own. Any
+        // other model waits for a click on the button, because it is a new
+        // download.
+        if (modelWasOn(modelFor(lang))) loadModel();
+        else turnOff();
       });
     }
     showButton();
 
     loadButton.addEventListener("click", loadModel);
     try {
-      if (localStorage.getItem(MODEL_PREF) === "1") loadModel();
+      if (modelWasOn(modelFor(lang))) loadModel();
     } catch {}
   }
 

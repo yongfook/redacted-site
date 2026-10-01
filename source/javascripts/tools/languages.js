@@ -55,3 +55,25 @@ export function fillLanguageSelect(select, value) {
   }
   select.value = value;
 }
+
+// Remember, for each model, that the user turned it on. Such a model is in
+// the browser cache, so it can start on its own next time without a new
+// download. A model that was never turned on waits for a click.
+const onKey = (model) => `redacted:ai-on:${model.id}`;
+
+export function rememberModel(model) {
+  try {
+    localStorage.setItem(onKey(model), "1");
+  } catch {}
+}
+
+export function modelWasOn(model) {
+  try {
+    if (localStorage.getItem(onKey(model)) === "1") return true;
+    // Before models were remembered one by one, one setting covered the
+    // English model.
+    return model.id === NAME_MODELS.en.id && localStorage.getItem("redacted:text-redactor:model") === "1";
+  } catch {
+    return false;
+  }
+}

@@ -23,7 +23,7 @@ import {
 import { padBox, cover } from "./blur-core.js";
 import { pseudonymizer } from "./fake-names.js";
 import { busy, idle, note, downloadName } from "./busy.js";
-import { LANGUAGES, startLanguage, saveLanguage, modelFor, fillLanguageSelect } from "./languages.js";
+import { LANGUAGES, startLanguage, saveLanguage, modelFor, fillLanguageSelect, rememberModel, modelWasOn } from "./languages.js";
 
 const TESSERACT = "https://cdn.jsdelivr.net/npm/tesseract.js@7.0.0/dist/tesseract.esm.min.js";
 const MAX_PIXELS = 16_000_000;
@@ -205,7 +205,9 @@ export function startScreenshotTool({
   }
 
   try {
-    if (localStorage.getItem("redacted:screenshot:models") === "1") loadModels().catch(() => {});
+    // Start the models on their own only when they are already in the
+    // browser cache, so no download happens before a screenshot is opened.
+    if (localStorage.getItem("redacted:screenshot:models") === "1" && modelWasOn(modelFor(state.lang))) loadModels().catch(() => {});
   } catch {}
 
   // Categories and controls
@@ -244,8 +246,9 @@ export function startScreenshotTool({
       if (!ocrWorker) return;
       const runId = ++state.runId;
       setStatus(`Loading ${LANGUAGES[state.lang].label}…`, "busy");
+      // The name model for the new language loads when a screenshot needs
+      // it, not now.
       progress.ner = 0;
-      nerWorker.postMessage({ type: "load", model: modelFor(state.lang).id });
       try {
         await ocrWorker.reinitialize(LANGUAGES[state.lang].tesseract);
       } catch (err) {
@@ -401,6 +404,7 @@ export function startScreenshotTool({
       }
       // On OCR text the model is reliable for names, organizations and places.
       // The pattern rules find numbers, emails and links.
+      rememberModel(modelFor(state.lang));
       state.modelSpans = splitAtLines(
         text,
         [...found, ...perLine.flat()].filter((m) => PERSON.has(m.label) || PLACE.has(m.label) || ORG.has(m.label))

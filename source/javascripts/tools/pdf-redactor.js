@@ -2,10 +2,10 @@
 // bars. The export draws every page as an image, so no hidden text stays
 // under a bar. Everything happens in this tab. The PDF is never uploaded.
 import * as pdfjs from "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.3.289/build/pdf.min.mjs";
-import { CATEGORIES, MODEL_PREF, collectSpans, parseTerms } from "./pii-spans.js";
+import { CATEGORIES, collectSpans, parseTerms } from "./pii-spans.js";
 import { pageText, spanToRects, mergeRects } from "./pdf-core.js";
 import { busy, idle, note, downloadName } from "./busy.js";
-import { startLanguage, saveLanguage, modelFor, fillLanguageSelect } from "./languages.js";
+import { startLanguage, saveLanguage, modelFor, fillLanguageSelect, rememberModel, modelWasOn } from "./languages.js";
 
 pdfjs.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.3.289/build/pdf.worker.min.mjs";
 const PDF_LIB = "https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.esm.min.js";
@@ -79,9 +79,7 @@ worker.onmessage = ({ data }) => {
     state.modelReady = true;
     modelBar.dataset.state = "ready";
     modelStatus.textContent = "The model runs on this device.";
-    try {
-      localStorage.setItem(MODEL_PREF, "1");
-    } catch {}
+    rememberModel(modelFor(lang));
   } else if (data.type === "result") {
     const page = pending.get(data.id);
     pending.delete(data.id);
@@ -107,6 +105,14 @@ function runModel() {
   }
 }
 
+const startText = modelStatus.textContent;
+function turnOff() {
+  state.modelReady = false;
+  modelBar.dataset.state = "off";
+  loadButton.disabled = false;
+  modelStatus.textContent = startText;
+}
+
 function loadModel() {
   state.modelReady = false;
   modelBar.dataset.state = "loading";
@@ -130,14 +136,17 @@ langSelect.addEventListener("change", () => {
   for (const page of state.pages) page.modelSpans = null;
   pending.clear();
   refresh();
-  if (modelBar.dataset.state === "ready" || modelBar.dataset.state === "loading") loadModel();
+  // A model that was turned on before starts again on its own. Any other
+  // model waits for a click on the button, because it is a new download.
+  if (modelWasOn(modelFor(lang))) loadModel();
+  else turnOff();
 });
 showButton();
 
 loadButton.addEventListener("click", loadModel);
 
 try {
-  if (localStorage.getItem(MODEL_PREF) === "1") loadModel();
+  if (modelWasOn(modelFor(lang))) loadModel();
 } catch {}
 
 // Opening a PDF
