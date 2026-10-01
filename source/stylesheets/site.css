@@ -39,17 +39,6 @@ a {
 
 /* Brand */
 
-.logo {
-  font-family: var(--mono);
-  font-weight: 500;
-  font-size: 18px;
-  letter-spacing: 0.02em;
-  text-decoration: none;
-  background: var(--black);
-  color: var(--white);
-  padding: 4px 10px;
-}
-
 .brand {
   display: flex;
   flex-wrap: wrap;
@@ -72,10 +61,6 @@ a {
 .brand-logo img {
   height: 34px;
   width: auto;
-}
-
-.logo-small {
-  font-size: 14px;
 }
 
 /* Hero */
@@ -338,9 +323,9 @@ a {
 /* Footer */
 
 .site-footer {
-  background: var(--black);
-  color: var(--white);
-  padding: 48px 0;
+  background: #f2f2f2;
+  color: var(--black);
+  padding: 40px 0;
 }
 
 .site-footer .wrap {
@@ -351,15 +336,20 @@ a {
   gap: 16px;
 }
 
-.site-footer .logo {
-  background: var(--white);
-  color: var(--black);
+.footer-logo {
+  display: block;
+  line-height: 0;
+}
+
+.footer-logo img {
+  height: 24px;
+  width: auto;
 }
 
 .site-footer p {
   margin: 0;
   font-size: 14px;
-  color: #bbb;
+  color: #555;
 }
 
 @media (max-width: 600px) {
@@ -741,4 +731,8 @@ textarea:focus {
     align-items: flex-start;
     gap: 12px;
   }
+}
+
+.nowrap {
+  white-space: nowrap;
 }
