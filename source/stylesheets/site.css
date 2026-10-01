@@ -141,12 +141,12 @@ a {
 .scribble path {
   fill: none;
   stroke: var(--black);
-  stroke-width: 19;
-  stroke-linecap: round;
+  stroke-width: 22;
+  stroke-linecap: butt;
   stroke-linejoin: round;
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
-  animation: scribble 1.4s 0.3s ease-in-out forwards;
+  animation: scribble 1.2s 0.3s ease-in-out forwards;
 }
 
 .scribble:hover {
