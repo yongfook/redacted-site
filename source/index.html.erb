@@ -18,11 +18,6 @@ title:
 
 <section id="tools" class="tools">
   <div class="wrap">
-    <div class="section-head">
-      <h2>Tools</h2>
-      <p><%= data.tools.count(&:live) %> live &middot; <%= data.tools.count { |t| !t.live } %> coming soon</p>
-    </div>
-
     <ul class="grid">
       <% data.tools.each_with_index do |tool, i| %>
         <li class="card<%= " is-soon" unless tool.live %>">

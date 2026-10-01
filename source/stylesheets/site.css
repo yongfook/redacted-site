@@ -81,8 +81,7 @@ a {
 /* Hero */
 
 .hero {
-  padding: 40px 0 56px;
-  border-bottom: 1px solid var(--black);
+  padding: 40px 0 0;
 }
 
 .hero h1 {
@@ -170,7 +169,7 @@ a {
 /* Sections */
 
 .tools {
-  padding: 56px 0 96px;
+  padding: 48px 0 96px;
 }
 
 .how {
@@ -368,10 +367,10 @@ a {
     padding: 0 16px;
   }
   .hero {
-    padding: 28px 0 44px;
+    padding: 28px 0 0;
   }
   .tools {
-    padding: 44px 0 64px;
+    padding: 36px 0 64px;
   }
   .how {
     padding: 64px 0;
