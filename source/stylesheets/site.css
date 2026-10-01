@@ -488,13 +488,27 @@ button {
   font-size: 14px;
 }
 
+/* Status label: red when AI is off, black while it loads, green when on. */
 .model-text strong {
+  display: inline-block;
   font-family: var(--mono);
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   font-size: 12px;
+  line-height: 1;
+  padding: 5px 8px;
   margin-right: 10px;
+  color: var(--white);
+  background: #dc2626;
+}
+
+.model-bar[data-state="loading"] .model-text strong {
+  background: var(--black);
+}
+
+.model-bar[data-state="ready"] .model-text strong {
+  background: #15803d;
 }
 
 .model-bar[data-state="ready"] .button {
@@ -514,16 +528,6 @@ button {
   content: " on";
 }
 
-.model-bar[data-state="ready"] .model-text strong::before {
-  content: "";
-  display: inline-block;
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: #16a34a;
-  margin-right: 8px;
-  vertical-align: -1px;
-}
 
 .progress {
   position: absolute;
