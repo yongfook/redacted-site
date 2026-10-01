@@ -618,12 +618,22 @@ button {
   gap: 8px;
 }
 
+/* Form controls (option buttons, menus, text fields) share one height. */
+.chip,
+.controls select,
+.controls input[type="text"] {
+  height: 40px;
+}
+
 .chip {
+  display: inline-flex;
+  align-items: center;
   background: var(--white);
   color: var(--black);
   border: 1px solid var(--black);
-  padding: 6px 12px;
-  font-size: 14px;
+  padding: 0 14px;
+  font-size: 15px;
+  line-height: 1;
 }
 
 .chip[aria-pressed="true"] {
@@ -639,7 +649,7 @@ input[type="text"] {
   background: var(--white);
   border: 1px solid var(--black);
   border-radius: 0;
-  padding: 9px 12px;
+  padding: 0 12px;
   width: 100%;
 }
 
@@ -1119,7 +1129,7 @@ textarea:focus {
   display: flex;
   align-items: center;
   gap: 8px;
-  height: 36px;
+  height: 40px;
 }
 
 .checkbox input {
