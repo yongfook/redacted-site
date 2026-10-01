@@ -116,6 +116,7 @@
 - name: Document Scan Redactor
   slug: scan-redactor
   landing: true
+  grid_name: Document Redactor
   input: Image / PDF
   description: Read scanned letters, invoices and forms, then redact personal data straight on the page image.
   model: OCR + entity detection
