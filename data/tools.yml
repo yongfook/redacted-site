@@ -33,12 +33,18 @@
   description: Remove API keys, passwords, tokens, IP addresses and internal hostnames from logs and code before you share them.
   model: Pattern rules
 
-- name: Chat Anonymizer
-  slug: chat-anonymizer
+- name: Chat Text Anonymizer
+  slug: chat-text-anonymizer
   live: true
   input: Text
-  description: Replace every person in a chat export with a consistent pseudonym, so the conversation still reads correctly.
-  model: Named-entity recognition
+  description: Replace every person in a copied chat or chat export with a consistent fake name, so the conversation still reads correctly.
+  model: Chat rules + named-entity recognition
+
+- name: Chat Screenshot Anonymizer
+  slug: chat-screenshot-anonymizer
+  input: Screenshot
+  description: Hide names, faces, profile pictures, phone numbers and links in chat screenshots from WhatsApp, Telegram, iMessage and more.
+  model: OCR + face + entity detection
 
 - name: Redaction Checker
   slug: redaction-checker

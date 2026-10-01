@@ -10,9 +10,10 @@ page "/*.xml", layout: false
 page "/*.json", layout: false
 page "/*.txt", layout: false
 
-# Cloudflare Pages reads _headers from the build root.
-# Middleman ignores files that start with "_", so import it explicitly.
+# Cloudflare reads _headers and _redirects from the build root.
+# Middleman ignores files that start with "_", so import them explicitly.
 import_file File.expand_path("_headers", config[:source]), "/_headers"
+import_file File.expand_path("_redirects", config[:source]), "/_redirects"
 
 # A "coming soon" page for each tool that is not live yet.
 data.tools.each do |tool|

@@ -1,4 +1,4 @@
-// Chat Anonymizer: give every person in a chat export a consistent fake
+// Chat Text Anonymizer: give every person in a chat export a consistent fake
 // name, so the conversation still reads correctly.
 import { startTextTool } from "./text-tool.js";
 import { detectChat } from "./chat-patterns.js";

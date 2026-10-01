@@ -1,4 +1,4 @@
-// Consistent fake names for the Chat Anonymizer. The same person always
+// Consistent fake names for the chat anonymizers. The same person always
 // gets the same fake name, also when the text uses only their first name.
 
 const NAMES = [

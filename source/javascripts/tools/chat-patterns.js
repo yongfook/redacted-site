@@ -1,4 +1,4 @@
-// Rules for the Chat Anonymizer: find who sent each message in a chat
+// Rules for the Chat Text Anonymizer: find who sent each message in a chat
 // export, then find every other place their names appear, and @mentions.
 // Returns spans: { tag: "NAME", start, end }.
 
