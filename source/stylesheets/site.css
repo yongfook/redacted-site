@@ -537,7 +537,8 @@ button {
   width: auto;
   border: 0;
   background-color: transparent;
-  padding: 2px 4px 2px 4px;
+  /* Room on the right for the arrow, so the longest name does not touch it. */
+  padding: 2px 20px 2px 4px;
   background-position: right 10px center, right 5px center;
   font-family: var(--mono);
   font-size: 12px;
@@ -1569,13 +1570,10 @@ textarea:focus {
   margin-right: 6px;
 }
 
-/* The language menu keeps the button's height also when it has focus: no
-   outline after a mouse click, and a thin outline that fits the menu for
-   keyboard users. */
-.model-actions select:focus {
-  outline: none;
-}
-
+/* A thin frame around the language menu at all times. An outline does not
+   change the size, so the menu stays the button's height. */
+.model-actions select,
+.model-actions select:focus,
 .model-actions select:focus-visible {
   outline: 1px solid var(--black);
   outline-offset: 0;
