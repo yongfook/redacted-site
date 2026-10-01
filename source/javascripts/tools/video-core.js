@@ -19,10 +19,17 @@ export class Tracker {
     const pairs = [];
     faces.forEach((face, fi) => {
       active.forEach((track, ti) => {
-        const guess = predict(track, t);
-        const overlap = iou(face, guess);
-        const dist = centerDistance(face, guess) / Math.max(face.w, face.h, guess.w, guess.h);
-        if (overlap > 0.1 || dist < 0.8) pairs.push({ fi, ti, score: overlap - dist * 0.5 });
+        // Compare with the predicted box and with the last box, and use the
+        // better match. A person who turns away often stops moving the way
+        // the prediction expects.
+        let best = null;
+        for (const guess of [predict(track, t), last(track)]) {
+          const overlap = iou(face, guess);
+          const dist = centerDistance(face, guess) / Math.max(face.w, face.h, guess.w, guess.h);
+          const score = overlap - dist * 0.5;
+          if ((overlap > 0.1 || dist < 1) && (best === null || score > best)) best = score;
+        }
+        if (best !== null) pairs.push({ fi, ti, score: best });
       });
     });
 
@@ -48,6 +55,44 @@ export class Tracker {
     });
     return result;
   }
+}
+
+// Tracks to keep after a scan. A track made of one weak detection is
+// almost always a hand or an object: real faces, also turned ones, give
+// several detections in a row.
+export function keepTracks(tracks, minScore = 0.7) {
+  return tracks.filter((tr) => tr.keys.length > 1 || tr.keys[0].score >= minScore);
+}
+
+// Join short extra tracks to the person they belong to. A person who turns
+// can give a second box at the same time, for example on the back of the
+// head. A short track that stays next to a longer track gets `parent`, so
+// the people list shows it as part of that person. It is still blurred.
+export function groupTracks(tracks, { maxLength = 1.5, near = 1.2, timing = { lead: 0.5, hold: 1 } } = {}) {
+  const span = (tr) => tr.keys[tr.keys.length - 1].t - tr.keys[0].t;
+  const long = tracks.filter((tr) => span(tr) > maxLength);
+  for (const tr of tracks) {
+    if (span(tr) > maxLength) continue;
+    let best = null;
+    for (const other of long) {
+      let total = 0;
+      let ok = true;
+      for (const k of tr.keys) {
+        // Use the same timing as the blur, so a person who just turned away
+        // still has a box to compare with.
+        const b = boxAt(other, k.t, timing);
+        const d = b && centerDistance(k, b) / Math.max(k.w, k.h, b.w, b.h);
+        if (!b || d > near) {
+          ok = false;
+          break;
+        }
+        total += d;
+      }
+      if (ok && (!best || total < best.total)) best = { other, total };
+    }
+    if (best) tr.parent = best.other;
+  }
+  return tracks;
 }
 
 // A track's box at time t, or null when the track is not on screen.
@@ -77,6 +122,30 @@ export function boxAt(track, t, { lead = 0.2, hold = 0.5 } = {}) {
     w: a.w + (b.w - a.w) * k,
     h: a.h + (b.h - a.h) * k,
   };
+}
+
+// The area to hide for a track at time t: its boxes from `trail` seconds
+// before to `trail` seconds after, joined into one box. When a person turns
+// away, detection can jump from the face to the back of the head. The trail
+// keeps the old face position covered while that happens. A still person
+// gets the same box as boxAt().
+export function coverAt(track, t, timing, trail = 0.4) {
+  let box = null;
+  for (let dt = -trail; dt <= trail + 1e-9; dt += trail / 2) {
+    const b = boxAt(track, t + dt, timing);
+    if (!b) continue;
+    if (!box) {
+      box = { x: b.x, y: b.y, w: b.w, h: b.h };
+      continue;
+    }
+    const right = Math.max(box.x + box.w, b.x + b.w);
+    const bottom = Math.max(box.y + box.h, b.y + b.h);
+    box.x = Math.min(box.x, b.x);
+    box.y = Math.min(box.y, b.y);
+    box.w = right - box.x;
+    box.h = bottom - box.y;
+  }
+  return box;
 }
 
 const last = (track) => track.keys[track.keys.length - 1];

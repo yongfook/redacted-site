@@ -12,10 +12,10 @@ import {
   ALL_FORMATS,
 } from "https://cdn.jsdelivr.net/npm/mediabunny@1.61.0/dist/bundles/mediabunny.min.mjs";
 import { padBox, cover } from "./blur-core.js";
-import { Tracker, boxAt } from "./video-core.js";
+import { Tracker, coverAt, keepTracks, groupTracks } from "./video-core.js";
 import { busy, idle, note } from "./busy.js";
 
-const SAMPLE = "/samples/office-meeting.mp4";
+const SAMPLE = "/samples/team-meeting.mp4";
 const READY = "The face model runs on this device. Choose a video to start.";
 const MAX_SECONDS = 10 * 60;
 const MAX_SIDE = 1920; // Larger videos are made smaller to 1080p.
@@ -216,7 +216,7 @@ async function analyze(track, runId) {
   }
 
   if (runId !== state.runId) return;
-  state.tracks = tracker.tracks;
+  state.tracks = groupTracks(keepTracks(tracker.tracks), { timing: TIMING });
   renderPeople();
   updateStatus();
   download.disabled = false;
@@ -245,9 +245,12 @@ function thumbnail(source, f, scale) {
 
 // People list
 
+const persons = () => state.tracks.filter((tr) => !tr.parent);
+
 function renderPeople() {
   people.replaceChildren();
-  state.tracks.forEach((tr, i) => {
+  // Short extra tracks that belong to a person follow that person.
+  persons().forEach((tr, i) => {
     const b = document.createElement("button");
     b.type = "button";
     b.className = "person";
@@ -274,8 +277,8 @@ function renderPeople() {
 }
 
 function updateStatus() {
-  const total = state.tracks.length;
-  const on = state.tracks.filter((t) => t.on).length;
+  const total = persons().length;
+  const on = persons().filter((t) => t.on).length;
   if (!total) {
     setStatus("No faces found in this video.");
   } else {
@@ -296,8 +299,8 @@ function boxesAt(t, width, height) {
   const k = width / state.width;
   const out = [];
   for (const tr of state.tracks) {
-    if (!tr.on) continue;
-    const b = boxAt(tr, t, TIMING);
+    if (!(tr.parent || tr).on) continue;
+    const b = coverAt(tr, t, TIMING);
     if (!b) continue;
     out.push(padBox({ x: b.x * k, y: b.y * k, w: b.w * k, h: b.h * k }, width, height, MOTION_PAD));
   }
@@ -461,7 +464,7 @@ $("new").addEventListener("click", reset);
 $("sample").addEventListener("click", async () => {
   setStatus("Loading the example video…", "busy");
   const blob = await (await fetch(SAMPLE)).blob();
-  await openFile(new File([blob], "office-meeting.mp4", { type: "video/mp4" }));
+  await openFile(new File([blob], "team-meeting.mp4", { type: "video/mp4" }));
 });
 
 function formatTime(seconds) {
