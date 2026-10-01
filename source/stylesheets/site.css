@@ -292,32 +292,25 @@ a {
 
 /* How it works */
 
-.steps {
+.points {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 48px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 48px 56px;
 }
 
-.step-num {
-  font-family: var(--mono);
-  font-size: 13px;
-  display: inline-block;
-  background: var(--black);
-  color: var(--white);
-  padding: 2px 8px;
-}
-
-.steps h3 {
+.points h3 {
   font-size: 20px;
-  margin: 20px 0 8px;
+  letter-spacing: -0.01em;
+  margin: 0 0 8px;
 }
 
-.steps p {
+.points p {
   margin: 0;
   color: #333;
+  max-width: 46ch;
 }
 
 /* Footer */
