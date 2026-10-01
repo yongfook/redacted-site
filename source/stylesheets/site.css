@@ -1568,3 +1568,15 @@ textarea:focus {
   color: inherit;
   margin-right: 6px;
 }
+
+/* The language menu keeps the button's height also when it has focus: no
+   outline after a mouse click, and a thin outline that fits the menu for
+   keyboard users. */
+.model-actions select:focus {
+  outline: none;
+}
+
+.model-actions select:focus-visible {
+  outline: 1px solid var(--black);
+  outline-offset: 0;
+}
