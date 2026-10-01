@@ -34,7 +34,7 @@ title:
           <p><%= tool.description %></p>
           <div class="card-foot">
             <span class="card-model"><%= tool.model %></span>
-            <span class="soon"><%= tool.live ? "Open &rarr;" : "Coming soon" %></span>
+            <% unless tool.live %><span class="soon">Coming soon</span><% end %>
           </div>
         </li>
       <% end %>
