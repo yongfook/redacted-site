@@ -119,17 +119,55 @@ a {
   margin: 0 0 32px;
 }
 
-.bar {
-  background: var(--black);
-  color: var(--black);
-  padding: 0 0.12em;
+/* Hand-drawn scribble over the hidden words. Hover to see them. */
+.scribble {
+  position: relative;
   white-space: nowrap;
+  color: transparent;
   transition: color 0.25s ease;
   cursor: default;
 }
 
-.bar:hover {
-  color: var(--white);
+.scribble svg {
+  position: absolute;
+  left: 0.04em;
+  top: 0.1em;
+  width: calc(100% - 0.04em);
+  height: 0.94em;
+  overflow: visible;
+  transition: opacity 0.25s ease;
+}
+
+.scribble path {
+  fill: none;
+  stroke: var(--black);
+  stroke-width: 26;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: scribble 1.1s 0.3s ease-in-out forwards;
+}
+
+.scribble:hover {
+  color: var(--black);
+}
+
+.scribble:hover svg {
+  opacity: 0.12;
+}
+
+@keyframes scribble {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scribble path {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
 }
 
 .lede {
