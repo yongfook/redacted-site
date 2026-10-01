@@ -1,5 +1,6 @@
 // Face Blur: find faces in a photo and blur, pixelate or cover them.
 // Everything happens in this tab. The photo is never uploaded.
+import "./polyfills.js";
 import { padBox, cover } from "./blur-core.js";
 import { busy, idle, note, downloadName } from "./busy.js";
 

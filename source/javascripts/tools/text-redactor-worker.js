@@ -1,5 +1,6 @@
 // Runs the name models off the main thread so typing stays smooth. Each
 // request names its model, and each model loads once.
+import "./polyfills.js";
 import { pipeline, env } from "https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.3.0";
 import { detectEntities } from "./ner-core.js";
 

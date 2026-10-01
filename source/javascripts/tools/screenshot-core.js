@@ -152,6 +152,7 @@ const HEADER_INFO = new RegExp(
     "\\b(?:miembros?|en línea|escribiendo|últ\\. vez|participantes)\\b",
     "\\b(?:membres?|en ligne|écrit|vu(?:e)? (?:à|hier|il y a)|participants)\\b",
     "\\b(?:Mitglieder|online|schreibt|zuletzt|Teilnehmer)\\b",
+    "\\b(?:leden|lid|typt|laatst gezien|deelnemers)\\b",
     "成员|成員|在线|在線|正在输入|最后上线|メンバー|オンライン|入力中|最終ログイン|สมาชิก|ออนไลน์|กำลังพิมพ์|ใช้งานล่าสุด",
   ].join("|"),
   "iu"

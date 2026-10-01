@@ -1,6 +1,7 @@
 // Video Face Blur: find and track faces in a video, then make a copy with
 // the faces blurred. Everything happens in this tab. The video is never
 // uploaded.
+import "./polyfills.js";
 import {
   Input,
   Output,

@@ -2,6 +2,7 @@
 // Chat Text Anonymizer): categories, the optional AI model, the two panes, the
 // replacement styles, copy and download. Each tool calls startTextTool()
 // with its own settings.
+import "./polyfills.js";
 import { CATEGORIES, TAG_CATEGORY, collectSpans, parseTerms } from "./pii-spans.js";
 import { pseudonymizer } from "./fake-names.js";
 import { startLanguage, saveLanguage, modelFor, fillLanguageSelect, rememberModel, modelWasOn } from "./languages.js";

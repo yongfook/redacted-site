@@ -1,6 +1,7 @@
 // Metadata Stripper: show and remove hidden details such as location,
 // camera and author from photos, PDFs and videos. Everything happens in this
 // tab. The file is never uploaded.
+import "./polyfills.js";
 import { stripJpeg, stripPng, stripWebp, pngText, webpExif, sniff } from "./metadata-core.js";
 import { busy, idle, note, downloadName } from "./busy.js";
 

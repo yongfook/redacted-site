@@ -1,4 +1,4 @@
-// Pattern rules for Spanish, French, German, Chinese, Japanese and Thai:
+// Pattern rules for Spanish, French, German, Dutch, Chinese, Japanese and Thai:
 // dates, times and national ID numbers. Pure functions, no imports, so the
 // same file runs in the browser and in Node tests.
 // Each rule returns spans: { tag, start, end }.
@@ -11,6 +11,9 @@ const FR_MONTH = "janvier|février|fevrier|mars|avril|mai|juin|juillet|août|aou
 const FR_DAY = "lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche";
 const DE_MONTH = "Januar|Jänner|Februar|März|Maerz|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember";
 const DE_DAY = "Montag|Dienstag|Mittwoch|Donnerstag|Freitag|Samstag|Sonnabend|Sonntag";
+const NL_MONTH = "januari|februari|maart|april|mei|juni|juli|augustus|september|oktober|november|december";
+const NL_DAY = "maandag|dinsdag|woensdag|donderdag|vrijdag|zaterdag|zondag";
+const UNITS_NL = "seconden?|minuten?|uur|uren|dagen?|weken|week|maanden?|jaren?|jaar";
 const TH_MONTH = "มกราคม|กุมภาพันธ์|มีนาคม|เมษายน|พฤษภาคม|มิถุนายน|กรกฎาคม|สิงหาคม|กันยายน|ตุลาคม|พฤศจิกายน|ธันวาคม";
 const TH_DAY = "วันจันทร์|วันอังคาร|วันพุธ|วันพฤหัสบดี|วันพฤหัส|วันศุกร์|วันเสาร์|วันอาทิตย์";
 const UNITS_ES = "segundos?|minutos?|horas?|días?|dias?|semanas?|mes(?:es)?|años?";
@@ -36,6 +39,11 @@ const DATE_RULES = [
   `${B}vor \\d+ (?:${UNITS_DE})${E}`,
   `${B}(?:${DE_DAY}|heute|gestern|vorgestern)${E}`,
   `${B}\\d{1,2}(?:[:.]\\d{2})? Uhr${E}`,
+  // Dutch: dinsdag 14 maart 2025, 14 maart, 3 dagen geleden, gisteren, 8 uur
+  `${B}(?:(?:${NL_DAY}) )?\\d{1,2} (?:${NL_MONTH})(?: \\d{4})?${E}`,
+  `${B}\\d+ (?:${UNITS_NL}) geleden${E}`,
+  `${B}(?:${NL_DAY}|vandaag|gisteren|eergisteren)${E}`,
+  `${B}\\d{1,2}(?:[:.]\\d{2})? uur${E}`,
   // Chinese and Japanese: 2025年3月14日, 3月14日, 下午3:45, 8点, 午後3時, 3日前
   `(?:\\d{2,4}年)?\\d{1,2}月\\d{1,2}[日号]`,
   `\\d{2,4}年\\d{1,2}月`,
@@ -59,11 +67,24 @@ export function intlDateSpans(text) {
 }
 
 // National ID numbers, each with its check digit, so other long numbers do
-// not match.
+// not match. A number that is part of a longer run of digit groups, such as
+// a card number, is not an ID.
 
 const digits = (s) => s.replace(/\D/g, "");
 
 const ID_RULES = [
+  {
+    // Netherlands: BSN (burgerservicenummer), after its name. Nine digits
+    // alone are too common to match without it.
+    re: /(?<![\p{L}])(?:BSN|burgerservicenummer)\D{0,12}?(\d{4}[.\s]?\d{2}[.\s]?\d{3})(?![.\s-]?\p{N})/giu,
+    group: 1,
+    test: (m) => {
+      const d = digits(m[1]);
+      let sum = 0;
+      for (let i = 0; i < 8; i++) sum += Number(d[i]) * (9 - i);
+      return (sum - Number(d[8])) % 11 === 0;
+    },
+  },
   {
     // Spain: DNI 12345678Z and NIE X1234567L.
     re: /(?<![\p{L}\p{N}])([XYZ]?)(\d{7,8})-?([A-Z])(?![\p{L}\p{N}])/giu,
@@ -76,7 +97,7 @@ const ID_RULES = [
   },
   {
     // France: numéro de sécurité sociale, 1 85 05 78 006 084 36.
-    re: /(?<![\p{N}])([12]) ?(\d{2}) ?(\d{2}) ?(\d{2}|2[AB]) ?(\d{3}) ?(\d{3}) ?(\d{2})(?![\p{N}])/giu,
+    re: /(?<![\p{N}][ .-]?)([12]) ?(\d{2}) ?(\d{2}) ?(\d{2}|2[AB]) ?(\d{3}) ?(\d{3}) ?(\d{2})(?![ .-]?[\p{N}])/giu,
     test: (m) => {
       const dept = m[4].toUpperCase().replace("2A", "19").replace("2B", "18");
       const body = BigInt(m[1] + m[2] + m[3] + dept + m[5] + m[6]);
@@ -85,7 +106,7 @@ const ID_RULES = [
   },
   {
     // China: resident identity card, 18 characters.
-    re: /(?<![\p{N}])(\d{17}[\dX])(?![\p{N}])/giu,
+    re: /(?<![\p{N}][ .-]?)(\d{17}[\dX])(?![ .-]?[\p{N}])/giu,
     test: (m) => {
       const id = m[1].toUpperCase();
       const w = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2];
@@ -95,7 +116,7 @@ const ID_RULES = [
   },
   {
     // Japan: My Number, 12 digits, often 1234 5678 9012.
-    re: /(?<![\p{N}])(\d{4}[ -]?\d{4}[ -]?\d{4})(?![\p{N}])/gu,
+    re: /(?<![\p{N}][ .-]?)(\d{4}[ -]?\d{4}[ -]?\d{4})(?![ .-]?[\p{N}])/gu,
     test: (m) => {
       const d = digits(m[1]);
       let sum = 0;
@@ -106,7 +127,7 @@ const ID_RULES = [
   },
   {
     // Thailand: national ID, 13 digits, often 1-2345-67890-12-3.
-    re: /(?<![\p{N}])(\d[ -]?\d{4}[ -]?\d{5}[ -]?\d{2}[ -]?\d)(?![\p{N}])/gu,
+    re: /(?<![\p{N}][ .-]?)(\d[ -]?\d{4}[ -]?\d{5}[ -]?\d{2}[ -]?\d)(?![ .-]?[\p{N}])/gu,
     test: (m) => {
       const d = digits(m[1]);
       let sum = 0;
@@ -122,8 +143,9 @@ export function intlIdSpans(text) {
     rule.re.lastIndex = 0;
     for (const m of text.matchAll(rule.re)) {
       if (!rule.test(m)) continue;
-      const start = m.index;
-      const end = start + m[0].length;
+      const value = rule.group ? m[rule.group] : m[0];
+      const start = m.index + m[0].lastIndexOf(value);
+      const end = start + value.length;
       if (spans.some((s) => start < s.end && end > s.start)) continue;
       spans.push({ tag: "ID", start, end });
     }

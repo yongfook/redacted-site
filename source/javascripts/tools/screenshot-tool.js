@@ -3,6 +3,7 @@
 // boxes, styles and download. OCR, face detection and name detection all run
 // in this tab. The screenshot is never uploaded. Each tool calls
 // startScreenshotTool() with its own settings.
+import "./polyfills.js";
 import { TAG_CATEGORY, collectSpans, parseTerms } from "./pii-spans.js";
 import {
   lightTextMask,

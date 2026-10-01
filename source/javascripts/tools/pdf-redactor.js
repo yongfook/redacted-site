@@ -1,6 +1,7 @@
 // PDF Redactor: find personal data in a PDF and export a copy with black
 // bars. The export draws every page as an image, so no hidden text stays
 // under a bar. Everything happens in this tab. The PDF is never uploaded.
+import "./polyfills.js";
 import * as pdfjs from "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.3.289/build/pdf.min.mjs";
 import { CATEGORIES, collectSpans, parseTerms } from "./pii-spans.js";
 import { pageText, spanToRects, mergeRects } from "./pdf-core.js";

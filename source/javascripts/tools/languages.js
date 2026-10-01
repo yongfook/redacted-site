@@ -14,6 +14,7 @@ export const LANGUAGES = {
   es: { label: "Español", tesseract: ["eng", "spa"], model: "multi" },
   fr: { label: "Français", tesseract: ["eng", "fra"], model: "multi" },
   de: { label: "Deutsch", tesseract: ["eng", "deu"], model: "multi" },
+  nl: { label: "Nederlands", tesseract: ["eng", "nld"], model: "multi" },
   "zh-Hans": { label: "中文（简体）", tesseract: ["eng", "chi_sim"], model: "multi" },
   "zh-Hant": { label: "中文（繁體）", tesseract: ["eng", "chi_tra"], model: "multi" },
   ja: { label: "日本語", tesseract: ["eng", "jpn"], model: "multi" },

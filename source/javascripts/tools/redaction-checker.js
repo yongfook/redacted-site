@@ -1,5 +1,6 @@
 // Redaction Checker: test a redacted PDF for leaks. Everything happens in
 // this tab. The PDF is never uploaded.
+import "./polyfills.js";
 import * as pdfjs from "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.3.289/build/pdf.min.mjs";
 import { pageText, spanToRects } from "./pdf-core.js";
 import { busy, idle, note, downloadName } from "./busy.js";

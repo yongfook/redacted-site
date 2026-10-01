@@ -1,4 +1,5 @@
 // Finds faces off the main thread so the page stays responsive.
+import "./polyfills.js";
 import * as ort from "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.30.0/dist/ort.wasm.min.mjs";
 import { regionsFor, scaleFor, tensorFromRGBA, decode, nms, INPUT_SIZE } from "./face-core.js";
 

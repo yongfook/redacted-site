@@ -88,7 +88,9 @@ const PATTERNS = [
 ];
 
 export function detectPatterns(text) {
-  const spans = [];
+  // National ID numbers first: their check digit makes them more exact than
+  // the general rules (a BSN is not a phone number).
+  const spans = intlIdSpans(text);
   for (const p of PATTERNS) {
     p.re.lastIndex = 0;
     for (const m of text.matchAll(p.re)) {
@@ -104,8 +106,8 @@ export function detectPatterns(text) {
       spans.push({ tag: p.tag, start, end });
     }
   }
-  // Dates and ID numbers in Spanish, French, German, Chinese, Japanese and Thai.
-  for (const x of [...intlIdSpans(text), ...intlDateSpans(text)]) {
+  // Dates in Spanish, French, German, Dutch, Chinese, Japanese and Thai.
+  for (const x of intlDateSpans(text)) {
     if (!spans.some((s) => x.start < s.end && x.end > s.start)) spans.push(x);
   }
   return spans;
