@@ -243,8 +243,16 @@ a {
   padding: 0;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-  border-top: 1px solid var(--black);
-  border-left: 1px solid var(--black);
+  position: relative;
+}
+
+/* Outer frame on top of the cards, so faded cards do not fade the edge. */
+.grid::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--black);
+  pointer-events: none;
 }
 
 .card {
