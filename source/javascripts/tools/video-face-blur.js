@@ -14,13 +14,17 @@ import {
 import { padBox, cover } from "./blur-core.js";
 import { Tracker, boxAt } from "./video-core.js";
 
-const SAMPLE = "/samples/solvay-1927-pan.mp4";
+const SAMPLE = "/samples/office-meeting.mp4";
 const MAX_SECONDS = 10 * 60;
 const MAX_SIDE = 1920; // Larger videos are made smaller to 1080p.
 const DETECT_FPS = 8; // Frames per second to run face detection on.
 const DETECT_WIDTH = 1280; // Detection frames are made this wide or smaller.
 const MOTION_PAD = 0.12; // Extra box size, for movement between detections.
-const TIMING = { lead: 1.5 / DETECT_FPS, hold: 0.6 };
+// A lower threshold than for photos: in a video, a false detection only
+// adds a short track that can be switched off, but a missed face is a leak.
+// Faces turned to the side or partly covered often score 0.5 to 0.75.
+const THRESHOLD = 0.5;
+const TIMING = { lead: 1.5 / DETECT_FPS, hold: 1.0 };
 
 const $ = (id) => document.getElementById(id);
 const drop = $("drop");
@@ -76,7 +80,7 @@ function detectFaces(bitmap) {
   const id = ++requestId;
   return new Promise((resolve, reject) => {
     waiting.set(id, { resolve, reject });
-    worker.postMessage({ type: "detect", id, bitmap, tile: 960 }, [bitmap]);
+    worker.postMessage({ type: "detect", id, bitmap, tile: 960, threshold: THRESHOLD }, [bitmap]);
   });
 }
 
@@ -153,7 +157,7 @@ async function analyze(track, runId) {
   const times = [];
   for (let t = start; t < start + state.duration; t += 1 / DETECT_FPS) times.push(t);
 
-  const tracker = new Tracker();
+  const tracker = new Tracker({ maxGap: 2 });
   const thumbs = new Map(); // track id -> best score so far
   let n = 0;
   const started = performance.now();
@@ -441,7 +445,7 @@ $("new").addEventListener("click", reset);
 $("sample").addEventListener("click", async () => {
   setStatus("Loading the example video…", "busy");
   const blob = await (await fetch(SAMPLE)).blob();
-  await openFile(new File([blob], "solvay-1927-pan.mp4", { type: "video/mp4" }));
+  await openFile(new File([blob], "office-meeting.mp4", { type: "video/mp4" }));
 });
 
 function formatTime(seconds) {

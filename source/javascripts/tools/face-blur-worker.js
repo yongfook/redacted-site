@@ -32,7 +32,7 @@ const ctx = canvas.getContext("2d", { willReadFrequently: true });
 // noise that gives false and doubled boxes.
 ctx.imageSmoothingQuality = "high";
 
-async function detect(bitmap, id, tile) {
+async function detect(bitmap, id, tile, threshold) {
   const session = await load();
   const regions = regionsFor(bitmap.width, bitmap.height, tile);
   const found = [];
@@ -44,7 +44,7 @@ async function detect(bitmap, id, tile) {
     ctx.drawImage(bitmap, r.x, r.y, r.w, r.h, 0, 0, Math.round(r.w * s), Math.round(r.h * s));
     const pixels = ctx.getImageData(0, 0, INPUT_SIZE, INPUT_SIZE).data;
     const input = new ort.Tensor("float32", tensorFromRGBA(pixels), [1, 3, INPUT_SIZE, INPUT_SIZE]);
-    found.push(...decode(await session.run({ input }), r));
+    found.push(...decode(await session.run({ input }), r, threshold));
     self.postMessage({ type: "progress", id, done: i + 1, total: regions.length });
   }
   bitmap.close();
@@ -56,7 +56,7 @@ self.onmessage = async ({ data }) => {
     if (data.type === "load") {
       await load();
     } else if (data.type === "detect") {
-      const faces = await detect(data.bitmap, data.id, data.tile);
+      const faces = await detect(data.bitmap, data.id, data.tile, data.threshold);
       self.postMessage({ type: "result", id: data.id, faces });
     }
   } catch (err) {
