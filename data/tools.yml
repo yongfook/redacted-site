@@ -26,6 +26,13 @@
   description: Track faces frame by frame and blur them through a whole clip. Export the result without an upload.
   model: Face detection + tracking
 
+- name: Secrets Scrubber
+  slug: secrets-scrubber
+  live: true
+  input: Code / Logs
+  description: Remove API keys, passwords, tokens, IP addresses and internal hostnames from logs and code before you share them.
+  model: Pattern rules
+
 - name: Screenshot Redactor
   slug: screenshot-redactor
   input: Image
@@ -49,12 +56,6 @@
   input: Audio
   description: Transcribe a recording on your device, find names and numbers, and bleep or silence them in the audio.
   model: Speech-to-text
-
-- name: Secrets Scrubber
-  slug: secrets-scrubber
-  input: Code / Logs
-  description: Remove API keys, passwords, tokens, IP addresses and internal hostnames from logs and code before you share them.
-  model: Pattern + classifier
 
 - name: Chat Anonymizer
   slug: chat-anonymizer

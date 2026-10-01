@@ -73,11 +73,19 @@ export const MODEL_PREF = "redacted:text-redactor:model";
 
 // All spans to hide in `text`. `modelSpans` are results from the PII model
 // for this text, `terms` are words to always hide, and `enabled` is the set
-// of category ids that are switched on.
-export function collectSpans(text, { modelSpans = [], terms = [], enabled }) {
-  const all = [];
-
-  for (const s of detectPatterns(text)) all.push(s);
+// of category ids that are switched on. A tool can add its own spans with
+// `extra`, which win over the general pattern rules, and its own
+// tag-to-category map with `tagCategory`. Tags missing from the map are not
+// hidden.
+export function collectSpans(
+  text,
+  { modelSpans = [], terms = [], enabled, extra = [], tagCategory = TAG_CATEGORY }
+) {
+  // The tool's own rules win: drop general matches that overlap them.
+  const all = [...extra];
+  for (const s of detectPatterns(text)) {
+    if (!extra.some((e) => s.start < e.end && s.end > e.start)) all.push(s);
+  }
 
   for (const s of modelSpans) {
     const tag = MODEL_TAGS[s.label];
@@ -87,8 +95,9 @@ export function collectSpans(text, { modelSpans = [], terms = [], enabled }) {
   for (const s of detectCustom(text, terms)) all.push(s);
 
   const on = all.filter((s) => {
-    const cat = TAG_CATEGORY[s.tag];
-    return cat === "custom" || enabled.has(cat);
+    if (s.tag === "CUSTOM") return true;
+    const cat = tagCategory[s.tag];
+    return cat !== undefined && enabled.has(cat);
   });
 
   // Merge spans that overlap. The longer span gives the tag.
