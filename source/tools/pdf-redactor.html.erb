@@ -1,0 +1,82 @@
+---
+title: PDF Redactor
+description: Black out names, emails, phone numbers, account numbers and addresses in a PDF. The hidden text is removed, not just covered. Runs in your browser. Nothing is uploaded.
+---
+
+<section class="tool-hero">
+  <div class="wrap">
+    <%= partial "partials/brand" %>
+    <h1>PDF Redactor</h1>
+    <p class="lede">
+      Black out personal data in a PDF. The text under each bar is removed, not just covered.
+      Your PDF is never uploaded.
+    </p>
+  </div>
+</section>
+
+<section class="tool">
+  <div class="wrap">
+    <div class="model-bar" id="model" data-state="off">
+      <div class="model-text">
+        <strong>AI detection</strong>
+        <span id="model-status">Pattern rules find emails, phones, cards and IDs. Turn on AI to also find names, organizations and places.</span>
+      </div>
+      <button type="button" id="load" class="button">Turn on AI (29 MB)</button>
+      <div class="progress"><div id="progress-bar"></div></div>
+    </div>
+
+    <div class="drop" id="drop">
+      <p class="drop-title">Drop a PDF here</p>
+      <p class="drop-text">or choose a file.</p>
+      <div class="drop-actions">
+        <label class="button">
+          Choose a PDF
+          <input type="file" id="file" accept="application/pdf,.pdf" class="visually-hidden">
+        </label>
+        <button type="button" id="sample" class="button button-outline">Try an example PDF</button>
+      </div>
+    </div>
+
+    <p class="status" id="status" role="status" aria-live="polite"></p>
+
+    <div class="editor" id="editor" hidden>
+      <div class="controls">
+        <div class="control">
+          <span class="control-label">Hide</span>
+          <div class="chips" id="categories"></div>
+        </div>
+        <label class="control">
+          <span class="control-label">Always hide these words</span>
+          <input type="text" id="custom" placeholder="Project Falcon, Acme, Jane" autocomplete="off">
+        </label>
+      </div>
+
+      <div class="pdf-pages" id="pages"></div>
+
+      <div class="editor-foot">
+        <button type="button" id="new" class="text-button">Use another PDF</button>
+        <div class="editor-actions">
+          <button type="button" id="original" class="button button-outline">Hold to see original</button>
+          <button type="button" id="download" class="button">Download redacted PDF</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div>
+        <h3>Text is removed, not covered</h3>
+        <p>Many redacted PDFs leak, because the black bar is drawn over text that is still in the file. This tool makes each page of the new PDF from an image of the page, with the bars drawn in. No text, hidden layers or old versions stay in the file.</p>
+      </div>
+      <div>
+        <h3>Check before you share</h3>
+        <p>Automatic detection can miss things. Read every page. Drag on a page to black out anything else, such as a signature, a photo or a handwritten note. The text in the new PDF cannot be selected or searched.</p>
+      </div>
+      <div>
+        <h3>Private by design</h3>
+        <p>The page has no server code. <a href="https://mozilla.github.io/pdf.js/" target="_blank" rel="noopener">PDF.js</a> reads the PDF in your browser, and the optional AI model, <a href="https://huggingface.co/onnx-community/bert-small-pii-detection-ONNX" target="_blank" rel="noopener">bert-small-pii-detection</a>, runs on your device. The new PDF does not keep the original's metadata.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script type="module" src="/javascripts/tools/pdf-redactor.js"></script>

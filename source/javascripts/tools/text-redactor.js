@@ -1,73 +1,4 @@
-import { detectPatterns, detectCustom } from "./pii-patterns.js";
-
-const CATEGORIES = [
-  { id: "name", label: "Names", on: true },
-  { id: "org", label: "Organizations", on: true },
-  { id: "place", label: "Places & addresses", on: true },
-  { id: "contact", label: "Emails & phones", on: true },
-  { id: "date", label: "Dates & ages", on: true },
-  { id: "finance", label: "Card & bank numbers", on: true },
-  { id: "id", label: "ID numbers", on: true },
-  { id: "tech", label: "URLs, IPs & secrets", on: true },
-  { id: "other", label: "Titles & groups", on: false },
-];
-
-// Model labels to our tags.
-const MODEL_TAGS = {
-  PERSON: "NAME",
-  ORGANIZATION: "ORG",
-  LOCATION: "LOCATION",
-  COORDINATE: "LOCATION",
-  EMAIL_ADDRESS: "EMAIL",
-  PHONE_NUMBER: "PHONE",
-  URL: "URL",
-  DATE_TIME: "DATE",
-  AGE: "AGE",
-  CREDIT_CARD: "CARD",
-  FINANCIAL: "ACCOUNT",
-  IBAN_CODE: "IBAN",
-  US_BANK_NUMBER: "ACCOUNT",
-  US_SSN: "SSN",
-  US_ITIN: "ID",
-  US_PASSPORT: "PASSPORT",
-  US_DRIVER_LICENSE: "LICENSE",
-  US_LICENSE_PLATE: "PLATE",
-  IMEI: "ID",
-  IP_ADDRESS: "IP",
-  MAC_ADDRESS: "MAC",
-  PASSWORD: "SECRET",
-  NRP: "GROUP",
-  TITLE: "TITLE",
-};
-
-const TAG_CATEGORY = {
-  NAME: "name",
-  ORG: "org",
-  LOCATION: "place",
-  ADDRESS: "place",
-  EMAIL: "contact",
-  PHONE: "contact",
-  DATE: "date",
-  AGE: "date",
-  CARD: "finance",
-  IBAN: "finance",
-  ACCOUNT: "finance",
-  SSN: "id",
-  ID: "id",
-  PASSPORT: "id",
-  LICENSE: "id",
-  PLATE: "id",
-  URL: "tech",
-  IP: "tech",
-  MAC: "tech",
-  SECRET: "tech",
-  GROUP: "other",
-  TITLE: "other",
-  CUSTOM: "custom",
-};
-
-const MIN_MODEL_SCORE = 0.6;
-const MODEL_PREF = "redacted:text-redactor:model";
+import { CATEGORIES, MODEL_PREF, collectSpans as collectSpans_, parseTerms } from "./pii-spans.js";
 
 const EXAMPLE = `Hi team,
 
@@ -133,7 +64,7 @@ worker.onmessage = ({ data }) => {
   } else if (data.type === "ready") {
     state.modelReady = true;
     modelBar.dataset.state = "ready";
-    modelStatus.textContent = "On. The model runs on this device.";
+    modelStatus.textContent = "The model runs on this device.";
     try {
       localStorage.setItem(MODEL_PREF, "1");
     } catch {}
@@ -178,48 +109,12 @@ try {
 // Detection
 
 function collectSpans(text) {
-  const all = [];
-
-  for (const s of detectPatterns(text)) all.push(s);
-
-  // Use model results only when they belong to the current text.
-  if (state.modelText === text) {
-    for (const s of state.modelSpans) {
-      const tag = MODEL_TAGS[s.label];
-      if (tag && s.score >= MIN_MODEL_SCORE) all.push({ tag, start: s.start, end: s.end });
-    }
-  }
-
-  const terms = customInput.value
-    .split(/[,\n]/)
-    .map((t) => t.trim())
-    .filter(Boolean);
-  for (const s of detectCustom(text, terms)) all.push(s);
-
-  const enabled = all.filter((s) => {
-    const cat = TAG_CATEGORY[s.tag];
-    return cat === "custom" || state.enabled.has(cat);
+  return collectSpans_(text, {
+    // Use model results only when they belong to the current text.
+    modelSpans: state.modelText === text ? state.modelSpans : [],
+    terms: parseTerms(customInput.value),
+    enabled: state.enabled,
   });
-
-  // Merge spans that overlap. The longer span gives the tag.
-  enabled.sort((a, b) => a.start - b.start || b.end - a.end);
-  const merged = [];
-  for (const s of enabled) {
-    const last = merged[merged.length - 1];
-    if (last && s.start < last.end) {
-      if (s.end - s.start > last.end - last.start) last.tag = s.tag;
-      last.end = Math.max(last.end, s.end);
-    } else {
-      merged.push({ ...s });
-    }
-  }
-
-  // Trim spaces and trailing punctuation from each span.
-  for (const s of merged) {
-    while (s.start < s.end && /\s/.test(text[s.start])) s.start++;
-    while (s.end > s.start && /[\s.,;:!?)]/.test(text[s.end - 1])) s.end--;
-  }
-  return merged.filter((s) => s.end > s.start);
 }
 
 // Output

@@ -14,6 +14,7 @@
 
 - name: PDF Redactor
   slug: pdf-redactor
+  live: true
   input: PDF
   description: Find names, emails, account numbers and addresses in a PDF, then burn in true black-bar redactions. The hidden text is removed, not just covered.
   model: Named-entity recognition
