@@ -116,6 +116,8 @@ export function startScreenshotTool({
         showLoading();
         if (modelBar.dataset.state === "ready" && state.ocr && !state.namesDone) {
           setStatus(`Downloading the name model… ${Math.round(progress.ner * 100)}%`, "busy");
+        } else if (modelBar.dataset.state === "ready") {
+          idleStatus();
         }
         return;
       }
@@ -154,6 +156,7 @@ export function startScreenshotTool({
         (w) => {
           ocrWorker = w;
           modelBar.dataset.state = "ready";
+          idleStatus();
           try {
             localStorage.setItem("redacted:screenshot:models", "1");
           } catch {}
@@ -161,6 +164,7 @@ export function startScreenshotTool({
         (err) => {
           modelBar.dataset.state = "error";
           modelsReady = null;
+          if (!state.image) setStatus(`Could not load the AI models. ${(err && err.message) || err} Reload the page to try again.`, "error");
           throw err;
         }
       );
@@ -171,7 +175,19 @@ export function startScreenshotTool({
   function showLoading() {
     if (modelBar.dataset.state !== "loading") return;
     const pct = Math.round(((progress.ocr + progress.ner) / 2) * 100);
-    setStatus(`Downloading the AI models (about 40 MB, one time)… ${pct}%`, "busy");
+    // After the download, the models still need a moment to start.
+    if (pct >= 100) setStatus("Starting the AI models…", "busy");
+    else setStatus(`Downloading the AI models (about 40 MB, one time)… ${pct}%`, "busy");
+  }
+
+  // The status when no screenshot is open.
+  function idleStatus() {
+    if (state.image) return;
+    if (progress.ner > 0 && progress.ner < 1) {
+      setStatus(`Downloading the name model… ${Math.round(progress.ner * 100)}%`, "busy");
+    } else {
+      setStatus("The AI models run on this device. Choose a screenshot to start.");
+    }
   }
 
   try {
@@ -677,7 +693,8 @@ export function startScreenshotTool({
     editor.hidden = true;
     drop.hidden = false;
     fileInput.value = "";
-    setStatus(modelBar.dataset.state === "ready" ? "The AI models run on this device. Choose a screenshot to start." : "");
+    if (modelBar.dataset.state === "ready") idleStatus();
+    else setStatus("");
   }
 
   fileInput.addEventListener("change", () => openFile(fileInput.files[0]));
