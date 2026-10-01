@@ -3,7 +3,7 @@
 // Returns spans: { tag: "NAME", start, end }.
 
 // A person's name: one to four words that start with a letter.
-const NAME = "[\\p{Lu}\\p{Ll}][\\p{L}'’.-]*(?: [\\p{Lu}\\p{Ll}][\\p{L}'’.-]*){0,3}";
+const NAME = "\\p{L}[\\p{L}\\p{M}'’.-]*(?: \\p{L}[\\p{L}\\p{M}'’.-]*){0,3}";
 const TIME = "\\d{1,2}[:.]\\d{2}(?:[:.]\\d{2})?(?:\\s?[AaPp]\\.?[Mm]\\.?)?";
 const DATE = "\\d{1,4}[/.-]\\d{1,2}[/.-]\\d{1,4}";
 
@@ -31,6 +31,7 @@ const NOT_NAMES = new Set(
     .split(" ")
 );
 
+const CJK = /^[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Thai}]/u;
 const escape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 const isRealName = (n) => !NOT_NAMES.has(n.toLowerCase()) && !/^\d/.test(n);
 
@@ -47,17 +48,20 @@ export function detectChat(text) {
     SIMPLE.lastIndex = 0;
     for (const m of text.matchAll(SIMPLE)) {
       const n = m.groups.name.trim();
-      if (isRealName(n)) simple.set(n, (simple.get(n) || 0) + 1);
+      // Without a timestamp, a lowercase word ("note: …", "host: …") is not
+      // taken as a person.
+      if (isRealName(n) && !/^\p{Ll}/u.test(n)) simple.set(n, (simple.get(n) || 0) + 1);
     }
     if (simple.size >= 2) for (const n of simple.keys()) senders.add(n);
   }
 
-  // Full names, and first names of three letters or more.
+  // Full names, and first names of three letters or more (two in Chinese
+  // and Japanese, where "鈴木" is a whole family name).
   const names = new Set();
   for (const s of senders) {
     names.add(s);
     const first = s.split(" ")[0];
-    if (first.length >= 3 && first !== s) names.add(first);
+    if (first !== s && (first.length >= 3 || (CJK.test(first) && first.length >= 2))) names.add(first);
   }
 
   const spans = [];
@@ -67,7 +71,9 @@ export function detectChat(text) {
 
   // Longest names first, so "Sarah O'Connor" wins over "Sarah".
   for (const n of [...names].sort((a, b) => b.length - a.length)) {
-    const re = new RegExp(`(?<![\\p{L}\\p{N}])${escape(n)}(?![\\p{L}\\p{N}])`, "gu");
+    // Chinese, Japanese and Thai have no spaces between words, so a name
+    // can touch the words around it.
+    const re = CJK.test(n) ? new RegExp(escape(n), "gu") : new RegExp(`(?<![\\p{L}\\p{N}])${escape(n)}(?![\\p{L}\\p{N}])`, "gu");
     for (const m of text.matchAll(re)) add(m.index, m.index + m[0].length);
   }
 

@@ -516,6 +516,28 @@ button {
   display: none;
 }
 
+/* Language menu and button on the right of the AI bar. */
+.model-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+}
+
+/* A compact menu with no border, so the bar keeps the same height as
+   the bars without it. */
+.model-actions select {
+  width: auto;
+  border: 0;
+  background-color: transparent;
+  padding: 2px 22px 2px 4px;
+  background-position: right 10px center, right 5px center;
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.2;
+  cursor: pointer;
+}
+
 /* The state is part of the label: AI DETECTION ON / OFF. */
 .model-text strong::after {
   content: " off";

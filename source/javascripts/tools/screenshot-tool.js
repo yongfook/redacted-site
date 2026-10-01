@@ -23,6 +23,7 @@ import {
 import { padBox, cover } from "./blur-core.js";
 import { pseudonymizer } from "./fake-names.js";
 import { busy, idle, note, downloadName } from "./busy.js";
+import { LANGUAGES, startLanguage, saveLanguage, modelFor, fillLanguageSelect } from "./languages.js";
 
 const TESSERACT = "https://cdn.jsdelivr.net/npm/tesseract.js@7.0.0/dist/tesseract.esm.min.js";
 const MAX_PIXELS = 16_000_000;
@@ -69,6 +70,7 @@ export function startScreenshotTool({
   const modelBar = $("model");
   const chips = $("categories");
   const customInput = $("custom");
+  const langSelect = $("ocr-lang");
   const strength = $("strength");
   const strengthControl = $("strength-control");
   const download = $("download");
@@ -80,6 +82,7 @@ export function startScreenshotTool({
     name: "screenshot",
     enabled: new Set(CATEGORIES.filter((c) => c.on).map((c) => c.id)),
     style: document.querySelector('#style [aria-pressed="true"]').dataset.value,
+    lang: startLanguage(),
     ocr: null, // { lines, text, parts }
     modelSpans: [],
     faces: [],
@@ -113,6 +116,15 @@ export function startScreenshotTool({
   const progress = { ner: 0, ocr: 0 };
   for (const worker of [faceWorker, nerWorker]) {
     worker.onmessage = ({ data }) => {
+      // Ignore name model messages for a language that is no longer chosen.
+      if (worker === nerWorker && data.model && data.model !== modelFor(state.lang).id) {
+        const stale = waiting.get(data.id);
+        if (stale) {
+          waiting.delete(data.id);
+          stale.resolve([]);
+        }
+        return;
+      }
       if (data.type === "progress" && worker === nerWorker && data.total) {
         progress.ner = data.loaded / data.total;
         showLoading();
@@ -143,7 +155,7 @@ export function startScreenshotTool({
       modelBar.dataset.state = "loading";
       showLoading();
       const ocr = import(TESSERACT).then((mod) =>
-        (mod.createWorker || mod.default.createWorker)("eng", 1, {
+        (mod.createWorker || mod.default.createWorker)(LANGUAGES[state.lang].tesseract, 1, {
           logger: (m) => {
             if (/loading|initializ/.test(m.status) && typeof m.progress === "number") {
               progress.ocr = m.progress;
@@ -153,7 +165,7 @@ export function startScreenshotTool({
         })
       );
       faceWorker.postMessage({ type: "load" });
-      nerWorker.postMessage({ type: "load" });
+      nerWorker.postMessage({ type: "load", model: modelFor(state.lang).id });
       modelsReady = ocr.then(
         (w) => {
           ocrWorker = w;
@@ -179,7 +191,7 @@ export function startScreenshotTool({
     const pct = Math.round(((progress.ocr + progress.ner) / 2) * 100);
     // After the download, the models still need a moment to start.
     if (pct >= 100) setStatus("Starting the AI models…", "busy");
-    else setStatus(`Downloading the AI models (about 40 MB, one time)… ${pct}%`, "busy");
+    else setStatus(`Downloading the AI models (about ${modelFor(state.lang).size + 8} MB, one time)… ${pct}%`, "busy");
   }
 
   // The status when no screenshot is open.
@@ -222,7 +234,40 @@ export function startScreenshotTool({
     render();
   });
   strength.addEventListener("input", render);
-  customInput.addEventListener("input", refresh);
+
+  // Text language
+  if (langSelect) {
+    fillLanguageSelect(langSelect, state.lang);
+    langSelect.addEventListener("change", async () => {
+      state.lang = langSelect.value;
+      saveLanguage(state.lang);
+      if (!ocrWorker) return;
+      const runId = ++state.runId;
+      setStatus(`Loading ${LANGUAGES[state.lang].label}…`, "busy");
+      progress.ner = 0;
+      nerWorker.postMessage({ type: "load", model: modelFor(state.lang).id });
+      try {
+        await ocrWorker.reinitialize(LANGUAGES[state.lang].tesseract);
+      } catch (err) {
+        setStatus(`Could not load this language. ${(err && err.message) || err}`, "error");
+        return;
+      }
+      if (runId !== state.runId) return;
+      // Read the open screenshot again in the new language.
+      if (state.image) {
+        state.ocr = null;
+        state.modelSpans = [];
+        state.off.clear();
+        try {
+          await analyze(state.image, runId);
+        } catch (err) {
+          if (runId === state.runId) setStatus(`Could not read the screenshot. ${(err && err.message) || err}`, "error");
+        }
+      } else {
+        idleStatus();
+      }
+    });
+  }
 
   // Opening a screenshot
 
@@ -329,23 +374,27 @@ export function startScreenshotTool({
       // The model depends a lot on the text around a name, and screenshot
       // lines are short. So it reads the full text and each line alone, and
       // the results are joined.
-      const found = text.trim() ? await ask(nerWorker, { type: "detect", text }) : [];
+      const model = modelFor(state.lang).id;
+      const found = text.trim() ? await ask(nerWorker, { type: "detect", model, text }) : [];
       const lineTexts = [];
       let start = 0;
       for (const line of text.split("\n")) {
         if (/\p{L}{2}/u.test(line)) lineTexts.push({ start, line });
         start += line.length + 1;
       }
-      // One after the other: the model runs one text at a time.
+      // One after the other: the model runs one text at a time. Only the
+      // small English model needs this. The multilingual and Thai models
+      // read short lines well, and alone they mark words such as "Moi" or
+      // "Genial" at the start of a line as names.
       const perLine = [];
-      for (const { start, line } of lineTexts) {
+      for (const { start, line } of LANGUAGES[state.lang].model === "en" ? lineTexts : []) {
         if (runId !== state.runId) return;
-        const spans = await ask(nerWorker, { type: "detect", text: line });
+        const spans = await ask(nerWorker, { type: "detect", model, text: line });
         // A line alone gives more false results, so keep only clear people
         // and places that start with a capital letter.
         const clear = spans.filter(
           (m) =>
-            ((m.label === "PERSON" && m.score >= 0.85) || (m.label === "LOCATION" && m.score >= 0.7)) &&
+            ((PERSON.has(m.label) && m.score >= 0.85) || (PLACE.has(m.label) && m.score >= 0.7)) &&
             /^\p{Lu}/u.test(line.slice(m.start, m.end))
         );
         perLine.push(clear.map((m) => ({ ...m, start: m.start + start, end: m.end + start })));
@@ -354,7 +403,7 @@ export function startScreenshotTool({
       // The pattern rules find numbers, emails and links.
       state.modelSpans = splitAtLines(
         text,
-        [...found, ...perLine.flat()].filter((m) => ["PERSON", "ORGANIZATION", "LOCATION"].includes(m.label))
+        [...found, ...perLine.flat()].filter((m) => PERSON.has(m.label) || PLACE.has(m.label) || ORG.has(m.label))
       );
     } catch {
       state.modelSpans = [];
@@ -455,7 +504,11 @@ export function startScreenshotTool({
       const { text, parts, rules } = state.ocr;
       const spans = splitAtLines(
         text,
-        collectSpans(text, {
+        // Lines in a chat bubble wrap, so a phone number or an email can
+        // start on one line and end on the next. The rules read the text as
+        // one long line (same length, so the positions do not change), and
+        // splitAtLines() makes one box for each line again.
+        collectSpans(text.replace(/\n/g, " "), {
           modelSpans: state.modelSpans,
           terms: parseTerms(customInput.value),
           enabled: state.enabled,
@@ -467,8 +520,11 @@ export function startScreenshotTool({
         const value = text.slice(s.start, s.end);
         // OCR noise such as "Z" or "4 v" is not a name.
         if (s.tag === "NAME" && !/^\p{L}/u.test(value)) continue;
-        if (s.tag === "NAME" && (value.match(/\p{L}/gu) || []).length < 2) continue;
-        spanBoxes(s, parts).forEach((b, i) => {
+        if (s.tag === "NAME" && (value.match(/\p{L}/gu) || []).length < 2 && !/[\p{Script=Han}\p{Script=Hangul}]/u.test(value)) continue;
+        // A colored name brings its own box, which can be wider than the
+        // words OCR read.
+        const rule = rules.find((r) => r.box && r.start === s.start && r.end === s.end);
+        (rule ? [rule.box] : spanBoxes(s, parts)).forEach((b, i) => {
           const pad = b.h * 0.18;
           boxes.push({ x: b.x - pad, y: b.y - pad, w: b.w + 2 * pad, h: b.h + 2 * pad, tag: s.tag, text: value, key: `${s.start}:${s.end}:${i}` });
         });
@@ -725,6 +781,12 @@ export function startScreenshotTool({
     await openFile(new File([blob], sampleName, { type: "image/png" }));
   });
 }
+
+// Model labels for people, places and organizations (English, multilingual
+// and Thai models).
+const PERSON = new Set(["PERSON", "PER"]);
+const PLACE = new Set(["LOCATION", "LOC", "FACILITY"]);
+const ORG = new Set(["ORGANIZATION", "ORG"]);
 
 // A tall screenshot comes from a phone.
 const isPhone = (width, height) => height > width * 1.4;

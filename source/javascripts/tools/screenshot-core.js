@@ -92,6 +92,13 @@ export function groupLines(words) {
   return lines.sort((a, b) => a.y - b.y || a.x - b.x);
 }
 
+// Scripts written without spaces between words.
+const NO_SPACE = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Thai}]/u;
+
+// Letters of scripts without capital letters, where a name can start with
+// any letter.
+const CASELESS = /^[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Thai}\p{Script=Hangul}\p{Script=Arabic}\p{Script=Hebrew}\p{Script=Devanagari}]/u;
+
 // One text for the detectors, one line per OCR line. `parts` records where
 // each word sits in the text.
 export function linesText(lines) {
@@ -103,7 +110,12 @@ export function linesText(lines) {
       // before when there is almost no gap and the first ends with a dot.
       const prev = line.words[wi - 1];
       const tight = prev && /\.$/.test(prev.text) && /^[a-z0-9]/.test(w.text) && w.x - (prev.x + prev.w) < w.h * 0.35;
-      if (wi && !tight) text += " ";
+      // Chinese, Japanese and Thai do not put spaces between words, but OCR
+      // does. Join them again: "3 月 14 日" becomes "3月14日".
+      const before = prev ? prev.text.slice(-1) : "";
+      const after = w.text[0];
+      const noSpace = prev && ((NO_SPACE.test(before) && (NO_SPACE.test(after) || /\d/.test(after))) || (/\d/.test(before) && NO_SPACE.test(after)));
+      if (wi && !tight && !noSpace) text += " ";
       parts.push({ line: li, word: w, start: text.length, end: text.length + w.text.length });
       text += w.text;
     });
@@ -133,6 +145,18 @@ export function spanBoxes(span, parts) {
   return [...byLine.values()];
 }
 
+// Header lines that are not names, in the supported languages.
+const HEADER_INFO = new RegExp(
+  [
+    "\\b(?:members?|online|last seen|typing|subscribers?|participants?|active|recently)\\b",
+    "\\b(?:miembros?|en línea|escribiendo|últ\\. vez|participantes)\\b",
+    "\\b(?:membres?|en ligne|écrit|vu(?:e)? (?:à|hier|il y a)|participants)\\b",
+    "\\b(?:Mitglieder|online|schreibt|zuletzt|Teilnehmer)\\b",
+    "成员|成員|在线|在線|正在输入|最后上线|メンバー|オンライン|入力中|最終ログイン|สมาชิก|ออนไลน์|กำลังพิมพ์|ใช้งานล่าสุด",
+  ].join("|"),
+  "iu"
+);
+
 // The chat or contact name in the app header: lines near the top, below
 // the phone's status bar, between the back button and the profile picture.
 // Lines such as "6 members" or "last seen…" are not names.
@@ -144,8 +168,8 @@ export function headerSpans(lines, parts, width, height) {
     if (cy < height * 0.045 || cy > height * 0.095) continue;
     if (line.x < width * 0.15 || line.x + line.w > width * 0.85) continue;
     const text = line.words.map((w) => w.text).join(" ");
-    if (/\b(members?|online|last seen|typing|subscribers?|participants?|active|recently)\b/i.test(text)) continue;
-    if (!/\p{L}{2}/u.test(text)) continue;
+    if (HEADER_INFO.test(text)) continue;
+    if (!/\p{L}{2}/u.test(text) && !CASELESS.test(text)) continue;
     spans.push(lineSpan(parts, li, "NAME"));
   }
   return spans;
@@ -159,16 +183,50 @@ export function colorNameSpans(lines, parts, rgba, width) {
   for (let li = 0; li < lines.length; li++) {
     const line = lines[li];
     const text = line.words.map((w) => w.text).join(" ");
-    if (line.words.length > 4 || text.length > 30) continue;
-    if (!/^\p{Lu}/u.test(text) || /[\d/@:]|\.\w/u.test(text)) continue;
+    // OCR splits Thai and Chinese into many short words, so count letters,
+    // not words, for those.
+    const caselessLine = CASELESS.test(text);
+    if ((!caselessLine && line.words.length > 4) || text.length > 30) continue;
+    const caseless = CASELESS.test(text);
+    if ((!/^\p{Lu}/u.test(text) && !caseless) || /[\d/@:]|\.\w/u.test(text)) continue;
     // Each word has two letters or more. A capital initial at the end, as in
-    // "Dmitry V", is fine.
+    // "Dmitry V", is fine. In Chinese and Japanese one character can be a
+    // whole word.
     const words = line.words.map((w) => w.text);
-    if (words.some((w, i) => !/\p{L}{2}/u.test(w) && !(i === words.length - 1 && i > 0 && /^\p{Lu}\.?$/u.test(w)))) continue;
+    if (!caseless && words.some((w, i) => !/\p{L}{2}/u.test(w) && !(i === words.length - 1 && i > 0 && /^\p{Lu}\.?$/u.test(w)))) continue;
     if (textSaturation(rgba, width, line) < 70) continue;
-    spans.push(lineSpan(parts, li, "NAME"));
+    // OCR can miss part of a name, for example one character of a Chinese
+    // name. Cover all the colored text on this line.
+    spans.push({ ...lineSpan(parts, li, "NAME"), box: coloredExtent(rgba, width, line) });
   }
   return spans;
+}
+
+// The colored text that starts at a line: from the line's left edge to
+// the last column with colored pixels, allowing gaps between characters.
+function coloredExtent(rgba, width, line) {
+  const y0 = Math.max(0, Math.floor(line.y));
+  const y1 = Math.floor(line.y + line.h);
+  const colored = (x) => {
+    for (let y = y0; y < y1; y++) {
+      const i = (y * width + x) * 4;
+      const r = rgba[i];
+      const g = rgba[i + 1];
+      const b = rgba[i + 2];
+      if (Math.max(r, g, b) - Math.min(r, g, b) > 60 && 0.299 * r + 0.587 * g + 0.114 * b > 70) return true;
+    }
+    return false;
+  };
+  let right = Math.ceil(line.x + line.w);
+  const maxGap = Math.round(line.h * 1.2);
+  let gap = 0;
+  for (let x = right; x < Math.min(width, line.x + line.h * 20); x++) {
+    if (colored(x)) {
+      right = x + 1;
+      gap = 0;
+    } else if (++gap > maxGap) break;
+  }
+  return { x: line.x, y: line.y, w: right - line.x, h: line.h };
 }
 
 function lineSpan(parts, li, tag) {

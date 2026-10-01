@@ -14,7 +14,7 @@ export const CATEGORIES = [
   { id: "other", label: "Titles & groups", on: false },
 ];
 
-// Model labels to our tags.
+// Model labels to our tags, for the English, multilingual and Thai models.
 export const MODEL_TAGS = {
   PERSON: "NAME",
   ORGANIZATION: "ORG",
@@ -40,6 +40,16 @@ export const MODEL_TAGS = {
   PASSWORD: "SECRET",
   NRP: "GROUP",
   TITLE: "TITLE",
+  // Multilingual model
+  PER: "NAME",
+  ORG: "ORG",
+  LOC: "LOCATION",
+  DATE: "DATE",
+  // Thai model
+  FACILITY: "LOCATION",
+  EMAIL: "EMAIL",
+  PHONE: "PHONE",
+  ZIP: "ADDRESS",
 };
 
 export const TAG_CATEGORY = {

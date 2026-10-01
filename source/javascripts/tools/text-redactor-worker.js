@@ -1,17 +1,18 @@
-// Runs the PII model off the main thread so typing stays smooth.
+// Runs the name models off the main thread so typing stays smooth. Each
+// request names its model, and each model loads once.
 import { pipeline, env } from "https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.3.0";
 import { detectEntities } from "./ner-core.js";
 
-const MODEL = "onnx-community/bert-small-pii-detection-ONNX";
+const DEFAULT_MODEL = "onnx-community/bert-small-pii-detection-ONNX";
 
 env.allowLocalModels = false;
 
-let loading = null;
+const loading = new Map();
 
-function load() {
-  if (!loading) {
+function load(model = DEFAULT_MODEL) {
+  if (!loading.has(model)) {
     const files = {};
-    loading = pipeline("token-classification", MODEL, {
+    const ready = pipeline("token-classification", model, {
       dtype: "q8",
       device: "wasm",
       progress_callback: (e) => {
@@ -23,33 +24,33 @@ function load() {
           loaded += f.loaded;
           total += f.total;
         }
-        self.postMessage({ type: "progress", loaded, total });
+        self.postMessage({ type: "progress", model, loaded, total });
       },
     }).then(
-      (clf) => {
-        self.postMessage({ type: "ready" });
-        return clf;
-      },
+      (clf) => clf,
       (err) => {
         // Let the next request try again.
-        loading = null;
+        loading.delete(model);
         throw err;
       }
     );
+    loading.set(model, ready);
   }
-  return loading;
+  return loading.get(model);
 }
 
 self.onmessage = async ({ data }) => {
   try {
     if (data.type === "load") {
-      await load();
+      // Answer every load request, also for a model that is already loaded.
+      await load(data.model);
+      self.postMessage({ type: "ready", model: data.model || DEFAULT_MODEL });
     } else if (data.type === "detect") {
-      const clf = await load();
+      const clf = await load(data.model);
       const spans = await detectEntities(clf, data.text);
-      self.postMessage({ type: "result", id: data.id, spans });
+      self.postMessage({ type: "result", id: data.id, model: data.model, spans });
     }
   } catch (err) {
-    self.postMessage({ type: "error", message: String((err && err.message) || err) });
+    self.postMessage({ type: "error", id: data.id, model: data.model, message: String((err && err.message) || err) });
   }
 };

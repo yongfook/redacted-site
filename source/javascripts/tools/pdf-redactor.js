@@ -5,6 +5,7 @@ import * as pdfjs from "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.3.289/build/pd
 import { CATEGORIES, MODEL_PREF, collectSpans, parseTerms } from "./pii-spans.js";
 import { pageText, spanToRects, mergeRects } from "./pdf-core.js";
 import { busy, idle, note, downloadName } from "./busy.js";
+import { startLanguage, saveLanguage, modelFor, fillLanguageSelect } from "./languages.js";
 
 pdfjs.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.3.289/build/pdf.worker.min.mjs";
 const PDF_LIB = "https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.esm.min.js";
@@ -59,12 +60,17 @@ for (const c of CATEGORIES) {
 
 customInput.addEventListener("input", refresh);
 
-// PII model (the same worker as the Text Redactor)
+// Name model (the same worker as the Text Redactor)
 
 const worker = new Worker(new URL("./text-redactor-worker.js", import.meta.url), { type: "module" });
 const pending = new Map(); // request id -> page
+const langSelect = $("ai-lang");
+let lang = startLanguage();
+const model = () => modelFor(lang).id;
 
 worker.onmessage = ({ data }) => {
+  // Ignore messages for a model of a language that is no longer chosen.
+  if (data.model && data.model !== model()) return;
   if (data.type === "progress") {
     const pct = Math.round((data.loaded / data.total) * 100);
     progressBar.style.width = `${pct}%`;
@@ -97,17 +103,36 @@ function runModel() {
     if (!page.text.trim() || page.modelSpans) continue;
     const id = ++requestId;
     pending.set(id, page);
-    worker.postMessage({ type: "detect", id, text: page.text });
+    worker.postMessage({ type: "detect", id, model: model(), text: page.text });
   }
 }
 
 function loadModel() {
+  state.modelReady = false;
   modelBar.dataset.state = "loading";
+  progressBar.style.width = "0";
   loadButton.disabled = true;
   modelStatus.textContent = "Starting…";
-  worker.postMessage({ type: "load" });
+  worker.postMessage({ type: "load", model: model() });
   runModel();
 }
+
+const showButton = () => {
+  loadButton.textContent = `Turn on AI (${modelFor(lang).size} MB)`;
+};
+
+// The language decides which model finds names.
+fillLanguageSelect(langSelect, lang);
+langSelect.addEventListener("change", () => {
+  lang = langSelect.value;
+  saveLanguage(lang);
+  showButton();
+  for (const page of state.pages) page.modelSpans = null;
+  pending.clear();
+  refresh();
+  if (modelBar.dataset.state === "ready" || modelBar.dataset.state === "loading") loadModel();
+});
+showButton();
 
 loadButton.addEventListener("click", loadModel);
 

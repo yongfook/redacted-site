@@ -62,7 +62,11 @@ export function alignTokens(text, tokens) {
     // Skip a token we cannot place close to the cursor.
     if (at === -1 || at - cursor > 40) continue;
     const endAt = at + word.length;
-    out.push({ ...t, start: map[at], end: map[endAt - 1] + 1 });
+    // Thai vowel and tone marks are removed when comparing. Include the
+    // marks that follow the last letter.
+    let end = map[endAt - 1] + 1;
+    while (end < text.length && /\p{M}/u.test(text[end])) end++;
+    out.push({ ...t, start: map[at], end });
     cursor = endAt;
   }
   return out;
@@ -87,7 +91,17 @@ export function groupSpans(text, tokens, minScore = 0.5) {
       cur.label === label &&
       (gap === "" || (prefix !== "B" && /^[\s\-.,'/]{1,3}$/.test(gap)));
 
-    if (joins) {
+    // A person's name does not continue on the next line. Text read from
+    // screenshots puts the sender name on its own line, and the model often
+    // marks the first word of the message as part of the name. Drop that
+    // word. Addresses can continue on the next line.
+    const newLine = gap.includes("\n") && /^(?:PER|PERSON)$/.test(label);
+    if (cur && cur.label === label && prefix !== "B" && newLine) {
+      cur = null;
+      continue;
+    }
+
+    if (joins && !newLine) {
       cur.end = t.end;
       cur.scores.push(t.score);
     } else {
@@ -99,8 +113,10 @@ export function groupSpans(text, tokens, minScore = 0.5) {
   return spans
     .map((s) => {
       let { start, end } = s;
-      while (start > 0 && /[\p{L}\p{N}]/u.test(text[start - 1])) start--;
-      while (end < text.length && /[\p{L}\p{N}]/u.test(text[end])) end++;
+      // Not for scripts without spaces, where a "word" can be a whole line.
+      const grow = (ch) => /[\p{L}\p{N}]/u.test(ch) && !/[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Thai}]/u.test(ch);
+      while (start > 0 && grow(text[start - 1])) start--;
+      while (end < text.length && grow(text[end])) end++;
       const score = s.scores.reduce((a, b) => a + b, 0) / s.scores.length;
       return { label: s.label, start, end, score };
     })

@@ -22,7 +22,10 @@ description: Replace every person in a copied chat or chat export with a consist
         <strong>AI detection</strong>
         <span id="model-status">Chat rules find the people who send messages. Turn on AI to also find other names, organizations and places in the messages.</span>
       </div>
-      <button type="button" id="load" class="button">Turn on AI (29 MB)</button>
+      <div class="model-actions">
+        <select id="ai-lang" aria-label="Text language"></select>
+        <button type="button" id="load" class="button">Turn on AI (29 MB)</button>
+      </div>
       <div class="progress"><div id="progress-bar"></div></div>
     </div>
 

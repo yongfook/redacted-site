@@ -1,6 +1,7 @@
 // Pattern-based detectors for structured personal data. These run
 // instantly and catch formats that the model can miss.
 // Each detector returns spans: { tag, start, end }.
+import { intlDateSpans, intlIdSpans } from "./intl-patterns.js";
 
 const digits = (s) => s.replace(/\D/g, "");
 
@@ -59,13 +60,16 @@ const PATTERNS = [
   {
     tag: "DATE",
     re: new RegExp(
-      `\\b\\d{4}-\\d{2}-\\d{2}\\b|\\b\\d{1,2}[/.-]\\d{1,2}[/.-]\\d{2,4}\\b|\\b\\d{1,2}(?:st|nd|rd|th)? (?:${MONTHS})\\.?,? \\d{4}\\b|\\b(?:${MONTHS})\\.? \\d{1,2}(?:st|nd|rd|th)?,? \\d{4}\\b`,
+      `\\b\\d{4}[-/.]\\d{1,2}[-/.]\\d{1,2}\\b|\\b\\d{1,2}[/.-]\\d{1,2}[/.-]\\d{2,4}\\b|\\b\\d{1,2}(?:st|nd|rd|th)? (?:${MONTHS})\\.?,? \\d{4}\\b|\\b(?:${MONTHS})\\.? \\d{1,2}(?:st|nd|rd|th)?,? \\d{4}\\b`,
       "gi"
     ),
   },
   {
     tag: "PHONE",
-    re: /(?<![\w+])(?:\+\d{1,3}[ .-]?)?(?:\(\d{1,4}\)[ .-]?)?\d{2,6}(?:[ .-]\d{2,6}){1,4}(?![\w])/g,
+    // After a country code the first group can be one digit (+33 6 12 34 56
+    // 78), and groups can be up to 8 digits (+49 151 23456789). "- " is
+    // allowed between groups: OCR adds a space where a number wraps.
+    re: /(?<![\w+])(?:\+\d{1,3}[ .-]?(?:\(\d{1,4}\)[ .-]?)?\d{1,8}|(?:\(\d{1,4}\)[ .-]?)?\d{2,8})(?:(?:[ .-]|- )\d{2,8}){1,4}(?![\w])/g,
     test: (m) => {
       const n = digits(m).length;
       const intl = /^[+(]/.test(m);
@@ -99,6 +103,10 @@ export function detectPatterns(text) {
       if (spans.some((s) => start < s.end && end > s.start)) continue;
       spans.push({ tag: p.tag, start, end });
     }
+  }
+  // Dates and ID numbers in Spanish, French, German, Chinese, Japanese and Thai.
+  for (const x of [...intlIdSpans(text), ...intlDateSpans(text)]) {
+    if (!spans.some((s) => x.start < s.end && x.end > s.start)) spans.push(x);
   }
   return spans;
 }

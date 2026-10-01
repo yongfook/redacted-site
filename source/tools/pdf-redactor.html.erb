@@ -21,7 +21,10 @@ description: Black out names, emails, phone numbers, account numbers and address
         <strong>AI detection</strong>
         <span id="model-status">Pattern rules find emails, phones, cards and IDs. Turn on AI to also find names, organizations and places.</span>
       </div>
-      <button type="button" id="load" class="button">Turn on AI (29 MB)</button>
+      <div class="model-actions">
+        <select id="ai-lang" aria-label="Text language"></select>
+        <button type="button" id="load" class="button">Turn on AI (29 MB)</button>
+      </div>
       <div class="progress"><div id="progress-bar"></div></div>
     </div>
 

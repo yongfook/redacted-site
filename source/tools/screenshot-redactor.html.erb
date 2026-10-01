@@ -19,7 +19,7 @@ description: Hide emails, phone numbers, names, usernames, API keys, passwords a
     <div class="model-bar" id="model" data-state="off">
       <div class="model-text">
         <strong>AI detection</strong>
-        <span class="status" id="status" role="status" aria-live="polite">Text reading, face and name models (about 40 MB) download once when you open a screenshot.</span>
+        <span class="status" id="status" role="status" aria-live="polite">Text reading, face and name models download once when you open a screenshot. The size depends on the text language.</span>
       </div>
       <div class="progress"><div id="progress-bar"></div></div>
     </div>
@@ -55,6 +55,10 @@ description: Hide emails, phone numbers, names, usernames, API keys, passwords a
           <label class="control" id="strength-control" hidden>
             <span class="control-label">Strength</span>
             <input type="range" id="strength" min="1" max="10" value="8">
+          </label>
+          <label class="control">
+            <span class="control-label">Text language</span>
+            <select id="ocr-lang"></select>
           </label>
           <label class="control grow">
             <span class="control-label">Always hide these words</span>

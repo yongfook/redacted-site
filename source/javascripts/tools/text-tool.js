@@ -4,6 +4,7 @@
 // with its own settings.
 import { CATEGORIES, TAG_CATEGORY, MODEL_PREF, collectSpans, parseTerms } from "./pii-spans.js";
 import { pseudonymizer } from "./fake-names.js";
+import { startLanguage, saveLanguage, modelFor, fillLanguageSelect } from "./languages.js";
 import { downloadName } from "./busy.js";
 
 // options:
@@ -64,10 +65,19 @@ export function startTextTool({
     const loadButton = $("load");
     const modelStatus = $("model-status");
     const progressBar = $("progress-bar");
+    const langSelect = $("ai-lang");
     const worker = new Worker(new URL("./text-redactor-worker.js", import.meta.url), { type: "module" });
     let requestId = 0;
+    let lang = startLanguage();
+    const model = () => modelFor(lang).id;
+
+    const showButton = () => {
+      loadButton.textContent = `Turn on AI (${modelFor(lang).size} MB)`;
+    };
 
     worker.onmessage = ({ data }) => {
+      // Ignore messages for a model of a language that is no longer chosen.
+      if (data.model && data.model !== model()) return;
       if (data.type === "progress") {
         const pct = Math.round((data.loaded / data.total) * 100);
         progressBar.style.width = `${pct}%`;
@@ -100,16 +110,34 @@ export function startTextTool({
         render();
         return;
       }
-      worker.postMessage({ type: "detect", id: requestId, text: input.value });
+      worker.postMessage({ type: "detect", id: requestId, model: model(), text: input.value });
     };
 
     const loadModel = () => {
+      state.modelReady = false;
       modelBar.dataset.state = "loading";
+      progressBar.style.width = "0";
       loadButton.disabled = true;
       modelStatus.textContent = "Starting…";
-      worker.postMessage({ type: "load" });
+      worker.postMessage({ type: "load", model: model() });
       runModel();
     };
+
+    // The language decides which model finds names.
+    if (langSelect) {
+      fillLanguageSelect(langSelect, lang);
+      langSelect.addEventListener("change", () => {
+        lang = langSelect.value;
+        saveLanguage(lang);
+        showButton();
+        state.modelSpans = [];
+        state.modelText = null;
+        render();
+        // If AI is on, switch to the model for the new language.
+        if (modelBar.dataset.state === "ready" || modelBar.dataset.state === "loading") loadModel();
+      });
+    }
+    showButton();
 
     loadButton.addEventListener("click", loadModel);
     try {
