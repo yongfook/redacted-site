@@ -460,12 +460,14 @@ button {
   font-size: 14px;
 }
 
-/* The Turn on AI button has the same height and type as the language menu. */
+/* The Turn on AI button has the same size and type as the AI ON/OFF
+   label: 12px mono text, line height 1 and 5px 8px padding. */
 .model-bar .button {
-  padding: 1px 8px;
+  padding: 5px 8px;
+  border: 0;
   font-family: var(--mono);
   font-size: 12px;
-  line-height: 1.2;
+  line-height: 1;
 }
 
 .text-button {
@@ -538,11 +540,11 @@ button {
   border: 0;
   background-color: transparent;
   /* Room on the right for the arrow, so the longest name does not touch it. */
-  padding: 2px 20px 2px 4px;
+  padding: 5px 20px 5px 6px;
   background-position: right 10px center, right 5px center;
   font-family: var(--mono);
   font-size: 12px;
-  line-height: 1.2;
+  line-height: 1;
   cursor: pointer;
 }
 
