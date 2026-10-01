@@ -1338,3 +1338,90 @@ textarea:focus {
     border-left: 0;
   }
 }
+
+/* Redaction Checker */
+
+.findings {
+  display: grid;
+  gap: 12px;
+}
+
+.finding {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 16px;
+  padding: 16px 20px;
+  border: 1px solid var(--black);
+}
+
+.finding-label {
+  align-self: start;
+  font-family: var(--mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  padding: 5px 8px;
+  color: var(--white);
+  background: var(--black);
+  min-width: 56px;
+  text-align: center;
+}
+
+.finding.is-leak .finding-label {
+  background: #dc2626;
+}
+
+.finding.is-ok .finding-label {
+  background: #15803d;
+}
+
+.finding h3 {
+  font-size: 17px;
+  margin: 0 0 4px;
+}
+
+.finding p {
+  margin: 0;
+  font-size: 15px;
+  color: #333;
+}
+
+.finding ul {
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 4px;
+  font-size: 14px;
+}
+
+.finding li a {
+  font-family: var(--mono);
+  font-size: 12px;
+  margin-right: 6px;
+}
+
+.finding q {
+  font-family: var(--mono);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.flag {
+  position: absolute;
+  pointer-events: auto;
+}
+
+.flag.is-leak {
+  outline: 2px solid #dc2626;
+  background: rgba(220, 38, 38, 0.15);
+}
+
+.flag.is-check {
+  outline: 2px dashed var(--black);
+}
+
+#pages .boxes {
+  cursor: default;
+}

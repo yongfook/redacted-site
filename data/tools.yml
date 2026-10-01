@@ -40,6 +40,13 @@
   description: Replace every person in a chat export with a consistent pseudonym, so the conversation still reads correctly.
   model: Named-entity recognition
 
+- name: Redaction Checker
+  slug: redaction-checker
+  live: true
+  input: PDF
+  description: Test a redacted PDF for leaks. Find text under black boxes, old revisions and metadata that others missed.
+  model: No model needed
+
 - name: Screenshot Redactor
   slug: screenshot-redactor
   input: Image
@@ -69,12 +76,6 @@
   input: Spreadsheet
   description: Detect columns that hold personal data and mask, hash or fake them. Keep the shape of the data for testing.
   model: Column classifier
-
-- name: Redaction Checker
-  slug: redaction-checker
-  input: PDF
-  description: Test a redacted PDF for leaks. Find text under black boxes, old revisions and metadata that others missed.
-  model: Document analysis
 
 - name: Metadata Stripper
   slug: metadata-stripper
