@@ -5,7 +5,7 @@ import { busy, idle, note, downloadName } from "./busy.js";
 
 const MAX_PIXELS = 16_000_000; // iOS Safari cannot draw larger canvases.
 const SAMPLE = "/samples/solvay-1927.jpg";
-const READY = "The face model runs on this device. Choose a photo to start.";
+const READY = "Runs on this device. Choose a photo.";
 
 const $ = (id) => document.getElementById(id);
 const drop = $("drop");
@@ -57,7 +57,7 @@ worker.onmessage = ({ data }) => {
     updateStatus();
     download.disabled = false;
   } else if (data.type === "error") {
-    setStatus(`Could not run face detection. ${data.message} You can still drag on the photo to add boxes.`, "error");
+    setStatus(`Could not run face detection. ${data.message} Drag to add boxes.`, "error");
     download.disabled = false;
   }
 };
@@ -194,12 +194,11 @@ function updateStatus() {
   const on = state.faces.filter((f) => f.on).length;
   const sizeNote = state.sizeNote || "";
   if (!total) {
-    setStatus(`No faces found. Drag on the photo to add a box.${sizeNote}`);
+    setStatus(`No faces found. Drag to add a box.${sizeNote}`);
   } else {
     const kept = total - on;
     setStatus(
-      `${on} of ${total} ${total === 1 ? "area" : "areas"} hidden${kept ? ` · ${kept} shown` : ""}. ` +
-        `Click a box to show or hide it. Drag on the photo to add a box.${sizeNote}`
+      `${on} of ${total} hidden${kept ? ` · ${kept} shown` : ""}. Click a box to show it. Drag to add one.${sizeNote}`
     );
   }
 }

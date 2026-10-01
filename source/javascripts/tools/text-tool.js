@@ -85,7 +85,7 @@ export function startTextTool({
       } else if (data.type === "ready") {
         state.modelReady = true;
         modelBar.dataset.state = "ready";
-        modelStatus.textContent = "The model runs on this device.";
+        modelStatus.textContent = "Runs on this device.";
         rememberModel(modelFor(lang));
       } else if (data.type === "result") {
         if (data.id !== requestId) return;

@@ -129,7 +129,7 @@ export function startScreenshotTool({
         progress.ner = data.loaded / data.total;
         showLoading();
         if (modelBar.dataset.state === "ready" && state.ocr && !state.namesDone) {
-          setStatus(`Downloading the name model… ${Math.round(progress.ner * 100)}%`, "busy");
+          setStatus(`Downloading name model… ${Math.round(progress.ner * 100)}%`, "busy");
         } else if (modelBar.dataset.state === "ready") {
           idleStatus();
         }
@@ -190,17 +190,17 @@ export function startScreenshotTool({
     if (modelBar.dataset.state !== "loading") return;
     const pct = Math.round(((progress.ocr + progress.ner) / 2) * 100);
     // After the download, the models still need a moment to start.
-    if (pct >= 100) setStatus("Starting the AI models…", "busy");
-    else setStatus(`Downloading the AI models (about ${modelFor(state.lang).size + 8} MB, one time)… ${pct}%`, "busy");
+    if (pct >= 100) setStatus("Starting…", "busy");
+    else setStatus(`Downloading AI (${modelFor(state.lang).size + 8} MB, once)… ${pct}%`, "busy");
   }
 
   // The status when no screenshot is open.
   function idleStatus() {
     if (state.image) return;
     if (progress.ner > 0 && progress.ner < 1) {
-      setStatus(`Downloading the name model… ${Math.round(progress.ner * 100)}%`, "busy");
+      setStatus(`Downloading name model… ${Math.round(progress.ner * 100)}%`, "busy");
     } else {
-      setStatus("The AI models run on this device. Choose a screenshot to start.");
+      setStatus("Runs on this device. Choose a screenshot.");
     }
   }
 
@@ -321,7 +321,7 @@ export function startScreenshotTool({
       await analyze(work, runId);
     } catch (err) {
       if (runId !== state.runId) return;
-      setStatus(`Could not read the screenshot. ${(err && err.message) || err} You can still drag on it to add boxes.`, "error");
+      setStatus(`Could not read the screenshot. ${(err && err.message) || err} Drag to add boxes.`, "error");
       download.disabled = false;
     }
   }
@@ -549,9 +549,7 @@ export function startScreenshotTool({
     const on = all.filter(isOn).length;
     const names = new Set(all.filter((b) => b.tag === "NAME" && isOn(b)).map((b) => b.text.toLowerCase())).size;
     const faces = all.filter((b) => b.tag === "FACE" && isOn(b)).length;
-    setStatus(
-      `${on} ${on === 1 ? "area" : "areas"} hidden: ${names} ${names === 1 ? "name" : "names"}, ${faces} ${faces === 1 ? "face" : "faces"}${on - faces > 0 ? " and other details" : ""}. Click a box to show it. Drag to add a box.`
-    );
+    setStatus(`${on} hidden: ${names} ${names === 1 ? "name" : "names"}, ${faces} ${faces === 1 ? "face" : "faces"}${all.some((b) => isOn(b) && b.tag !== "NAME" && b.tag !== "FACE") ? " and more" : ""}. Click a box to show it. Drag to add one.`);
   }
 
   // Rendering

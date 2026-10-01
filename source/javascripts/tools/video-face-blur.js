@@ -16,7 +16,7 @@ import { Tracker, coverAt, keepTracks, groupTracks } from "./video-core.js";
 import { busy, idle, note, downloadName } from "./busy.js";
 
 const SAMPLE = "/samples/team-meeting.mp4";
-const READY = "The face model runs on this device. Choose a video to start.";
+const READY = "Runs on this device. Choose a video.";
 const MAX_SECONDS = 10 * 60;
 const MAX_SIDE = 1920; // Larger videos are made smaller to 1080p.
 const DETECT_FPS = 8; // Frames per second to run face detection on.
@@ -280,12 +280,9 @@ function updateStatus() {
   const total = persons().length;
   const on = persons().filter((t) => t.on).length;
   if (!total) {
-    setStatus("No faces found in this video.");
+    setStatus("No faces found.");
   } else {
-    setStatus(
-      `${total} ${total === 1 ? "person" : "people"} found · ${on} hidden. ` +
-        "Click a person to show or hide their face in the whole video."
-    );
+    setStatus(`${total} ${total === 1 ? "person" : "people"} · ${on} hidden. Click a person to show them.`);
   }
 }
 
