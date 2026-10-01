@@ -455,10 +455,17 @@ button {
   color: var(--white);
 }
 
-.pane-foot .button,
-.model-bar .button {
+.pane-foot .button {
   padding: 10px 18px;
   font-size: 14px;
+}
+
+/* The Turn on AI button has the same height and type as the language menu. */
+.model-bar .button {
+  padding: 1px 8px;
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.2;
 }
 
 .text-button {
@@ -530,7 +537,7 @@ button {
   width: auto;
   border: 0;
   background-color: transparent;
-  padding: 2px 22px 2px 4px;
+  padding: 2px 4px 2px 4px;
   background-position: right 10px center, right 5px center;
   font-family: var(--mono);
   font-size: 12px;
