@@ -42,6 +42,7 @@
 
 - name: Chat Screenshot Anonymizer
   slug: chat-screenshot-anonymizer
+  live: true
   input: Screenshot
   description: Hide names, faces, profile pictures, phone numbers and links in chat screenshots from WhatsApp, Telegram, iMessage and more.
   model: OCR + face + entity detection
