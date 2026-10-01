@@ -1482,3 +1482,60 @@ textarea:focus {
   font-size: 15px;
   color: #333;
 }
+
+/* Privacy and other text pages */
+
+.prose {
+  max-width: 68ch;
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+.prose h2 {
+  font-size: 24px;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin: 48px 0 12px;
+}
+
+.prose h3 {
+  font-size: 18px;
+  margin: 32px 0 8px;
+}
+
+.prose h4 {
+  font-size: 15px;
+  margin: 24px 0 6px;
+}
+
+.prose p,
+.prose ul {
+  margin: 0 0 14px;
+}
+
+.prose ul {
+  padding-left: 22px;
+}
+
+.prose li {
+  margin-bottom: 6px;
+}
+
+.prose a {
+  overflow-wrap: anywhere;
+}
+
+.prose-summary {
+  border: 1px solid var(--black);
+  padding: 4px 24px 10px;
+  margin-bottom: 40px;
+}
+
+.prose-summary h2 {
+  margin-top: 20px;
+}
+
+.site-footer p a {
+  color: inherit;
+  margin-right: 6px;
+}
