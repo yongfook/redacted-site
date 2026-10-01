@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<% pages = sitemap.resources.select { |r| r.ext == ".html" && !r.ignored? }.sort_by(&:url) %>
+<% pages.each do |page| %>
+  <url>
+    <loc><%= config[:site_url] %><%= page.url %></loc>
+  </url>
+<% end %>
+</urlset>

@@ -1,0 +1,27 @@
+# <%= config[:site_name] %> (redacted.to)
+
+> Free redaction tools that run entirely in the browser. Detection uses small AI models and pattern rules that run on the user's device, so files and text are never uploaded. No account, no usage limit and no watermark.
+
+Key facts:
+
+- All processing happens in the browser tab. The site has no server code that receives user files or text.
+- AI models download once from the site or from Hugging Face and run locally with WebAssembly. After a model loads, a tool keeps working without an internet connection.
+- Users review every suggested redaction before they export a file.
+- Exported files do not keep the original file's metadata, such as GPS location or author.
+
+## Tools
+
+<% data.tools.select(&:live).each do |tool| %>
+- [<%= tool.name %>](<%= config[:site_url] %>/tools/<%= tool.slug %>/): <%= tool.description %> Input: <%= tool.input %>. Detection: <%= tool.model %>.
+<% end %>
+
+## Coming soon
+
+<% data.tools.reject(&:live).each do |tool| %>
+- [<%= tool.name %>](<%= config[:site_url] %>/tools/<%= tool.slug %>/): <%= tool.description %>
+<% end %>
+
+## Optional
+
+- [Newsletter](<%= config[:newsletter_url] %>): Sign up to hear when new tools launch.
+- [Sitemap](<%= config[:site_url] %>/sitemap.xml): All pages on the site.
