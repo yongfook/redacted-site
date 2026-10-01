@@ -1,0 +1,44 @@
+<% live = data.tools.select(&:live) %>
+
+<section class="tool-hero">
+  <div class="wrap">
+    <%= partial "partials/brand" %>
+    <h1><%= tool.name %></h1>
+    <p class="lede"><%= tool.description %></p>
+  </div>
+</section>
+
+<section class="tool">
+  <div class="wrap">
+    <div class="soon-panel">
+      <span class="soon-label">Coming soon</span>
+      <h2>We are building this tool</h2>
+      <p>Like our other tools, it will be free and it will run in your browser, so your files are never uploaded. Be first to know when it is ready.</p>
+      <a href="<%= config[:newsletter_url] %>" class="button button-big" target="_blank" rel="noopener">Sign Up for the Newsletter</a>
+    </div>
+
+    <dl class="soon-facts">
+      <div>
+        <dt>Works with</dt>
+        <dd><%= tool.input %></dd>
+      </div>
+      <div>
+        <dt>AI model</dt>
+        <dd><%= tool.model %></dd>
+      </div>
+      <div>
+        <dt>Price</dt>
+        <dd>Free, with no account</dd>
+      </div>
+    </dl>
+
+    <div class="soon-live">
+      <h3>Ready to use now</h3>
+      <ul>
+        <% live.each do |t| %>
+          <li><a href="/tools/<%= t.slug %>/"><%= t.name %></a></li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+</section>
