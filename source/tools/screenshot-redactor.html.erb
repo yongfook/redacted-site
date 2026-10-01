@@ -21,6 +21,9 @@ description: Hide emails, phone numbers, names, usernames, API keys, passwords a
         <strong>AI</strong>
         <span class="status" id="status" role="status" aria-live="polite">AI models download once when you open a screenshot.</span>
       </div>
+      <div class="model-actions">
+        <select id="ocr-lang" aria-label="Text language"></select>
+      </div>
       <div class="progress"><div id="progress-bar"></div></div>
     </div>
 
@@ -55,10 +58,6 @@ description: Hide emails, phone numbers, names, usernames, API keys, passwords a
           <label class="control" id="strength-control" hidden>
             <span class="control-label">Strength</span>
             <input type="range" id="strength" min="1" max="10" value="8">
-          </label>
-          <label class="control">
-            <span class="control-label">Text language</span>
-            <select id="ocr-lang"></select>
           </label>
           <label class="control grow">
             <span class="control-label">Always hide these words</span>
