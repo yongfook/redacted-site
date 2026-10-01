@@ -1,6 +1,6 @@
 # Site settings
 set :site_name, "[REDACTED]"
-set :site_url, "https://redacted.to"
+set :site_url, "https://www.redacted.to"
 set :site_description, "Free redaction tools that run entirely in your browser. Local AI models. Nothing leaves your device."
 set :newsletter_url, "https://mailchi.mp/52e24e1cbb61/redacted-mailing-list"
 
