@@ -47,6 +47,13 @@
   description: Test a redacted PDF for leaks. Find text under black boxes, old revisions and metadata that others missed.
   model: No model needed
 
+- name: Metadata Stripper
+  slug: metadata-stripper
+  live: true
+  input: Any file
+  description: Remove GPS location, camera details, author names and edit history from photos and documents.
+  model: No model needed
+
 - name: Screenshot Redactor
   slug: screenshot-redactor
   input: Image
@@ -76,12 +83,6 @@
   input: Spreadsheet
   description: Detect columns that hold personal data and mask, hash or fake them. Keep the shape of the data for testing.
   model: Column classifier
-
-- name: Metadata Stripper
-  slug: metadata-stripper
-  input: Any file
-  description: Remove GPS location, camera details, author names and edit history from photos and documents.
-  model: No model needed
 
 - name: Signature Redactor
   slug: signature-redactor

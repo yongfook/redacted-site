@@ -1,0 +1,64 @@
+---
+title: Metadata Stripper
+description: See and remove hidden details such as GPS location, camera, author and dates from photos, PDFs and videos. Runs in your browser. Nothing is uploaded.
+---
+
+<section class="tool-hero">
+  <div class="wrap">
+    <%= partial "partials/brand" %>
+    <h1>Metadata Stripper</h1>
+    <p class="lede">
+      See the hidden details in a photo, PDF or video, such as where it was made and with which device, and download a clean copy.
+      Your file is never uploaded.
+    </p>
+  </div>
+</section>
+
+<section class="tool">
+  <div class="wrap">
+    <div class="drop" id="drop">
+      <p class="drop-title">Drop a file here</p>
+      <p class="drop-text">or choose a file. JPEG, PNG, WebP, PDF, MP4, MOV or WebM.</p>
+      <div class="drop-actions">
+        <label class="button">
+          Choose a file
+          <input type="file" id="file" accept="image/jpeg,image/png,image/webp,application/pdf,.pdf,video/mp4,video/quicktime,video/webm,.mov,.mp4,.m4v,.webm,.mkv" class="visually-hidden">
+        </label>
+        <button type="button" id="sample" class="button button-outline">Try an example photo</button>
+      </div>
+    </div>
+
+    <p class="status" id="status" role="status" aria-live="polite"></p>
+
+    <div class="editor" id="editor" hidden>
+      <div class="preview" id="preview"></div>
+
+      <div class="editor-foot">
+        <div class="editor-actions">
+          <button type="button" id="new" class="button button-outline">Use another file</button>
+          <button type="button" id="download" class="button" disabled>Download clean file</button>
+        </div>
+        <p class="download-note" id="download-note" role="status" aria-live="polite"></p>
+      </div>
+
+      <div class="findings" id="findings"></div>
+    </div>
+
+    <div class="notes">
+      <div>
+        <h3>The picture does not change</h3>
+        <p>For photos and videos, the tool removes only the hidden details. The image and sound are copied as they are, with no loss of quality. A photo keeps its rotation.</p>
+      </div>
+      <div>
+        <h3>What it removes</h3>
+        <p>GPS location, camera make, model and serial number, author, software, dates, descriptions, Exif, XMP and IPTC data. For PDFs, also earlier saved versions of the file.</p>
+      </div>
+      <div>
+        <h3>Private by design</h3>
+        <p>The page has no server code and uses no AI model. <a href="https://github.com/MikeKovarik/exifr" target="_blank" rel="noopener">exifr</a>, <a href="https://pdf-lib.js.org" target="_blank" rel="noopener">pdf-lib</a> and <a href="https://mediabunny.dev" target="_blank" rel="noopener">Mediabunny</a> read and write the file in your browser.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script type="module" src="/javascripts/tools/metadata-stripper.js"></script>
