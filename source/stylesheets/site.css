@@ -400,8 +400,7 @@ a {
 /* Tool pages */
 
 .tool-hero {
-  padding: 40px 0 48px;
-  border-bottom: 1px solid var(--black);
+  padding: 40px 0 0;
 }
 
 .tool-hero h1 {
