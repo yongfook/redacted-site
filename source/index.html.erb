@@ -6,7 +6,7 @@ title:
   <div class="wrap">
     <%= partial "partials/brand" %>
     <h1>
-      Redact <span class="scribble">sensitive data<svg viewBox="0 0 600 100" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path pathLength="1" d="M4 10 C211 7 418 12 596 9 L596 24 C390 19 184 21 7 22 L8 41 C211 38 415 32 589 37 L598 56 C392 52 186 53 9 55 L7 72 C211 68 415 71 589 68 L589 84 C387 82 185 84 11 84 L4 96 C208 99 413 89 588 92"/></svg></span>.<br>
+      Redact <span class="scribble" tabindex="0" role="button" aria-pressed="false" aria-label="sensitive data (tap to reveal)">sensitive data<svg viewBox="0 0 600 100" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path pathLength="1" d="M4 10 C211 7 418 12 596 9 L596 24 C390 19 184 21 7 22 L8 41 C211 38 415 32 589 37 L598 56 C392 52 186 53 9 55 L7 72 C211 68 415 71 589 68 L589 84 C387 82 185 84 11 84 L4 96 C208 99 413 89 588 92"/></svg></span>.<br>
       Privately on your device.
     </h1>
     <p class="lede">
@@ -79,3 +79,17 @@ title:
     </div>
   </div>
 </section>
+
+<script>
+  // Tap, click or press Enter to reveal the words under the scribble.
+  document.querySelectorAll(".scribble").forEach((el) => {
+    const toggle = () => el.setAttribute("aria-pressed", String(el.getAttribute("aria-pressed") !== "true"));
+    el.addEventListener("click", toggle);
+    el.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        toggle();
+      }
+    });
+  });
+</script>

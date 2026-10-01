@@ -87,7 +87,8 @@ a {
   white-space: nowrap;
   color: transparent;
   transition: color 0.25s ease;
-  cursor: default;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .scribble svg {
@@ -111,12 +112,28 @@ a {
   animation: scribble 1.2s 0.3s ease-in-out forwards;
 }
 
-.scribble:hover {
+.scribble[aria-pressed="true"] {
   color: var(--black);
 }
 
-.scribble:hover svg {
+.scribble[aria-pressed="true"] svg {
   opacity: 0.12;
+}
+
+/* Only real hover. On touch screens a tap would leave hover stuck on. */
+@media (hover: hover) {
+  .scribble:hover {
+    color: var(--black);
+  }
+
+  .scribble:hover svg {
+    opacity: 0.12;
+  }
+}
+
+.scribble:focus-visible {
+  outline: 3px solid var(--black);
+  outline-offset: 4px;
 }
 
 @keyframes scribble {
