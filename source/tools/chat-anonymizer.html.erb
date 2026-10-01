@@ -1,0 +1,93 @@
+---
+title: Chat Anonymizer
+description: Replace every person in a chat export with a consistent fake name, so the conversation still reads correctly. Works with WhatsApp, Slack, Teams and Discord. Runs in your browser. Nothing is uploaded.
+---
+
+<section class="tool-hero">
+  <div class="wrap">
+    <%= partial "partials/brand" %>
+    <h1>Chat Anonymizer</h1>
+    <p class="lede">
+      Paste a chat and give every person a fake name that stays the same, so the conversation still makes sense.
+      Your chat is never uploaded.
+    </p>
+  </div>
+</section>
+
+<section class="tool">
+  <div class="wrap">
+    <div class="model-bar" id="model" data-state="off">
+      <div class="model-text">
+        <strong>AI detection</strong>
+        <span id="model-status">Chat rules find the people who send messages. Turn on AI to also find other names, organizations and places in the messages.</span>
+      </div>
+      <button type="button" id="load" class="button">Turn on AI (29 MB)</button>
+      <div class="progress"><div id="progress-bar"></div></div>
+    </div>
+
+    <div class="controls">
+      <div class="control">
+        <span class="control-label">Hide</span>
+        <div class="chips" id="categories"></div>
+      </div>
+      <div class="control-row">
+        <label class="control">
+          <span class="control-label">Replace with</span>
+          <select id="style">
+            <option value="fake">Fake names: Alex, Sam…</option>
+            <option value="numbered">Numbered labels: [NAME_1]</option>
+            <option value="labels">Labels: [NAME]</option>
+            <option value="blocks">Blocks: ████</option>
+            <option value="redacted">[REDACTED]</option>
+          </select>
+        </label>
+        <label class="control grow">
+          <span class="control-label">Always hide these words</span>
+          <input type="text" id="custom" placeholder="Nicknames, team names, places" autocomplete="off">
+        </label>
+      </div>
+    </div>
+
+    <div class="panes">
+      <div class="pane">
+        <div class="pane-head">
+          <span>Original</span>
+          <span class="pane-actions">
+            <button type="button" id="example" class="text-button">Paste an example</button>
+            <button type="button" id="clear" class="text-button">Clear</button>
+          </span>
+        </div>
+        <textarea id="input" spellcheck="false" placeholder="Paste a chat export here: WhatsApp, Slack, Teams, Discord or Name: message lines…" aria-label="Original chat"></textarea>
+      </div>
+
+      <div class="pane">
+        <div class="pane-head">
+          <span>Anonymized</span>
+          <span id="count" class="pane-meta"></span>
+        </div>
+        <div id="output" class="output is-empty" aria-live="polite" data-placeholder="The anonymized chat shows here. Click a replacement to keep the original."></div>
+        <div class="pane-foot">
+          <button type="button" id="copy" class="button">Copy</button>
+          <button type="button" id="download" class="button button-outline">Download .txt</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div>
+        <h3>The same person, the same name</h3>
+        <p>"Sarah O'Connor", "Sarah" and "@sarah" all become the same fake name. Other people get other names, so you can still follow who said what.</p>
+      </div>
+      <div>
+        <h3>Check before you share</h3>
+        <p>Nicknames, team names and details in the messages can still identify people. Read the result, and add words to "Always hide these words".</p>
+      </div>
+      <div>
+        <h3>Private by design</h3>
+        <p>The page has no server code. The optional AI model, <a href="https://huggingface.co/onnx-community/bert-small-pii-detection-ONNX" target="_blank" rel="noopener">bert-small-pii-detection</a>, runs on your device.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script type="module" src="/javascripts/tools/chat-anonymizer.js"></script>

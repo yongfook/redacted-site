@@ -7,7 +7,17 @@ const NAMES = [
   "Kai", "Emerson", "Finley", "Harper", "Logan", "Parker", "Sage", "Blake",
 ];
 
-const fold = (s) => s.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase().replace(/[^\p{L}\p{N}' -]/gu, "").trim();
+// Compare names without case, accents or handle separators, so
+// "@rajesh.kumar" and "Rajesh Kumar" are the same person.
+const fold = (s) =>
+  s
+    .normalize("NFD")
+    .replace(/\p{M}/gu, "")
+    .toLowerCase()
+    .replace(/[._]/g, " ")
+    .replace(/[^\p{L}\p{N}' -]/gu, "")
+    .replace(/\s+/g, " ")
+    .trim();
 
 // Returns a function: real name -> fake name. Make a new one for each
 // render, so the names are given in the order people appear in the text.

@@ -33,6 +33,13 @@
   description: Remove API keys, passwords, tokens, IP addresses and internal hostnames from logs and code before you share them.
   model: Pattern rules
 
+- name: Chat Anonymizer
+  slug: chat-anonymizer
+  live: true
+  input: Text
+  description: Replace every person in a chat export with a consistent pseudonym, so the conversation still reads correctly.
+  model: Named-entity recognition
+
 - name: Screenshot Redactor
   slug: screenshot-redactor
   input: Image
@@ -56,12 +63,6 @@
   input: Audio
   description: Transcribe a recording on your device, find names and numbers, and bleep or silence them in the audio.
   model: Speech-to-text
-
-- name: Chat Anonymizer
-  slug: chat-anonymizer
-  input: Text
-  description: Replace every person in a chat export with a consistent pseudonym, so the conversation still reads correctly.
-  model: Named-entity recognition
 
 - name: CSV Anonymizer
   slug: csv-anonymizer
