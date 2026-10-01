@@ -1,9 +1,10 @@
 // The shared page logic for the text tools (Text Redactor, Secrets Scrubber,
-// Chat Anonymizer): categories, the optional AI model, the two panes, the
+// Chat Text Anonymizer): categories, the optional AI model, the two panes, the
 // replacement styles, copy and download. Each tool calls startTextTool()
 // with its own settings.
 import { CATEGORIES, TAG_CATEGORY, MODEL_PREF, collectSpans, parseTerms } from "./pii-spans.js";
 import { pseudonymizer } from "./fake-names.js";
+import { downloadName } from "./busy.js";
 
 // options:
 //   example       text for "Paste an example"
@@ -243,7 +244,7 @@ export function startTextTool({
     const blob = new Blob([plainOutput()], { type: "text/plain" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = fileName;
+    a.download = downloadName(fileName);
     a.click();
     URL.revokeObjectURL(a.href);
   });

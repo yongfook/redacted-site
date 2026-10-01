@@ -4,7 +4,7 @@
 import * as pdfjs from "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.3.289/build/pdf.min.mjs";
 import { CATEGORIES, MODEL_PREF, collectSpans, parseTerms } from "./pii-spans.js";
 import { pageText, spanToRects, mergeRects } from "./pdf-core.js";
-import { busy, idle, note } from "./busy.js";
+import { busy, idle, note, downloadName } from "./busy.js";
 
 pdfjs.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.3.289/build/pdf.worker.min.mjs";
 const PDF_LIB = "https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.esm.min.js";
@@ -487,7 +487,7 @@ download.addEventListener("click", async () => {
     const bytes = await out.save();
     const a = document.createElement("a");
     a.href = URL.createObjectURL(new Blob([bytes], { type: "application/pdf" }));
-    a.download = `${state.name}-redacted.pdf`;
+    a.download = downloadName(`${state.name}-redacted.pdf`);
     a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
     note(downloadNote, "Done. Your redacted PDF is downloaded.");

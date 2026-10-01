@@ -27,3 +27,7 @@ export function note(el, text = "", kind = "") {
   el.textContent = text;
   el.dataset.kind = kind;
 }
+
+// The name of a downloaded file: the site name first, so people can see
+// where the file came from.
+export const downloadName = (name) => `www.redacted.to--${name}`;

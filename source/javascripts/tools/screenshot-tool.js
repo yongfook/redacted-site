@@ -22,7 +22,7 @@ import {
 } from "./screenshot-core.js";
 import { padBox, cover } from "./blur-core.js";
 import { pseudonymizer } from "./fake-names.js";
-import { busy, idle, note } from "./busy.js";
+import { busy, idle, note, downloadName } from "./busy.js";
 
 const TESSERACT = "https://cdn.jsdelivr.net/npm/tesseract.js@7.0.0/dist/tesseract.esm.min.js";
 const MAX_PIXELS = 16_000_000;
@@ -683,7 +683,7 @@ export function startScreenshotTool({
       idle(download);
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
-      a.download = `${state.name}-${fileSuffix}.png`;
+      a.download = downloadName(`${state.name}-${fileSuffix}.png`);
       a.click();
       setTimeout(() => URL.revokeObjectURL(a.href), 1000);
       note(downloadNote, "Done. Your screenshot is downloaded.");

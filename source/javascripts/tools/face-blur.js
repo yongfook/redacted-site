@@ -1,7 +1,7 @@
 // Face Blur: find faces in a photo and blur, pixelate or cover them.
 // Everything happens in this tab. The photo is never uploaded.
 import { padBox, cover } from "./blur-core.js";
-import { busy, idle, note } from "./busy.js";
+import { busy, idle, note, downloadName } from "./busy.js";
 
 const MAX_PIXELS = 16_000_000; // iOS Safari cannot draw larger canvases.
 const SAMPLE = "/samples/solvay-1927.jpg";
@@ -327,7 +327,7 @@ download.addEventListener("click", () => {
       idle(download);
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
-      a.download = `${state.name}-blurred.${ext}`;
+      a.download = downloadName(`${state.name}-blurred.${ext}`);
       a.click();
       setTimeout(() => URL.revokeObjectURL(a.href), 1000);
       note(downloadNote, "Done. Your photo is downloaded.");

@@ -13,7 +13,7 @@ import {
 } from "https://cdn.jsdelivr.net/npm/mediabunny@1.61.0/dist/bundles/mediabunny.min.mjs";
 import { padBox, cover } from "./blur-core.js";
 import { Tracker, coverAt, keepTracks, groupTracks } from "./video-core.js";
-import { busy, idle, note } from "./busy.js";
+import { busy, idle, note, downloadName } from "./busy.js";
 
 const SAMPLE = "/samples/team-meeting.mp4";
 const READY = "The face model runs on this device. Choose a video to start.";
@@ -419,7 +419,7 @@ download.addEventListener("click", async () => {
     const blob = new Blob([output.target.buffer], { type: "video/mp4" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = `${state.file.name.replace(/\.[^.]+$/, "") || "video"}-blurred.mp4`;
+    a.download = downloadName(`${state.file.name.replace(/\.[^.]+$/, "") || "video"}-blurred.mp4`);
     a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
     note(

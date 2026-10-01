@@ -2,7 +2,7 @@
 // camera and author from photos, PDFs and videos. Everything happens in this
 // tab. The file is never uploaded.
 import { stripJpeg, stripPng, stripWebp, pngText, webpExif, sniff } from "./metadata-core.js";
-import { busy, idle, note } from "./busy.js";
+import { busy, idle, note, downloadName } from "./busy.js";
 
 const EXIFR = "https://cdn.jsdelivr.net/npm/exifr@7.1.3/dist/full.esm.mjs";
 const PDF_LIB = "https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.esm.min.js";
@@ -269,7 +269,7 @@ download.addEventListener("click", async () => {
     const base = state.file.name.replace(/\.[^.]+$/, "") || "file";
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = `${base}-clean.${ext}`;
+    a.download = downloadName(`${base}-clean.${ext}`);
     a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
     note(downloadNote, "Done. Your clean file is downloaded.");

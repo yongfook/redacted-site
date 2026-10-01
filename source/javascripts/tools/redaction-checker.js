@@ -2,7 +2,7 @@
 // this tab. The PDF is never uploaded.
 import * as pdfjs from "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.3.289/build/pdf.min.mjs";
 import { pageText, spanToRects } from "./pdf-core.js";
-import { busy, idle, note } from "./busy.js";
+import { busy, idle, note, downloadName } from "./busy.js";
 
 pdfjs.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.3.289/build/pdf.worker.min.mjs";
 
@@ -414,7 +414,7 @@ download.addEventListener("click", () => {
   }
   const a = document.createElement("a");
   a.href = URL.createObjectURL(new Blob([lines.join("\n")], { type: "text/plain" }));
-  a.download = `${state.name}-redaction-check.txt`;
+  a.download = downloadName(`${state.name}-redaction-check.txt`);
   a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   idle(download);
