@@ -62,23 +62,22 @@ description: Blur every face in a video. Faces are found and tracked in your bro
         <video id="video" playsinline preload="auto" hidden></video>
       </div>
 
-      <div class="player">
-        <button type="button" id="play" class="button button-outline">Play</button>
-        <input type="range" id="scrubber" min="0" max="1" step="0.01" value="0" aria-label="Position in video">
-        <span id="time" class="time">0:00 / 0:00</span>
+      <div class="editor-foot">
+        <div class="player">
+          <button type="button" id="play" class="button button-outline">Play</button>
+          <input type="range" id="scrubber" min="0" max="1" step="0.01" value="0" aria-label="Position in video">
+          <span id="time" class="time">0:00 / 0:00</span>
+        </div>
+        <div class="editor-actions">
+          <button type="button" id="new" class="button button-outline">Use another video</button>
+          <button type="button" id="original" class="button button-outline">Hold to see original</button>
+          <button type="button" id="download" class="button" disabled>Download video</button>
+        </div>
       </div>
 
       <div class="control">
         <span class="control-label">People</span>
         <div class="people" id="people"></div>
-      </div>
-
-      <div class="editor-foot">
-        <button type="button" id="new" class="text-button">Use another video</button>
-        <div class="editor-actions">
-          <button type="button" id="original" class="button button-outline">Hold to see original</button>
-          <button type="button" id="download" class="button" disabled>Download video</button>
-        </div>
       </div>
     </div>
 

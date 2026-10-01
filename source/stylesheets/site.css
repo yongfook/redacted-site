@@ -878,7 +878,7 @@ textarea:focus {
   align-items: end;
 }
 
-.editor input[type="range"] {
+#strength {
   width: 180px;
   accent-color: var(--black);
 }
@@ -943,12 +943,17 @@ textarea:focus {
   pointer-events: none;
 }
 
+/* One row: the player (video only) on the left, then the three actions. */
 .editor-foot {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 16px;
+}
+
+.editor-foot .player {
+  flex: 1 1 320px;
 }
 
 .editor-actions {
@@ -1042,8 +1047,8 @@ textarea:focus {
 }
 
 .player .button {
-  padding: 8px 16px;
-  font-size: 14px;
+  padding: 12px 20px;
+  font-size: 15px;
   min-width: 80px;
 }
 
@@ -1125,4 +1130,26 @@ textarea:focus {
 
 .person[aria-pressed="false"] em {
   text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+  /* Two small actions side by side, then a full-width download. */
+  .editor-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .editor-actions .button {
+    padding: 12px 8px;
+    font-size: 14px;
+  }
+
+  .editor-actions #download {
+    grid-column: 1 / -1;
+  }
+
+  .editor-foot .player {
+    flex-basis: 100%;
+  }
 }
