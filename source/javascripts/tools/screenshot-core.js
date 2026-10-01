@@ -217,16 +217,22 @@ export function splitAtLines(text, spans) {
   return out;
 }
 
-// Avatars: profile pictures in chat apps are circles. A blurred face is not
+// Avatars: profile pictures in chat apps are circles, or squares with
+// rounded corners (Slack, some Teams and Google apps). A blurred face is not
 // enough, because hair, clothes, a logo or initials can show who it is, so
-// the whole circle is hidden.
+// the whole avatar is hidden.
 //
-// circleScorer() measures one possible circle: how much of its edge is a
-// clear change in brightness that points to the center (text edges point in
-// all directions), how plain the area just outside is (a bubble or the
+// Shapes are superellipses: |x|^n + |y|^n = r^n. n = 2 is a circle, n = 4
+// is a square with well rounded corners and n = 8 a square with small
+// rounded corners.
+export const SHAPES = [2, 4, 8];
+
+// shapeScorer() measures one possible avatar: how much of its outline is a
+// clear change in brightness across the outline (text edges point in all
+// directions), how plain the area just outside is (a bubble or the
 // wallpaper), and how the inside compares with the outside.
 // `gray` is one byte per pixel at `width` x `height`.
-export function circleScorer(gray, width, height) {
+export function shapeScorer(gray, width, height) {
   const gxs = new Float32Array(width * height);
   const gys = new Float32Array(width * height);
   for (let y = 1; y < height - 1; y++) {
@@ -236,87 +242,124 @@ export function circleScorer(gray, width, height) {
       gys[i] = gray[i + width - 1] + 2 * gray[i + width] + gray[i + width + 1] - gray[i - width - 1] - 2 * gray[i - width] - gray[i - width + 1];
     }
   }
-  const ANGLES = 36;
-  const cos = [];
-  const sin = [];
-  for (let a = 0; a < ANGLES; a++) {
-    cos.push(Math.cos((a / ANGLES) * Math.PI * 2));
-    sin.push(Math.sin((a / ANGLES) * Math.PI * 2));
+
+  // Points on the unit outline, with the outward normal, for each shape.
+  const POINTS = 40;
+  const outlines = {};
+  for (const n of SHAPES) {
+    const pts = [];
+    for (let a = 0; a < POINTS; a++) {
+      const t = (a / POINTS) * Math.PI * 2;
+      const c = Math.cos(t);
+      const s = Math.sin(t);
+      const x = Math.sign(c) * Math.abs(c) ** (2 / n);
+      const y = Math.sign(s) * Math.abs(s) ** (2 / n);
+      let nx = Math.sign(x) * Math.abs(x) ** (n - 1);
+      let ny = Math.sign(y) * Math.abs(y) ** (n - 1);
+      const len = Math.hypot(nx, ny) || 1;
+      nx /= len;
+      ny /= len;
+      pts.push({ x, y, nx, ny });
+    }
+    outlines[n] = pts;
   }
   const at = (x, y) => gray[Math.round(y) * width + Math.round(x)];
 
-  return (cx, cy, r, edge = 60) => {
+  return (cx, cy, r, n = 2, edge = 60) => {
     if (cx - r - 6 < 0 || cy - r - 6 < 0 || cx + r + 6 >= width || cy + r + 6 >= height) return null;
+    const pts = outlines[n];
     let strong = 0;
     let sum = 0;
-    for (let a = 0; a < ANGLES; a++) {
+    for (const p of pts) {
       let best = 0;
       for (let d = -1; d <= 1; d++) {
-        const i = Math.round(cy + (r + d) * sin[a]) * width + Math.round(cx + (r + d) * cos[a]);
-        const radial = Math.abs(gxs[i] * cos[a] + gys[i] * sin[a]);
-        if (radial > best) best = radial;
+        const i = Math.round(cy + p.y * r + d * p.ny) * width + Math.round(cx + p.x * r + d * p.nx);
+        const across = Math.abs(gxs[i] * p.nx + gys[i] * p.ny);
+        if (across > best) best = across;
       }
       sum += best;
       if (best > edge) strong++;
     }
+    // How often the color just inside the outline differs from just outside.
+    // An avatar differs from the background all round. Letters do not: the
+    // gaps between them have the background color on both sides.
+    let differs = 0;
+    for (const p of pts) {
+      const inner = at(cx + p.x * r - 3 * p.nx, cy + p.y * r - 3 * p.ny);
+      const outer = at(cx + p.x * r + 3 * p.nx, cy + p.y * r + 3 * p.ny);
+      if (Math.abs(inner - outer) > 20) differs++;
+    }
     let oSum = 0;
     let oSq = 0;
-    for (let a = 0; a < ANGLES; a++) {
+    for (const p of pts) {
       for (const d of [3, 5]) {
-        const v = at(cx + (r + d) * cos[a], cy + (r + d) * sin[a]);
+        const v = at(cx + p.x * r + d * p.nx, cy + p.y * r + d * p.ny);
         oSum += v;
         oSq += v * v;
       }
     }
-    const oMean = oSum / (ANGLES * 2);
-    const oSd = Math.sqrt(Math.max(0, oSq / (ANGLES * 2) - oMean * oMean));
+    const no = pts.length * 2;
+    const oMean = oSum / no;
+    const oSd = Math.sqrt(Math.max(0, oSq / no - oMean * oMean));
     let inSum = 0;
     let inSq = 0;
-    for (let a = 0; a < ANGLES; a++) {
+    for (const p of pts) {
       for (const k of [0.25, 0.5, 0.75]) {
-        const v = at(cx + r * k * cos[a], cy + r * k * sin[a]);
+        const v = at(cx + p.x * r * k, cy + p.y * r * k);
         inSum += v;
         inSq += v * v;
       }
     }
-    const n = ANGLES * 3;
-    const inMean = inSum / n;
-    const inSd = Math.sqrt(Math.max(0, inSq / n - inMean * inMean));
-    return { edge: strong / ANGLES, strength: sum / ANGLES, plainOutside: oSd <= 22, picture: inSd >= 18 || Math.abs(inMean - oMean) >= 30 };
+    const ni = pts.length * 3;
+    const inMean = inSum / ni;
+    const inSd = Math.sqrt(Math.max(0, inSq / ni - inMean * inMean));
+    return {
+      edge: strong / pts.length,
+      strength: sum / pts.length,
+      contrast: differs / pts.length,
+      plainOutside: oSd <= 22,
+      picture: inSd >= 18 || Math.abs(inMean - oMean) >= 30,
+    };
   };
 }
 
-// Circles with a clear edge all round, a plain area outside and a picture or
-// color inside. Radii are in pixels. Returns boxes: { x, y, w, h, score }.
+// Avatars: shapes with a clear outline, a plain area outside and a picture
+// or color inside. Radii are in pixels. Returns boxes: { x, y, w, h, n, score }
+// where n is the shape (2 = circle).
 export function findCircles(gray, width, height, { minR, maxR, top = 0, bottom = height }) {
-  const score = circleScorer(gray, width, height);
+  const score = shapeScorer(gray, width, height);
   const found = [];
-  for (let r = minR; r <= maxR; r += Math.max(1, Math.round(r / 10))) {
-    const step = Math.max(1, Math.round(r / 6));
-    for (let cy = Math.max(top, r + 7); cy < Math.min(bottom, height - r - 7); cy += step) {
-      for (let cx = r + 7; cx < width - r - 7; cx += step) {
-        const c = score(cx, cy, r);
-        if (!c || c.edge < 0.85 || !c.plainOutside || !c.picture) continue;
-        found.push({ x: cx - r, y: cy - r, w: 2 * r, h: 2 * r, score: c.strength });
+  for (const n of SHAPES) {
+    for (let r = minR; r <= maxR; r += Math.max(1, Math.round(r / 10))) {
+      const step = Math.max(1, Math.round(r / 6));
+      for (let cy = Math.max(top, r + 7); cy < Math.min(bottom, height - r - 7); cy += step) {
+        for (let cx = r + 7; cx < width - r - 7; cx += step) {
+          const c = score(cx, cy, r, n);
+          if (!c || c.edge < 0.85 || c.contrast < 0.7 || !c.plainOutside || !c.picture) continue;
+          // Prefer a circle when a circle and a square fit about as well.
+          found.push({ x: cx - r, y: cy - r, w: 2 * r, h: 2 * r, n, score: c.strength * (n === 2 ? 1.1 : 1) });
+        }
       }
     }
   }
   const kept = strongest(found);
 
-  // Group chats show avatars in one column on the left, all the same size.
-  // When two or more are found there, look down that column again with a
-  // lower edge threshold: dark photos on a dark background have weak edges.
-  const left = kept.filter((c) => c.x + c.w / 2 < width * 0.2);
-  if (left.length >= 2) {
+  // Chats show avatars in one column on the left, all the same size and
+  // shape. When one is found there, look down that column again
+  // with a lower edge threshold: dark photos on a dark background have weak
+  // edges.
+  const left = kept.filter((c) => c.x + c.w / 2 < width * 0.12 && c.w >= 2 * minR + 4);
+  if (left.length >= 1) {
     const mid = (list) => list.sort((a, b) => a - b)[Math.floor(list.length / 2)];
     const r = Math.round(mid(left.map((c) => c.w / 2)));
+    const n = mid(left.map((c) => c.n));
     const cx0 = Math.round(mid(left.map((c) => c.x + c.w / 2)));
     const extra = [];
     for (let cy = Math.max(top, r + 7); cy < Math.min(bottom, height - r - 7); cy += 1) {
       for (let cx = cx0 - 2; cx <= cx0 + 2; cx++) {
-        const c = score(cx, cy, r, 25);
-        if (!c || c.edge < 0.6 || !c.plainOutside || !c.picture) continue;
-        extra.push({ x: cx - r, y: cy - r, w: 2 * r, h: 2 * r, score: c.strength });
+        const c = score(cx, cy, r, n, 25);
+        if (!c || c.edge < 0.6 || c.contrast < 0.5 || !c.plainOutside || !c.picture) continue;
+        extra.push({ x: cx - r, y: cy - r, w: 2 * r, h: 2 * r, n, score: c.strength });
       }
     }
     return strongest([...kept.map((c) => ({ ...c, score: c.score + 1000 })), ...extra]);
@@ -324,7 +367,24 @@ export function findCircles(gray, width, height, { minR, maxR, top = 0, bottom =
   return kept;
 }
 
-// Keep the strongest circle where several overlap.
+// Shapes found on text are letters, not avatars. A shape is dropped when a
+// word read by OCR overlaps it but sits mostly outside it, or when a long
+// word sits inside it. Short words inside are fine: avatars can show
+// initials, and OCR reads noise in photos.
+export function notOnText(shapes, words) {
+  return shapes.filter((c) => {
+    return !words.some((w) => {
+      const inter = overlap(w, c);
+      if (inter < area(w) * 0.15) return false;
+      const cx = w.x + w.w / 2;
+      const cy = w.y + w.h / 2;
+      const inside = cx > c.x && cx < c.x + c.w && cy > c.y && cy < c.y + c.h;
+      return !inside || (w.text.match(/[\p{L}\p{N}]/gu) || []).length > 3;
+    });
+  });
+}
+
+// Keep the strongest shape where several overlap.
 function strongest(found) {
   found.sort((a, b) => b.score - a.score);
   const kept = [];
@@ -334,6 +394,30 @@ function strongest(found) {
   return kept;
 }
 
+// Dates and times as chat apps and websites show them: 10:43 PM, 14:05,
+// Tuesday, September 29th, Sep 29, Yesterday, 3 days ago.
+const MONTH = "Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?";
+const DAY = "Mon(?:day)?|Tue(?:s(?:day)?)?|Wed(?:nesday)?|Thu(?:r(?:s(?:day)?)?)?|Fri(?:day)?|Sat(?:urday)?|Sun(?:day)?";
+const DATE_TIME = new RegExp(
+  [
+    `\\b(?:${DAY}),? (?:${MONTH})\\.? \\d{1,2}(?:st|nd|rd|th)?(?:,? \\d{4})?\\b`,
+    `\\b(?:${MONTH})\\.? \\d{1,2}(?:st|nd|rd|th)?(?:,? \\d{4})?\\b`,
+    `\\b\\d{1,2}(?:st|nd|rd|th)? (?:${MONTH})\\.?(?:,? \\d{4})?\\b`,
+    `\\b\\d{1,2}[:.]\\d{2}(?:[:.]\\d{2})?(?: ?[AaPp]\\.?[Mm]\\.?)?(?![\\d])`,
+    `\\b\\d{1,2} ?[AaPp][Mm]\\b`,
+    // OCR often drops the colon or joins the time to noise: "1043PM".
+    `\\d{1,2}[:.]?\\d{2} ?[AaPp]\\.?[Mm]\\b`,
+    `\\b(?:${DAY})\\b`,
+    `\\b(?:Today|Yesterday|Tomorrow)\\b`,
+    `\\b\\d+ (?:seconds?|minutes?|mins?|hours?|hrs?|days?|weeks?|months?|years?) ago\\b`,
+    `\\b(?:an?|one) (?:minute|hour|day|week|month|year) ago\\b`,
+  ].join("|"),
+  "gi"
+);
+
+export function dateTimeSpans(text) {
+  return [...text.matchAll(DATE_TIME)].map((m) => ({ tag: "DATE", start: m.index, end: m.index + m[0].length }));
+}
 // @usernames and handles, such as @maya_chen. The @ stays visible.
 export function usernameSpans(text) {
   return [...text.matchAll(/(?<![\w.])@([A-Za-z][\w.-]{1,30}[A-Za-z0-9])/g)].map((m) => ({ tag: "USERNAME", start: m.index + 1, end: m.index + m[0].length }));

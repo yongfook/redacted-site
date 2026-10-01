@@ -17,6 +17,8 @@ import {
   splitAtLines,
   findCircles,
   usernameSpans,
+  dateTimeSpans,
+  notOnText,
 } from "./screenshot-core.js";
 import { padBox, cover } from "./blur-core.js";
 import { pseudonymizer } from "./fake-names.js";
@@ -296,15 +298,18 @@ export function startScreenshotTool({
     // A phone's status bar (time, signal, battery) is not part of the screen.
     // Text read inside an avatar is noise from the picture.
     const top = isPhone(width, height) ? height * 0.045 : 0;
-    const avatars = findAvatars(image);
+    const allWords = mergeWords(...words).filter((w) => w.y + w.h / 2 > top);
+    // A shape found on text is a letter, not an avatar.
+    const avatars = notOnText(findAvatars(image), allWords);
     const inAvatar = (w) => avatars.some((a) => w.x + w.w / 2 > a.x && w.x + w.w / 2 < a.x + a.w && w.y + w.h / 2 > a.y && w.y + w.h / 2 < a.y + a.h);
-    const lines = groupLines(mergeWords(...words).filter((w) => w.y + w.h / 2 > top && !inAvatar(w)));
+    const lines = groupLines(allWords.filter((w) => !inAvatar(w)));
     const { text, parts } = linesText(lines);
     const rules = [
       ...detect(text),
       ...(chatRules ? [...headerSpans(lines, parts, width, height), ...colorNameSpans(lines, parts, rgba, width)] : []),
       ...domainSpans(text),
       ...usernameSpans(text),
+      ...dateTimeSpans(text),
     ];
     // The usual text height, to keep fake names at a normal size.
     const heights = lines.map((l) => l.h).sort((a, b) => a - b);
@@ -392,7 +397,7 @@ export function startScreenshotTool({
   // Find avatar circles at screen size, then scale them back to the image.
   // A phone screenshot is drawn 390 points wide, where avatars have a radius
   // of about 9 to 28 points. A computer screenshot is drawn at most 1440
-  // pixels wide, where avatars have a radius of about 10 to 32.
+  // pixels wide, where avatars have a radius of about 10 to 48.
   function findAvatars(image) {
     const phone = isPhone(image.width, image.height);
     const W = phone ? 390 : Math.min(1440, image.width);
@@ -408,7 +413,7 @@ export function startScreenshotTool({
     const gray = new Uint8Array(W * H);
     for (let i = 0; i < gray.length; i++) gray[i] = 0.299 * rgba[i * 4] + 0.587 * rgba[i * 4 + 1] + 0.114 * rgba[i * 4 + 2];
     // On a phone, skip the status bar and the message box at the bottom.
-    const range = phone ? { minR: 9, maxR: 28, top: Math.round(H * 0.045), bottom: Math.round(H * 0.91) } : { minR: 10, maxR: 32 };
+    const range = phone ? { minR: 9, maxR: 28, top: Math.round(H * 0.045), bottom: Math.round(H * 0.91) } : { minR: 10, maxR: 48 };
     const circles = findCircles(gray, W, H, range);
     // Round emojis are mostly yellow inside. They are not avatars.
     const yellow = (c) => {
@@ -426,7 +431,8 @@ export function startScreenshotTool({
     return circles.filter((c) => !yellow(c)).map((c) => {
       // A little larger than the circle, so its edge is covered too.
       const pad = c.w * 0.08;
-      return { x: c.x / k - pad / k, y: c.y / k - pad / k, w: (c.w + 2 * pad) / k, h: (c.h + 2 * pad) / k, tag: "FACE", round: true };
+      // Circles are covered as ovals, rounded squares as squares.
+      return { x: c.x / k - pad / k, y: c.y / k - pad / k, w: (c.w + 2 * pad) / k, h: (c.h + 2 * pad) / k, tag: "FACE", round: c.n === 2 };
     });
   }
 

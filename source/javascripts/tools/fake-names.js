@@ -38,8 +38,13 @@ export function pseudonymizer() {
     if (!key) return "[NAME]";
     if (byName.has(key)) return byName.get(key);
     const first = key.split(/\s+/)[0];
-    // "Sarah" after "Sarah O'Connor", or the other way round.
-    const fake = byFirst.get(first) || fresh();
+    // "Sarah" after "Sarah O'Connor", or the other way round. Never give a
+    // person their own name.
+    let fake = byFirst.get(first);
+    if (!fake) {
+      fake = fresh();
+      if (fold(fake) === first) fake = fresh();
+    }
     byName.set(key, fake);
     if (!byFirst.has(first)) byFirst.set(first, fake);
     return fake;
