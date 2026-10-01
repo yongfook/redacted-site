@@ -19,10 +19,9 @@ title:
 <section id="tools" class="tools">
   <div class="wrap">
     <ul class="grid">
-      <% data.tools.each_with_index do |tool, i| %>
+      <% data.tools.each do |tool| %>
         <li class="card<%= " is-soon" unless tool.live %>">
           <div class="card-top">
-            <span class="card-num"><%= format("%02d", i + 1) %></span>
             <span class="card-input"><%= tool.input %></span>
           </div>
           <h3>

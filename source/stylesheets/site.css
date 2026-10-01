@@ -267,10 +267,6 @@ a {
   font-size: 12px;
 }
 
-.card-num {
-  color: var(--grey);
-}
-
 .card-input {
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -291,7 +287,6 @@ a {
 }
 
 .card:not(.is-soon):hover p,
-.card:not(.is-soon):hover .card-num,
 .card:not(.is-soon):hover .card-model {
   color: #bbb;
 }
