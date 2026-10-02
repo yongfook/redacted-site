@@ -14,7 +14,10 @@ description: A free virtual camera for Mac that blurs the faces behind you on Zo
       Works with Zoom, Google Meet, Teams, FaceTime and any other video app.
     </p>
     <div class="app-download">
-      <a href="/downloads/<%= app.file %>" class="button button-big" download>Download for Mac</a>
+      <a href="/downloads/<%= app.file %>" class="button button-big app-button" download>
+        <img src="<%= image_path "apps/#{app.slug}-icon.webp" %>" alt="" width="32" height="32">
+        Download for Mac
+      </a>
       <p class="app-meta">Free &middot; <%= app.platform %> &middot; Apple silicon and Intel &middot; Version <%= app.version %> &middot; <%= app.download_size %></p>
     </div>
     <figure class="app-shot">
@@ -55,40 +58,40 @@ description: A free virtual camera for Mac that blurs the faces behind you on Zo
   <div class="wrap">
     <h2>Works with every video app</h2>
     <p class="app-intro">The app adds a camera called <strong>[REDACTED] Camera</strong> to your Mac. Keep the app open and choose that camera in your video app.</p>
-    <div class="notes app-notes">
-      <div>
+    <ul class="points">
+      <li>
         <h3>Blur Face on Zoom Call</h3>
         <p>In Zoom, open Settings &rarr; Video and choose [REDACTED] Camera. In a meeting, you can also click the arrow next to Stop Video and choose it there.</p>
-      </div>
-      <div>
+      </li>
+      <li>
         <h3>Blur Face on Google Meet</h3>
         <p>In a Meet call, click More options &rarr; Settings &rarr; Video and choose [REDACTED] Camera. If it is not in the list, reload the page after you open the app.</p>
-      </div>
-      <div>
+      </li>
+      <li>
         <h3>Blur Face on Microsoft Teams</h3>
         <p>In Teams, open Settings &rarr; Devices and choose [REDACTED] Camera under Camera. Before you join a meeting, you can also pick it in the camera menu.</p>
-      </div>
-      <div>
+      </li>
+      <li>
         <h3>Blur Face on FaceTime</h3>
         <p>In a FaceTime call, open the Video menu in the menu bar and choose [REDACTED] Camera.</p>
-      </div>
-      <div>
+      </li>
+      <li>
         <h3>Blur Face on Webex</h3>
         <p>In a Webex meeting, click the arrow next to Stop Video and choose [REDACTED] Camera.</p>
-      </div>
-      <div>
+      </li>
+      <li>
         <h3>Blur Face on Slack Huddles</h3>
         <p>In Slack, open Settings &rarr; Audio &amp; video and choose [REDACTED] Camera under Camera. Your next huddle with video uses it.</p>
-      </div>
-      <div>
+      </li>
+      <li>
         <h3>Blur Face on Discord</h3>
         <p>In Discord, open User Settings &rarr; Voice &amp; Video and choose [REDACTED] Camera under Camera.</p>
-      </div>
-      <div>
+      </li>
+      <li>
         <h3>Blur Face on Any Other App</h3>
         <p>Any Mac app that lets you choose a camera can use [REDACTED] Camera, including OBS, Loom and Photo Booth.</p>
-      </div>
-    </div>
+      </li>
+    </ul>
   </div>
 </section>
 
@@ -102,23 +105,28 @@ description: A free virtual camera for Mac that blurs the faces behind you on Zo
       <li>In your video app, choose [REDACTED] Camera as your camera.</li>
     </ol>
 
-    <div class="notes">
-      <div>
+  </div>
+</section>
+
+<section class="app-section">
+  <div class="wrap">
+    <ul class="points">
+      <li>
         <h3>Private by design</h3>
         <p>Face detection uses Apple's Vision framework on your Mac. The app has no network code and no account. Your video goes only to the apps that you choose.</p>
-      </div>
-      <div>
+      </li>
+      <li>
         <h3>Low CPU use</h3>
         <p>Click Pause Camera to turn off your webcam and the face detection. Video apps then show a message in place of your video.</p>
-      </div>
-      <div>
+      </li>
+      <li>
         <h3>Check before you rely on it</h3>
         <p>Very small, far away or covered faces can be missed. Look at the preview in the app before a call.</p>
-      </div>
-      <div>
+      </li>
+      <li>
         <h3>Remove it at any time</h3>
         <p>Open the app's Settings and click Uninstall to remove the camera. Then drag the app to the Trash.</p>
-      </div>
-    </div>
+      </li>
+    </ul>
   </div>
 </section>

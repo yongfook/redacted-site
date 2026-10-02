@@ -1670,6 +1670,18 @@ textarea:focus {
   margin-top: 28px;
 }
 
+.app-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding-left: 20px;
+}
+
+.app-button img {
+  width: 32px;
+  height: 32px;
+}
+
 .app-meta {
   margin: 0;
   font-family: var(--mono);
@@ -1705,7 +1717,7 @@ textarea:focus {
 
 .app-intro {
   max-width: 620px;
-  margin: 0;
+  margin: 0 0 48px;
   font-size: 17px;
   color: #333;
 }
@@ -1763,10 +1775,6 @@ textarea:focus {
   font-family: var(--mono);
   font-size: 13px;
   color: var(--grey);
-}
-
-.app-notes {
-  margin-top: 40px;
 }
 
 .app-steps {
