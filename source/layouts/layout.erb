@@ -6,7 +6,8 @@
     <% page_title = current_page.data.title ? "#{current_page.data.title} — #{config[:site_name]}" : "#{config[:site_name]} — Free in-browser redaction tools" %>
     <% page_description = current_page.data.description || config[:site_description] %>
     <% page_url = "#{config[:site_url]}#{current_page.url}" %>
-    <% og_image = "#{config[:site_url]}#{image_path "og.png"}" %>
+    <% og_image = "#{config[:site_url]}#{image_path(current_page.data.og_image || "og.png")}" %>
+    <% og_image_alt = current_page.data.og_image_alt || "REDACTED logo. Free Data Redaction Tools. No file uploads. No signup." %>
     <title><%= page_title %></title>
     <meta name="description" content="<%= page_description %>">
     <link rel="canonical" href="<%= page_url %>">
@@ -18,7 +19,7 @@
     <meta property="og:image" content="<%= og_image %>">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <meta property="og:image:alt" content="REDACTED logo. Free Data Redaction Tools. No file uploads. No signup.">
+    <meta property="og:image:alt" content="<%= og_image_alt %>">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="<%= page_title %>">
     <meta name="twitter:description" content="<%= page_description %>">
