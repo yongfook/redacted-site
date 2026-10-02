@@ -315,8 +315,14 @@ a {
   height: 64px;
 }
 
+.app-promo-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+}
+
 .app-promo .card-input {
-  flex: none;
   font-family: var(--mono);
   font-size: 12px;
 }
@@ -334,12 +340,12 @@ a {
   line-height: 1.1;
 }
 
-.app-promo-text span {
+.app-promo-text > span:last-child {
   font-size: 15px;
   color: #333;
 }
 
-.app-promo:hover .app-promo-text span {
+.app-promo:hover .app-promo-text > span:last-child {
   color: #bbb;
 }
 
