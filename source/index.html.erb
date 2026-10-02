@@ -33,6 +33,17 @@ title:
         </li>
       <% end %>
     </ul>
+
+    <% data.apps.each do |app| %>
+      <a href="/apps/<%= app.slug %>/" class="app-promo">
+        <span class="card-input">Mac app</span>
+        <span class="app-promo-text">
+          <strong><%= app.name %></strong>
+          <span><%= app.description %></span>
+        </span>
+        <span class="app-promo-cta">Free download &rarr;</span>
+      </a>
+    <% end %>
   </div>
 </section>
 
