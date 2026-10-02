@@ -36,7 +36,7 @@ title:
 
     <% data.apps.each do |app| %>
       <a href="/apps/<%= app.slug %>/" class="app-promo">
-        <img src="<%= image_path "apps/#{app.slug}-icon.webp" %>" alt="" width="64" height="64" class="app-promo-icon">
+        <img src="<%= image_path "apps/#{app.slug}-icon.webp" %>" alt="" width="80" height="80" class="app-promo-icon">
         <span class="app-promo-text">
           <span class="app-promo-title"><strong><%= app.name %></strong> <span class="card-input">Mac app</span></span>
           <% first, rest = app.description.split(". ", 2) %>
