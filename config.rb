@@ -28,6 +28,8 @@ end
 
 configure :build do
   # Tool scripts load each other and a worker by relative URL, so keep their names.
-  activate :asset_hash, ignore: [%r{^javascripts/tools/}, %r{^samples/}], rewrite_ignore: [%r{^/?javascripts/tools/}]
+  # Browsers and the web manifest ask for the icons at fixed root paths, so keep their names.
+  activate :asset_hash, ignore: [%r{^javascripts/tools/}, %r{^samples/}, %r{^(favicon|apple-touch-icon|web-app-manifest)}],
+                        rewrite_ignore: [%r{^/?javascripts/tools/}]
   activate :minify_css
 end
