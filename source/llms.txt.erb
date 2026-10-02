@@ -15,6 +15,12 @@ Key facts:
 - [<%= tool.name %>](<%= config[:site_url] %>/tools/<%= tool.slug %>/): <%= tool.description %> Input: <%= tool.input %>. Detection: <%= tool.model %>.
 <% end %>
 
+## Apps
+
+<% data.apps.each do |app| %>
+- [<%= app.name %>](<%= config[:site_url] %>/apps/<%= app.slug %>/): <%= app.description %> Platform: <%= app.platform %>. Free download, version <%= app.version %>.
+<% end %>
+
 ## Coming soon
 
 <% data.tools.reject(&:live).each do |tool| %>

@@ -1590,3 +1590,137 @@ textarea:focus {
   outline: 1px solid var(--black);
   outline-offset: 0;
 }
+
+/* App pages */
+
+.app-download {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+  margin-top: 28px;
+}
+
+.app-meta {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--grey);
+}
+
+.app-shot {
+  margin: 40px 0 0;
+  border: 1px solid var(--black);
+  line-height: 0;
+}
+
+.app-shot img {
+  width: 100%;
+  height: auto;
+}
+
+.app-section {
+  padding: 80px 0 0;
+}
+
+.app-section:last-child {
+  padding-bottom: 96px;
+}
+
+.app-section h2 {
+  font-size: 36px;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin: 0 0 20px;
+}
+
+.app-intro {
+  max-width: 620px;
+  margin: 0;
+  font-size: 17px;
+  color: #333;
+}
+
+.app-copy {
+  max-width: 720px;
+}
+
+.app-copy p {
+  margin: 0 0 16px;
+  font-size: 17px;
+  color: #333;
+}
+
+.app-windows {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin-top: 24px;
+}
+
+/* A simple Mac window frame around a screenshot of the app. */
+.mac-window {
+  margin: 0;
+}
+
+.mac-window img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid #d4d4d4;
+  border-top: 0;
+  border-radius: 0 0 10px 10px;
+}
+
+.mac-titlebar {
+  display: flex;
+  gap: 6px;
+  padding: 9px 10px;
+  background: #ececec;
+  border: 1px solid #d4d4d4;
+  border-bottom: 0;
+  border-radius: 10px 10px 0 0;
+}
+
+.mac-titlebar span {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #cfcfcf;
+}
+
+.mac-window figcaption {
+  margin-top: 10px;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--grey);
+}
+
+.app-notes {
+  margin-top: 40px;
+}
+
+.app-steps {
+  max-width: 720px;
+  margin: 0;
+  padding-left: 22px;
+  font-size: 17px;
+  color: #333;
+}
+
+.app-steps li {
+  margin-bottom: 10px;
+  padding-left: 6px;
+}
+
+@media (max-width: 600px) {
+  .app-windows {
+    grid-template-columns: 1fr;
+  }
+  .app-section {
+    padding-top: 56px;
+  }
+  .app-section h2 {
+    font-size: 28px;
+  }
+}

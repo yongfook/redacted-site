@@ -1,0 +1,7 @@
+- name: "[REDACTED] Camera"
+  slug: redacted-camera
+  platform: macOS 13 or later
+  version: 0.1.0
+  file: RedactedCamera-0.1.0.dmg
+  download_size: 1 MB
+  description: A virtual camera for Mac that blurs faces in real time. Show your own face on a video call and hide everyone behind you.
