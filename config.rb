@@ -22,7 +22,7 @@ data.tools.each do |tool|
   next if tool.live
   proxy "/tools/#{tool.slug}/index.html", "/tools/coming-soon.html",
         locals: { tool: tool },
-        data: { title: "#{tool.name} (Coming Soon)", description: "#{tool.description.split(". ").first.chomp(".")}. Coming soon to redacted.to: free, in your browser, no uploads." },
+        data: { title: "#{tool.name}: Free Tool (Coming Soon)", description: "#{tool.description.split(". ").first.chomp(".")}. Coming soon to redacted.to: free, in your browser, no uploads." },
         ignore: true
 end
 
