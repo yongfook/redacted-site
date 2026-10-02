@@ -309,6 +309,12 @@ a {
   color: var(--white);
 }
 
+.app-promo-icon {
+  flex: none;
+  width: 64px;
+  height: 64px;
+}
+
 .app-promo .card-input {
   flex: none;
   font-family: var(--mono);
