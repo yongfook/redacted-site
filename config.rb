@@ -9,6 +9,8 @@ activate :directory_indexes
 page "/*.xml", layout: false
 page "/*.json", layout: false
 page "/*.txt", layout: false
+# Cloudflare serves /404.html for unknown URLs (see wrangler.toml).
+page "/404.html", directory_index: false
 
 # Cloudflare reads _headers and _redirects from the build root.
 # Middleman ignores files that start with "_", so import them explicitly.
@@ -20,7 +22,7 @@ data.tools.each do |tool|
   next if tool.live
   proxy "/tools/#{tool.slug}/index.html", "/tools/coming-soon.html",
         locals: { tool: tool },
-        data: { title: tool.name, description: "#{tool.description} Coming soon to redacted.to: free, in your browser, no uploads." },
+        data: { title: "#{tool.name} (Coming Soon)", description: "#{tool.description.split(". ").first.chomp(".")}. Coming soon to redacted.to: free, in your browser, no uploads." },
         ignore: true
 end
 

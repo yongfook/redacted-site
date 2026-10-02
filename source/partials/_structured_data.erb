@@ -1,0 +1,35 @@
+<%
+  # Structured data (JSON-LD) for search engines.
+  site = config[:site_url]
+  free = { "@type" => "Offer", "price" => "0", "priceCurrency" => "USD" }
+  graph = []
+  crumb = ->(name) {
+    { "@type" => "BreadcrumbList", "itemListElement" => [
+      { "@type" => "ListItem", "position" => 1, "name" => config[:site_name], "item" => "#{site}/" },
+      { "@type" => "ListItem", "position" => 2, "name" => name, "item" => page_url },
+    ] }
+  }
+  tool = data.tools.find { |t| t.live && current_page.url == "/tools/#{t.slug}/" }
+  app = data.apps.find { |a| current_page.url == "/apps/#{a.slug}/" }
+
+  if current_page.url == "/"
+    graph << { "@type" => "WebSite", "name" => config[:site_name], "url" => "#{site}/", "description" => page_description }
+    graph << { "@type" => "Organization", "name" => config[:site_name], "url" => "#{site}/",
+               "logo" => "#{site}#{image_path "logo.png"}", "email" => "jon@redacted.to" }
+  elsif tool
+    graph << { "@type" => "WebApplication", "name" => tool.name, "url" => page_url, "description" => page_description,
+               "applicationCategory" => "UtilitiesApplication", "operatingSystem" => "Any",
+               "browserRequirements" => "Requires a modern web browser with JavaScript and WebAssembly.",
+               "isAccessibleForFree" => true, "offers" => free }
+    graph << crumb.(tool.name)
+  elsif app
+    graph << { "@type" => "SoftwareApplication", "name" => app.name, "url" => page_url, "description" => page_description,
+               "applicationCategory" => "MultimediaApplication", "operatingSystem" => app.platform,
+               "softwareVersion" => app.version.to_s, "downloadUrl" => "#{site}/downloads/#{app.file}",
+               "fileSize" => app.download_size, "isAccessibleForFree" => true, "offers" => free }
+    graph << crumb.(app.name)
+  end
+%>
+<% unless graph.empty? %>
+<script type="application/ld+json"><%= JSON.generate({ "@context" => "https://schema.org", "@graph" => graph }).gsub("</", "<\\/") %></script>
+<% end %>

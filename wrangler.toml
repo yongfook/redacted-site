@@ -4,3 +4,5 @@ compatibility_date = "2026-10-01"
 # Static site: serve the Middleman build output with Workers static assets.
 [assets]
 directory = "./build"
+# Unknown URLs get build/404.html with a 404 status.
+not_found_handling = "404-page"

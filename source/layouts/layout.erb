@@ -3,19 +3,22 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <% page_title = current_page.data.title ? "#{current_page.data.title} — #{config[:site_name]}" : "#{config[:site_name]} — Free in-browser redaction tools" %>
+    <%# title_full is the whole title; title gets the site name after it. %>
+    <% page_title = current_page.data.title_full || (current_page.data.title ? "#{current_page.data.title} — #{config[:site_name]}" : "#{config[:site_name]} — Free in-browser redaction tools") %>
     <% page_description = current_page.data.description || config[:site_description] %>
     <% page_url = "#{config[:site_url]}#{current_page.url}" %>
     <% og_image = "#{config[:site_url]}#{image_path(current_page.data.og_image || "og.png")}" %>
     <% og_image_alt = current_page.data.og_image_alt || "REDACTED logo. Free Data Redaction Tools. No file uploads. No signup." %>
     <title><%= page_title %></title>
     <meta name="description" content="<%= page_description %>">
+    <meta name="robots" content="<%= current_page.data.noindex ? "noindex, follow" : "index, follow, max-image-preview:large" %>">
     <link rel="canonical" href="<%= page_url %>">
     <meta property="og:site_name" content="<%= config[:site_name] %>">
     <meta property="og:title" content="<%= page_title %>">
     <meta property="og:description" content="<%= page_description %>">
     <meta property="og:url" content="<%= page_url %>">
     <meta property="og:type" content="website">
+    <meta property="og:locale" content="en_US">
     <meta property="og:image" content="<%= og_image %>">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
@@ -24,12 +27,14 @@
     <meta name="twitter:title" content="<%= page_title %>">
     <meta name="twitter:description" content="<%= page_description %>">
     <meta name="twitter:image" content="<%= og_image %>">
+    <meta name="twitter:image:alt" content="<%= og_image_alt %>">
     <meta name="theme-color" content="#000000">
     <link rel="icon" href="<%= image_path "favicon.svg" %>" type="image/svg+xml">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
     <%= stylesheet_link_tag "site" %>
+    <%= partial "partials/structured_data", locals: { page_title: page_title, page_description: page_description, page_url: page_url } %>
     <!-- Privacy-friendly analytics by Plausible -->
     <script async src="https://plausible.io/js/pa-mYd-GSpTPr3BuNp8yGonz.js"></script>
     <script>
