@@ -1002,10 +1002,13 @@ textarea:focus {
   background: #f2f2f2;
 }
 
-/* A light that sweeps over the picture, and over the AI bar, while the AI
-   scans the picture. */
-.stage.is-scanning::after,
-.model-bar.is-scanning::after {
+/* The scan light: it sweeps over the file, and over the AI bar, while a tool
+   looks at the file. See javascripts/tools/scan.js. */
+.is-scanning {
+  position: relative;
+}
+
+.is-scanning::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -1028,8 +1031,7 @@ textarea:focus {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .stage.is-scanning::after,
-  .model-bar.is-scanning::after {
+  .is-scanning::after {
     animation: none;
     background-position: 50% 0, 0 0;
   }

@@ -35,6 +35,7 @@ import { detectSecrets } from "./secret-patterns.js";
 import { padBox, cover } from "./blur-core.js";
 import { Tracker, coverAt, keepTracks, groupTracks } from "./video-core.js";
 import { busy, idle, note, downloadName } from "./busy.js";
+import { scanLight } from "./scan.js";
 import { LANGUAGES, startLanguage, saveLanguage, modelFor, fillLanguageSelect, rememberModel, modelWasOn } from "./languages.js";
 
 const TESSERACT = "https://cdn.jsdelivr.net/npm/tesseract.js@7.0.0/dist/tesseract.esm.min.js";
@@ -413,7 +414,7 @@ async function openFile(file) {
 // Pass 1: read the screen where it changes, and find faces
 
 // A light sweeps over the video and the AI bar while the video is scanned.
-const scanning = (on) => [stage, modelBar].forEach((el) => el.classList.toggle("is-scanning", on));
+const scanning = scanLight(stage, modelBar);
 
 async function analyze(track, runId) {
   scanning(true);
@@ -1131,7 +1132,7 @@ function reset() {
   if (video.src) URL.revokeObjectURL(video.src);
   video.removeAttribute("src");
   itemsEl.replaceChildren();
-  scanning(false);
+  scanning(false, true);
   editor.hidden = true;
   drop.hidden = false;
   fileInput.value = "";

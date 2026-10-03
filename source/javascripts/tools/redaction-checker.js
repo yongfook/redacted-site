@@ -4,6 +4,7 @@ import "./polyfills.js";
 import * as pdfjs from "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.3.289/build/pdf.min.mjs";
 import { pageText, spanToRects } from "./pdf-core.js";
 import { busy, idle, note, downloadName } from "./busy.js";
+import { scanLight } from "./scan.js";
 
 pdfjs.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.3.289/build/pdf.worker.min.mjs";
 
@@ -15,6 +16,8 @@ const drop = $("drop");
 const fileInput = $("file");
 const editor = $("editor");
 const pagesEl = $("pages");
+// The scan light: over the pages while the PDF is checked.
+const scanning = scanLight(pagesEl);
 const status = $("status");
 const findingsEl = $("findings");
 const download = $("download");
@@ -61,6 +64,7 @@ async function openFile(file) {
   note(downloadNote);
 
   const findings = [];
+  scanning(true);
   try {
     await checkPages(doc, findings, runId);
     if (runId !== state.runId) return;
@@ -69,6 +73,8 @@ async function openFile(file) {
     if (runId !== state.runId) return;
     setStatus(`Could not check the PDF. ${(err && err.message) || err}`, "error");
     return;
+  } finally {
+    if (runId === state.runId) scanning(false);
   }
   state.findings = findings;
   renderFindings();
@@ -426,6 +432,7 @@ download.addEventListener("click", () => {
 
 function reset() {
   state.runId++;
+  scanning(false, true);
   if (state.doc) state.doc.destroy();
   state.doc = null;
   pagesEl.replaceChildren();

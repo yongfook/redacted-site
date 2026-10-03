@@ -6,6 +6,7 @@ import * as pdfjs from "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.3.289/build/pd
 import { CATEGORIES, collectSpans, parseTerms } from "./pii-spans.js";
 import { pageText, spanToRects, mergeRects } from "./pdf-core.js";
 import { busy, idle, note, downloadName } from "./busy.js";
+import { scanLight } from "./scan.js";
 import { startLanguage, saveLanguage, modelFor, fillLanguageSelect, rememberModel, modelWasOn } from "./languages.js";
 
 pdfjs.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.3.289/build/pdf.worker.min.mjs";
@@ -81,21 +82,33 @@ worker.onmessage = ({ data }) => {
     modelBar.dataset.state = "ready";
     modelStatus.textContent = "Runs on this device.";
     rememberModel(modelFor(lang));
+    updateScanning();
   } else if (data.type === "result") {
     const page = pending.get(data.id);
     pending.delete(data.id);
     if (!page || page.docId !== state.docId) return;
     page.modelSpans = data.spans;
     refresh();
+    updateScanning();
   } else if (data.type === "error") {
     modelBar.dataset.state = "error";
     modelStatus.textContent = `Could not load the model. ${data.message}`;
     loadButton.disabled = false;
     loadButton.textContent = "Try again";
+    updateScanning();
   }
 };
 
 let requestId = 0;
+
+// The scan light: over the pages and the AI bar while the pages are read,
+// and while the name model checks them (not while it downloads).
+const scanning = scanLight(pagesEl, modelBar);
+let reading = false;
+function updateScanning() {
+  const checking = modelBar.dataset.state === "ready" && [...pending.values()].some((p) => p.docId === state.docId);
+  scanning(reading || checking);
+}
 
 function runModel() {
   for (const page of state.pages) {
@@ -104,6 +117,7 @@ function runModel() {
     pending.set(id, page);
     worker.postMessage({ type: "detect", id, model: model(), text: page.text });
   }
+  updateScanning();
 }
 
 const startText = modelStatus.textContent;
@@ -112,6 +126,7 @@ function turnOff() {
   modelBar.dataset.state = "off";
   loadButton.disabled = false;
   modelStatus.textContent = startText;
+  updateScanning();
 }
 
 function loadModel() {
@@ -180,6 +195,8 @@ async function openFile(file) {
   note(downloadNote);
   pagesEl.replaceChildren();
   showEditor();
+  reading = true;
+  updateScanning();
 
   const measure = makeMeasure();
   for (let n = 1; n <= doc.numPages; n++) {
@@ -207,8 +224,10 @@ async function openFile(file) {
     addPageElement(page);
   }
 
+  reading = false;
   refresh();
   if (state.modelReady || modelBar.dataset.state === "loading") runModel();
+  updateScanning();
 }
 
 function showEditor() {
@@ -221,6 +240,8 @@ function reset() {
   state.doc = null;
   state.pages = [];
   state.docId++;
+  reading = false;
+  scanning(false, true);
   pagesEl.replaceChildren();
   editor.hidden = true;
   drop.hidden = false;

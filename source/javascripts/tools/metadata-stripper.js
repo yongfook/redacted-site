@@ -4,6 +4,7 @@
 import "./polyfills.js";
 import { stripJpeg, stripPng, stripWebp, pngText, webpExif, sniff } from "./metadata-core.js";
 import { busy, idle, note, downloadName } from "./busy.js";
+import { scanLight } from "./scan.js";
 
 const EXIFR = "https://cdn.jsdelivr.net/npm/exifr@7.1.3/dist/full.esm.mjs";
 const PDF_LIB = "https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.esm.min.js";
@@ -17,6 +18,8 @@ const editor = $("editor");
 const status = $("status");
 const findingsEl = $("findings");
 const preview = $("preview");
+// The scan light: over the file while its hidden details are read.
+const scanning = scanLight(preview);
 const download = $("download");
 const downloadNote = $("download-note");
 
@@ -50,12 +53,15 @@ async function openFile(file) {
   showPreview(file, kind);
 
   let found;
+  scanning(true);
   try {
     found = await readMetadata(bytes, kind, file);
   } catch (err) {
     if (runId !== state.runId) return;
     setStatus(`Could not read this ${KIND_NAMES[kind]}. ${(err && err.message) || err}`, "error");
     return;
+  } finally {
+    if (runId === state.runId) scanning(false);
   }
   if (runId !== state.runId) return;
   renderFindings(found);
@@ -394,6 +400,7 @@ function formatSize(n) {
 
 function reset() {
   state.runId++;
+  scanning(false, true);
   state.bytes = null;
   editor.hidden = true;
   drop.hidden = false;

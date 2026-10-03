@@ -24,6 +24,7 @@ import {
 import { padBox, cover } from "./blur-core.js";
 import { pseudonymizer } from "./fake-names.js";
 import { busy, idle, note, downloadName } from "./busy.js";
+import { scanLight } from "./scan.js";
 import { LANGUAGES, startLanguage, saveLanguage, modelFor, fillLanguageSelect, rememberModel, modelWasOn } from "./languages.js";
 
 const TESSERACT = "https://cdn.jsdelivr.net/npm/tesseract.js@7.0.0/dist/tesseract.esm.min.js";
@@ -77,6 +78,8 @@ export function startScreenshotTool({
   const download = $("download");
   const downloadNote = $("download-note");
   const original = $("original");
+  // The scan light: over the screenshot and the AI bar while it is read.
+  const scanning = scanLight(canvas.parentElement, modelBar);
 
   const state = {
     image: null, // canvas with the screenshot
@@ -328,6 +331,15 @@ export function startScreenshotTool({
   }
 
   async function analyze(image, runId) {
+    scanning(true);
+    try {
+      await read(image, runId);
+    } finally {
+      if (runId === state.runId) scanning(false);
+    }
+  }
+
+  async function read(image, runId) {
     const { width, height } = image;
     const rgba = image.getContext("2d").getImageData(0, 0, width, height).data;
 
@@ -753,6 +765,7 @@ export function startScreenshotTool({
 
   function reset() {
     state.runId++;
+    scanning(false, true);
     state.image = null;
     state.ocr = null;
     editor.hidden = true;

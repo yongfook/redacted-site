@@ -3,6 +3,7 @@
 import "./polyfills.js";
 import { padBox, cover } from "./blur-core.js";
 import { busy, idle, note, downloadName } from "./busy.js";
+import { scanLight } from "./scan.js";
 
 const MAX_PIXELS = 16_000_000; // iOS Safari cannot draw larger canvases.
 const SAMPLE = "/samples/solvay-1927.jpg";
@@ -15,24 +16,6 @@ const editor = $("editor");
 const canvas = $("canvas");
 const ctx = canvas.getContext("2d");
 const stage = canvas.parentElement;
-
-// A light sweeps over the photo and the AI bar while faces are found.
-// Detection on a small
-// photo is very fast, so the light stays for a moment and does not flicker.
-let scanStart = 0;
-function scanning(on) {
-  clearTimeout(scanning.timer);
-  if (on) {
-    scanStart = performance.now();
-    stage.classList.add("is-scanning");
-    modelBar.classList.add("is-scanning");
-  } else {
-    scanning.timer = setTimeout(() => {
-      stage.classList.remove("is-scanning");
-      modelBar.classList.remove("is-scanning");
-    }, Math.max(0, 800 - (performance.now() - scanStart)));
-  }
-}
 const boxes = $("boxes");
 const status = $("status");
 const strength = $("strength");
@@ -41,6 +24,8 @@ const download = $("download");
 const original = $("original");
 const downloadNote = $("download-note");
 const modelBar = $("model");
+// The scan light: over the photo and the AI bar while faces are found.
+const scanning = scanLight(stage, modelBar);
 
 const state = {
   image: null, // ImageBitmap or canvas with the photo at working size
@@ -149,9 +134,7 @@ function reset() {
   state.image = null;
   state.faces = [];
   state.requestId++;
-  clearTimeout(scanning.timer);
-  stage.classList.remove("is-scanning");
-  modelBar.classList.remove("is-scanning");
+  scanning(false, true);
   editor.hidden = true;
   drop.hidden = false;
   fileInput.value = "";

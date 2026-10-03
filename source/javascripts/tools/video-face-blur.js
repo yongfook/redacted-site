@@ -15,6 +15,7 @@ import {
 import { padBox, cover } from "./blur-core.js";
 import { Tracker, coverAt, keepTracks, groupTracks } from "./video-core.js";
 import { busy, idle, note, downloadName } from "./busy.js";
+import { scanLight } from "./scan.js";
 
 const SAMPLE = "/samples/team-meeting.mp4";
 const READY = "Runs on this device. Choose a video.";
@@ -165,7 +166,7 @@ async function openFile(file) {
 // Pass 1: find and track faces
 
 // A light sweeps over the video and the AI bar while the video is scanned.
-const scanning = (on) => [stage, modelBar].forEach((el) => el.classList.toggle("is-scanning", on));
+const scanning = scanLight(stage, modelBar);
 
 async function analyze(track, runId) {
   scanning(true);
@@ -454,7 +455,7 @@ function reset() {
   video.pause();
   if (video.src) URL.revokeObjectURL(video.src);
   video.removeAttribute("src");
-  scanning(false);
+  scanning(false, true);
   editor.hidden = true;
   drop.hidden = false;
   fileInput.value = "";
