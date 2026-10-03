@@ -133,7 +133,7 @@
 
 - name: Street View Cleaner
   slug: street-cleaner
-  landing: true
+  landing: false
   input: Image
   description: Blur faces, plates and house numbers together in one pass, for travel and real estate photos.
   model: Multi-object detection
