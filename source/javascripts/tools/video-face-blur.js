@@ -36,6 +36,7 @@ const editor = $("editor");
 const status = $("status");
 const canvas = $("canvas");
 const ctx = canvas.getContext("2d");
+const stage = canvas.parentElement;
 const video = $("video");
 const playButton = $("play");
 const scrubber = $("scrubber");
@@ -163,7 +164,17 @@ async function openFile(file) {
 
 // Pass 1: find and track faces
 
+// A light sweeps over the video while it is scanned.
 async function analyze(track, runId) {
+  stage.classList.add("is-scanning");
+  try {
+    await scan(track, runId);
+  } finally {
+    if (runId === state.runId) stage.classList.remove("is-scanning");
+  }
+}
+
+async function scan(track, runId) {
   const scale = Math.min(1, DETECT_WIDTH / state.width);
   const dw = Math.round(state.width * scale);
   const dh = Math.round(state.height * scale);
@@ -441,6 +452,7 @@ function reset() {
   video.pause();
   if (video.src) URL.revokeObjectURL(video.src);
   video.removeAttribute("src");
+  stage.classList.remove("is-scanning");
   editor.hidden = true;
   drop.hidden = false;
   fileInput.value = "";

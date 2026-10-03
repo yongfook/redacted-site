@@ -14,6 +14,20 @@ const fileInput = $("file");
 const editor = $("editor");
 const canvas = $("canvas");
 const ctx = canvas.getContext("2d");
+const stage = canvas.parentElement;
+
+// A light sweeps over the photo while faces are found. Detection on a small
+// photo is very fast, so the light stays for a moment and does not flicker.
+let scanStart = 0;
+function scanning(on) {
+  clearTimeout(scanning.timer);
+  if (on) {
+    scanStart = performance.now();
+    stage.classList.add("is-scanning");
+  } else {
+    scanning.timer = setTimeout(() => stage.classList.remove("is-scanning"), Math.max(0, 800 - (performance.now() - scanStart)));
+  }
+}
 const boxes = $("boxes");
 const status = $("status");
 const strength = $("strength");
@@ -53,11 +67,13 @@ worker.onmessage = ({ data }) => {
   if (data.type === "progress") {
     setStatus(`Looking for faces… ${Math.round((data.done / data.total) * 100)}%`, "busy");
   } else if (data.type === "result") {
+    scanning(false);
     state.faces = data.faces.map(padFace);
     render();
     updateStatus();
     download.disabled = false;
   } else if (data.type === "error") {
+    scanning(false);
     setStatus(`Could not run face detection. ${data.message} Drag to add boxes.`, "error");
     download.disabled = false;
   }
@@ -113,6 +129,7 @@ async function useBitmap(bitmap) {
 
   download.disabled = true;
   setStatus("Looking for faces…", "busy");
+  scanning(true);
   state.requestId++;
   const copy = await createImageBitmap(work);
   worker.postMessage({ type: "detect", id: state.requestId, bitmap: copy }, [copy]);
@@ -127,6 +144,8 @@ function reset() {
   state.image = null;
   state.faces = [];
   state.requestId++;
+  clearTimeout(scanning.timer);
+  stage.classList.remove("is-scanning");
   editor.hidden = true;
   drop.hidden = false;
   fileInput.value = "";

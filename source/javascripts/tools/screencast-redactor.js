@@ -103,6 +103,7 @@ const chips = $("categories");
 const customInput = $("custom");
 const canvas = $("canvas");
 const ctx = canvas.getContext("2d");
+const stage = canvas.parentElement;
 const boxesEl = $("boxes");
 const video = $("video");
 const playButton = $("play");
@@ -396,11 +397,15 @@ async function openFile(file) {
   note(downloadNote);
   drop.hidden = true;
   editor.hidden = false;
+  stage.classList.add("is-scanning");
 
   try {
     await loadModels();
   } catch (err) {
-    if (runId === state.runId) setStatus(`Could not load the AI models. ${(err && err.message) || err} Reload the page to try again.`, "error");
+    if (runId === state.runId) {
+      stage.classList.remove("is-scanning");
+      setStatus(`Could not load the AI models. ${(err && err.message) || err} Reload the page to try again.`, "error");
+    }
     return;
   }
   if (runId !== state.runId) return;
@@ -409,7 +414,17 @@ async function openFile(file) {
 
 // Pass 1: read the screen where it changes, and find faces
 
+// A light sweeps over the video while it is scanned.
 async function analyze(track, runId) {
+  stage.classList.add("is-scanning");
+  try {
+    await scan(track, runId);
+  } finally {
+    if (runId === state.runId) stage.classList.remove("is-scanning");
+  }
+}
+
+async function scan(track, runId) {
   state.snapshots = [];
   state.checks = [];
   state.faceTracks = [];
@@ -1115,6 +1130,7 @@ function reset() {
   if (video.src) URL.revokeObjectURL(video.src);
   video.removeAttribute("src");
   itemsEl.replaceChildren();
+  stage.classList.remove("is-scanning");
   editor.hidden = true;
   drop.hidden = false;
   fileInput.value = "";

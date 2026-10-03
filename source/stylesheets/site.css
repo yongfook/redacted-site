@@ -1002,6 +1002,36 @@ textarea:focus {
   background: #f2f2f2;
 }
 
+/* A light that sweeps over the picture while the AI scans it. */
+.stage.is-scanning::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.5) 44%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0.5) 56%, transparent 70%)
+      no-repeat,
+    rgba(0, 0, 0, 0.12);
+  background-size: 250% 100%, auto;
+  animation: scan 1.8s ease-in-out infinite;
+}
+
+@keyframes scan {
+  from {
+    background-position: 120% 0, 0 0;
+  }
+  to {
+    background-position: -20% 0, 0 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage.is-scanning::after {
+    animation: none;
+    background-position: 50% 0, 0 0;
+  }
+}
+
 .stage canvas {
   display: block;
   width: 100%;
