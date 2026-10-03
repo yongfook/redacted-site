@@ -397,13 +397,11 @@ async function openFile(file) {
   note(downloadNote);
   drop.hidden = true;
   editor.hidden = false;
-  stage.classList.add("is-scanning");
 
   try {
     await loadModels();
   } catch (err) {
     if (runId === state.runId) {
-      stage.classList.remove("is-scanning");
       setStatus(`Could not load the AI models. ${(err && err.message) || err} Reload the page to try again.`, "error");
     }
     return;
@@ -414,17 +412,20 @@ async function openFile(file) {
 
 // Pass 1: read the screen where it changes, and find faces
 
-// A light sweeps over the video while it is scanned.
+// A light sweeps over the video and the AI bar while the video is scanned.
+const scanning = (on) => [stage, modelBar].forEach((el) => el.classList.toggle("is-scanning", on));
+
 async function analyze(track, runId) {
-  stage.classList.add("is-scanning");
+  scanning(true);
   try {
     await scan(track, runId);
   } finally {
-    if (runId === state.runId) stage.classList.remove("is-scanning");
+    if (runId === state.runId) scanning(false);
   }
 }
 
 async function scan(track, runId) {
+  setStatus("Reading the screen…", "busy");
   state.snapshots = [];
   state.checks = [];
   state.faceTracks = [];
@@ -1130,7 +1131,7 @@ function reset() {
   if (video.src) URL.revokeObjectURL(video.src);
   video.removeAttribute("src");
   itemsEl.replaceChildren();
-  stage.classList.remove("is-scanning");
+  scanning(false);
   editor.hidden = true;
   drop.hidden = false;
   fileInput.value = "";

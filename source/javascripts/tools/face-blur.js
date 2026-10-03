@@ -16,7 +16,8 @@ const canvas = $("canvas");
 const ctx = canvas.getContext("2d");
 const stage = canvas.parentElement;
 
-// A light sweeps over the photo while faces are found. Detection on a small
+// A light sweeps over the photo and the AI bar while faces are found.
+// Detection on a small
 // photo is very fast, so the light stays for a moment and does not flicker.
 let scanStart = 0;
 function scanning(on) {
@@ -24,8 +25,12 @@ function scanning(on) {
   if (on) {
     scanStart = performance.now();
     stage.classList.add("is-scanning");
+    modelBar.classList.add("is-scanning");
   } else {
-    scanning.timer = setTimeout(() => stage.classList.remove("is-scanning"), Math.max(0, 800 - (performance.now() - scanStart)));
+    scanning.timer = setTimeout(() => {
+      stage.classList.remove("is-scanning");
+      modelBar.classList.remove("is-scanning");
+    }, Math.max(0, 800 - (performance.now() - scanStart)));
   }
 }
 const boxes = $("boxes");
@@ -146,6 +151,7 @@ function reset() {
   state.requestId++;
   clearTimeout(scanning.timer);
   stage.classList.remove("is-scanning");
+  modelBar.classList.remove("is-scanning");
   editor.hidden = true;
   drop.hidden = false;
   fileInput.value = "";

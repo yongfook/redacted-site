@@ -164,13 +164,15 @@ async function openFile(file) {
 
 // Pass 1: find and track faces
 
-// A light sweeps over the video while it is scanned.
+// A light sweeps over the video and the AI bar while the video is scanned.
+const scanning = (on) => [stage, modelBar].forEach((el) => el.classList.toggle("is-scanning", on));
+
 async function analyze(track, runId) {
-  stage.classList.add("is-scanning");
+  scanning(true);
   try {
     await scan(track, runId);
   } finally {
-    if (runId === state.runId) stage.classList.remove("is-scanning");
+    if (runId === state.runId) scanning(false);
   }
 }
 
@@ -452,7 +454,7 @@ function reset() {
   video.pause();
   if (video.src) URL.revokeObjectURL(video.src);
   video.removeAttribute("src");
-  stage.classList.remove("is-scanning");
+  scanning(false);
   editor.hidden = true;
   drop.hidden = false;
   fileInput.value = "";
