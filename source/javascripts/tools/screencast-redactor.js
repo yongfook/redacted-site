@@ -51,6 +51,12 @@ const FACE_EVERY = 2; // Look for faces on every 2nd checked frame.
 const FACE_WIDTH = 1280;
 const FACE_TIMING = { lead: (1.5 * FACE_EVERY) / CHECK_FPS, hold: 1.0 };
 const MOTION_PAD = 0.12;
+// Row fingerprints: the screen made PROFILE_WIDTH wide, each row cut into
+// BANDS columns, and each piece averaged. Comparing them says how far the
+// screen scrolled since a check, for each drawn frame.
+const PROFILE_WIDTH = 640;
+const BANDS = 16;
+const SEARCH = 24; // rows to search around the expected scroll
 // Text found in one check but missed in the one before or after it (a bad
 // read) is carried to it, moved with the scroll, at most this many times.
 const CARRY = 8;
@@ -430,6 +436,7 @@ async function analyze(track, runId) {
   const tracker = new Tracker({ maxGap: 2 });
   const faceScale = Math.min(1, FACE_WIDTH / ow);
   let prev = null;
+  let prevProfile = null;
   let words = [];
   let scrolled = 0;
   let n = 0;
@@ -446,9 +453,12 @@ async function analyze(track, runId) {
       sctx.drawImage(frame.canvas, 0, 0, dw, dh);
       const gray = grayOf(sctx.getImageData(0, 0, dw, dh).data);
       const bands = prev ? changedBands(prev, gray, dw, dh) : [{ y0: 0, y1: dh }];
-      const shift = prev && bands.length ? scrollShift(prev, gray, dw, dh) * (oh / dh) : 0;
+      const profile = profileOf(frame.canvas);
+      // Scroll since the last check, in frame (OCR) pixels.
+      const shift = prevProfile && bands.length ? measureScroll(profile, prevProfile) * scale : 0;
       scrolled += shift;
       prev = gray;
+      prevProfile = profile;
       state.checks.push({ t, y: scrolled });
 
       if (bands.length) {
@@ -467,7 +477,7 @@ async function analyze(track, runId) {
         const rules = [...detectSecrets(text), ...domainSpans(text), ...usernameSpans(text), ...dateTimeSpans(text)];
         const modelSpans = await findNames(text);
         if (runId !== state.runId) return;
-        state.snapshots.push({ t, y: scrolled, scroll: shift !== 0, bands: regions, text, parts, rules, modelSpans });
+        state.snapshots.push({ t, y: scrolled, scroll: shift !== 0, bands: regions, text, parts, rules, modelSpans, profile });
       }
 
       if ((n - 1) % FACE_EVERY === 0) {
@@ -590,34 +600,6 @@ function changedBands(prev, gray, w, h) {
   return bands.map((b) => ({ y0: Math.max(0, b.y0 - 1), y1: Math.min(h, b.y1 + 1) }));
 }
 
-// How far the screen scrolled up between two frames, in rows of the small
-// frame (0 when it did not scroll). It compares each row with the rows a few
-// steps higher and lower, and keeps the best match.
-function scrollShift(prev, gray, w, h) {
-  const cost = (s) => {
-    let sum = 0;
-    let n = 0;
-    for (let y = Math.max(0, -s); y < Math.min(h, h - s); y += 2) {
-      for (let x = 0, i = y * w, j = (y + s) * w; x < w; x += 2) sum += Math.abs(gray[i + x] - prev[j + x]);
-      n++;
-    }
-    return n > h / 6 ? sum / n : Infinity;
-  };
-  const still = cost(0);
-  let best = 0;
-  let bestCost = still;
-  for (let s = 1; s < h / 2; s++) {
-    for (const d of [s, -s]) {
-      const c = cost(d);
-      if (c < bestCost) {
-        best = d;
-        bestCost = c;
-      }
-    }
-  }
-  return bestCost < still * 0.6 ? best : 0;
-}
-
 // Items: the same text in the whole video is one item, so one click shows or
 // hides it everywhere.
 
@@ -731,7 +713,8 @@ const categoryOn = (cat) => cat === "custom" || state.enabled.has(cat);
 const isOn = (item) => categoryOn(item.cat) && !state.off.has(item.key);
 
 // Boxes to hide at time t, in the given frame size.
-function boxesAt(t, width, height) {
+// profile: the fingerprint of the frame being drawn, or null.
+function boxesAt(t, width, height, profile = null) {
   const k = width / state.width;
   const out = [];
   const scaled = (b, shape) => ({ x: b.x * k, y: b.y * k, w: b.w * k, h: b.h * k, shape });
@@ -751,23 +734,22 @@ function boxesAt(t, width, height) {
     }
   }
   if (i >= 0 && snaps[i].entries) {
-    // Between two checks the screen can scroll: cover each box at both
-    // checks' scroll positions and all the way between them.
-    const [a, b] = checksAround(t);
-    const ks = 1 / state.ocrScale;
-    const moved = (snap, e) => {
-      const at = (c) => ({ ...e.box, y: e.box.y - (c.y - snap.y) * ks });
-      return hull(at(a), at(b));
-    };
-    const now = snaps[i].entries.filter((e) => isOn(e.item));
-    const before = i > 0 && t <= snaps[i].t ? snaps[i - 1].entries.filter((e) => isOn(e.item)) : [];
-    const used = new Set();
-    for (const e of now) {
-      const old = before.find((o) => o.item === e.item && o.n === e.n);
-      if (old) used.add(old);
-      out.push(scaled(old ? hull(moved(snaps[i - 1], old), moved(snaps[i], e)) : moved(snaps[i], e), "rect"));
+    // Each box is drawn where its text is in this frame: the screen may have
+    // scrolled since the check that read it. A box on a part that does not
+    // scroll (a fixed header) stays where it is.
+    const list = [snaps[i], ...(i > 0 && t <= snaps[i].t ? [snaps[i - 1]] : [])];
+    const done = new Set();
+    for (const snap of list) {
+      const shift = scrollSince(snap, t, profile);
+      for (const e of snap.entries) {
+        if (!isOn(e.item)) continue;
+        const id = `${e.item.key}#${e.n}`;
+        if (done.has(id)) continue;
+        done.add(id);
+        const d = profile && shift ? boxShift(snap, e.box, shift, profile) : shift;
+        out.push(scaled({ ...e.box, y: e.box.y - d }, "rect"));
+      }
     }
-    for (const o of before) if (!used.has(o)) out.push(scaled(moved(snaps[i - 1], o), "rect"));
   }
 
   for (const item of state.items) {
@@ -782,10 +764,69 @@ function boxesAt(t, width, height) {
   return out;
 }
 
-// The checked frames just before and just after t.
-function checksAround(t) {
+// The fingerprint of a frame (any size).
+const profileCanvas = new OffscreenCanvas(1, 1);
+const profileCtx = profileCanvas.getContext("2d", { willReadFrequently: true });
+
+function profileOf(source) {
+  const w = PROFILE_WIDTH;
+  const h = Math.max(1, Math.round((PROFILE_WIDTH * state.height) / state.width));
+  if (profileCanvas.width !== w || profileCanvas.height !== h) {
+    profileCanvas.width = w;
+    profileCanvas.height = h;
+  }
+  profileCtx.drawImage(source, 0, 0, w, h);
+  const px = profileCtx.getImageData(0, 0, w, h).data;
+  const band = w / BANDS;
+  const out = new Float32Array(h * BANDS);
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const i = (y * w + x) * 4;
+      out[y * BANDS + Math.floor(x / band)] += px[i] * 0.299 + px[i + 1] * 0.587 + px[i + 2] * 0.114;
+    }
+  }
+  for (let j = 0; j < out.length; j++) out[j] /= band;
+  return { rows: h, data: out };
+}
+
+// How different two fingerprints are when the frame is moved up by p rows,
+// over the given rows and bands of the frame. Lower is closer.
+// Infinity when fewer than minRows rows can be compared.
+function profileCost(cur, ref, p, y0 = 0, y1 = cur.rows, b0 = 0, b1 = BANDS, minRows = 1) {
+  let sum = 0;
+  let rows = 0;
+  for (let y = Math.max(y0, -p, 0); y < Math.min(y1, cur.rows - p, cur.rows); y++) {
+    for (let b = b0; b < b1; b++) sum += Math.abs(cur.data[y * BANDS + b] - ref.data[(y + p) * BANDS + b]);
+    rows++;
+  }
+  return rows >= minRows && rows ? sum / (rows * (b1 - b0)) : Infinity;
+}
+
+// How far (video pixels) the screen scrolled up between two frames, from
+// their fingerprints: 0 when it did not scroll, or when the screen changed in
+// another way.
+function measureScroll(cur, ref) {
+  const toRows = cur.rows / state.height;
+  const still = profileCost(cur, ref, 0);
+  let best = 0;
+  let bestCost = still;
+  for (let p = 1; p < cur.rows / 2; p++) {
+    for (const d of [p, -p]) {
+      const cost = profileCost(cur, ref, d);
+      if (cost < bestCost) {
+        best = d;
+        bestCost = cost;
+      }
+    }
+  }
+  return bestCost < still * 0.6 && bestCost < 12 ? best / toRows : 0;
+}
+
+// How far (video pixels) the screen scrolled up between the check that made
+// snap and time t. With the frame's fingerprint it is measured; without it,
+// it is estimated from the checks before and after t.
+function scrollSince(snap, t, profile) {
   const c = state.checks;
-  if (!c.length) return [{ y: 0 }, { y: 0 }];
   let lo = 0;
   let hi = c.length - 1;
   while (lo < hi) {
@@ -793,14 +834,46 @@ function checksAround(t) {
     if (c[mid].t <= t) lo = mid;
     else hi = mid - 1;
   }
-  return [c[lo], c[Math.min(c.length - 1, lo + (c[lo].t < t ? 1 : 0))]];
+  const a = c[lo] || { t, y: snap.y };
+  const b = c[lo + 1] && a.t < t ? c[lo + 1] : a;
+  const y = b.t > a.t ? a.y + ((b.y - a.y) * (t - a.t)) / (b.t - a.t) : a.y;
+  const guess = (y - snap.y) / state.ocrScale;
+  if (!profile || !snap.profile) return Math.round(guess);
+
+  const toRows = profile.rows / state.height;
+  const center = Math.round(guess * toRows);
+  let best = 0;
+  let bestCost = profileCost(profile, snap.profile, 0);
+  if (bestCost === 0) return 0;
+  for (let p = center - SEARCH; p <= center + SEARCH; p++) {
+    if (p === 0 || Math.abs(p) >= profile.rows / 2) continue;
+    const cost = profileCost(profile, snap.profile, p);
+    if (cost < bestCost) {
+      best = p;
+      bestCost = cost;
+    }
+  }
+  // A poor match: the screen changed more than it scrolled. Use the estimate.
+  if (bestCost > 12) return Math.round(guess);
+  return best / toRows;
 }
 
-const hull = (a, b) => {
-  const x = Math.min(a.x, b.x);
-  const y = Math.min(a.y, b.y);
-  return { x, y, w: Math.max(a.x + a.w, b.x + b.w) - x, h: Math.max(a.y + a.h, b.y + b.h) - y };
-};
+// Does the part of the screen under this box scroll with the page, or stay
+// (a fixed header or sidebar)? Compare both places with the check's frame.
+function boxShift(snap, box, shift, profile) {
+  const toRows = profile.rows / state.height;
+  const p = Math.round(shift * toRows);
+  const y0 = Math.floor(box.y * toRows) - 1;
+  const y1 = Math.ceil((box.y + box.h) * toRows) + 1;
+  const b0 = Math.max(0, Math.floor((box.x / state.width) * BANDS));
+  const b1 = Math.min(BANDS, Math.ceil(((box.x + box.w) / state.width) * BANDS));
+  const minRows = Math.max(2, (y1 - y0) / 2);
+  const still = profileCost(profile, snap.profile, 0, y0, y1, b0, b1, minRows);
+  const moved = profileCost(profile, snap.profile, p, y0 - p, y1 - p, b0, b1, minRows);
+  // Move with the scroll unless staying still is clearly the better match.
+  // Near the edge of the frame there can be too few rows to compare.
+  return Number.isFinite(still) && Number.isFinite(moved) && still < moved * 0.7 ? 0 : shift;
+}
 
 const options = (shape) => ({ style: state.style, strength: +strength.value, shape });
 
@@ -870,7 +943,8 @@ function drawFrame() {
   if (video.readyState < 2) return;
   ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
   if (!state.showOriginal) {
-    for (const box of boxesAt(video.currentTime, canvas.width, canvas.height)) cover(ctx, canvas, box, options(box.shape));
+    const profile = state.done ? profileOf(canvas) : null;
+    for (const box of boxesAt(video.currentTime, canvas.width, canvas.height, profile)) cover(ctx, canvas, box, options(box.shape));
   }
   scrubber.value = video.currentTime;
   timeLabel.textContent = `${formatTime(video.currentTime)} / ${formatTime(state.duration)}`;
@@ -992,7 +1066,8 @@ download.addEventListener("click", async () => {
         processedHeight: outHeight,
         process: (sample) => {
           sample.draw(fctx, 0, 0, outWidth, outHeight);
-          for (const box of boxesAt(sample.timestamp, outWidth, outHeight)) cover(fctx, frame, box, options(box.shape));
+          const profile = profileOf(frame);
+          for (const box of boxesAt(sample.timestamp, outWidth, outHeight, profile)) cover(fctx, frame, box, options(box.shape));
           return frame;
         },
       },
