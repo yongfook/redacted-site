@@ -63,6 +63,14 @@
   description: Drop in a screenshot. The tool reads the text on screen and covers emails, phone numbers, usernames and tokens.
   model: OCR + face + entity detection
 
+- name: Screencast Redactor
+  slug: screencast-redactor
+  landing: true
+  live: true
+  input: Video
+  description: Hide emails, API keys, passwords, names and faces in a screen recording, such as a product demo. The screen is read as it changes.
+  model: OCR + face + entity detection
+
 - name: Redaction Checker
   slug: redaction-checker
   landing: true

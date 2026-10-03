@@ -1219,6 +1219,10 @@ textarea:focus {
   color: var(--grey);
 }
 
+.people[data-empty]:empty::before {
+  content: attr(data-empty);
+}
+
 .person {
   display: flex;
   align-items: center;
