@@ -1,6 +1,23 @@
 ---
 title: "Free Tool to Remove Personal Data From Text"
 description: "Paste text and hide names, emails, phone numbers, addresses and card numbers. A local AI model runs in your browser. Nothing is uploaded."
+faq:
+  - q: "Is the Text Redactor free?"
+    a: "Yes. The tool is free, with no account, no sign-up and no limit on how often you use it."
+  - q: "Is my text uploaded to a server?"
+    a: "No. The page has no server code. Detection runs in your browser, and your text never leaves your device. The only download is the AI model itself, which contains no user data."
+  - q: "Does it work offline?"
+    a: "After the AI model downloads once, your browser keeps it in its cache. The tool can then detect personal data without a network connection."
+  - q: "Which languages does it support?"
+    a: "The pattern detectors for emails, phone numbers, cards and IDs work in any language. The AI model that finds names, organizations and places is available for English, Spanish, French, German, Dutch, Chinese, Japanese and Thai."
+  - q: "Can someone undo the redaction?"
+    a: "No. The tool replaces the original words with labels or blocks in the copied or downloaded text. The original values are not hidden underneath, so there is nothing to recover."
+  - q: "Is automatic redaction 100% accurate?"
+    a: "No automatic tool is perfect. It can miss unusual names or hide words that are not personal. Always read the result before you share it, click a redaction to keep the original, and add any missed words to the always-hide list."
+  - q: "Can I use it to anonymize text before I paste it into ChatGPT or another AI chatbot?"
+    a: "Yes. Choose numbered labels such as [NAME_1] and [NAME_2]. Each person keeps the same label all through the text, so the chatbot can still follow who is who without seeing real names."
+  - q: "Can I redact PDFs, screenshots or chat logs?"
+    a: "This tool is for plain text. For other files, use the PDF Redactor, the Screenshot Redactor or the Chat Text Anonymizer, which run in your browser in the same way."
 ---
 
 <section class="tool-hero">
@@ -89,6 +106,63 @@ description: "Paste text and hide names, emails, phone numbers, addresses and ca
         <p>Use numbered labels to remove personal data before you paste text into a chatbot. The same person always gets the same label.</p>
       </div>
     </div>
+  </div>
+</section>
+
+<section class="tool-about">
+  <div class="wrap">
+    <article class="prose">
+      <h2>What is text redaction?</h2>
+      <p>Text redaction is the removal of sensitive information from a document before other people see it. The redacted words are replaced with a label such as [NAME], a black block or the word [REDACTED], so readers can still follow the text but cannot see the private details.</p>
+      <p>Redaction is different from deleting text. When you redact, you keep the structure and meaning of the document and remove only the parts that identify a person or expose confidential data, such as names, email addresses, phone numbers, home addresses, bank details and ID numbers.</p>
+
+      <h2>Why use a text redaction tool?</h2>
+      <p>Manual redaction is slow, and it is easy to miss things. A long email thread or support log can mention the same customer in ten different ways: a full name, a first name, an email signature, a phone number in a footer. A redaction tool scans every line and finds these for you in seconds.</p>
+      <p>A tool is also more consistent. It applies the same rules to the whole text, so the name it hides in the first paragraph is also hidden in the last one. That matters when you share data with a vendor, publish an example, file a bug report or meet privacy rules such as the GDPR, HIPAA or the CCPA.</p>
+
+      <h2>How does the Text Redactor work?</h2>
+      <ol>
+        <li><strong>Paste your text</strong> into the Original pane, or click "Paste an example" to try it.</li>
+        <li><strong>Turn on AI</strong> to find names, organizations and places. Without it, the tool still finds emails, phone numbers, cards and ID numbers.</li>
+        <li><strong>Choose what to hide</strong> with the category buttons, and choose how to replace it: labels, numbered labels, blocks or [REDACTED].</li>
+        <li><strong>Check the result.</strong> Click any redaction to keep the original word, or add words to "Always hide these words".</li>
+        <li><strong>Copy or download</strong> the clean text as a .txt file.</li>
+      </ol>
+      <p>The tool uses two kinds of detection. Pattern rules catch data with a fixed format, such as email addresses, card numbers, IBANs, US Social Security numbers, UK National Insurance numbers, IP addresses and API keys. A small AI model for named-entity recognition reads the context of each sentence to find names, organizations and places that no fixed rule can catch.</p>
+
+      <h2>Is my text safe?</h2>
+      <p>Yes. Most online redaction tools upload your text to a server to process it. This one does not. The page has no server code: detection runs entirely in your browser, and your text never leaves your device.</p>
+      <p>The AI model downloads once from Hugging Face and your browser keeps it in its cache. The download contains only the model, not your data. Read our <a href="/privacy/">privacy policy</a> for the details.</p>
+
+      <h2>What can the Text Redactor find and remove?</h2>
+      <ul>
+        <li><strong>Names</strong> of people</li>
+        <li><strong>Organizations</strong>, such as company and school names</li>
+        <li><strong>Places and addresses</strong>, including street addresses and postcodes</li>
+        <li><strong>Emails and phone numbers</strong>, including international formats</li>
+        <li><strong>Dates and ages</strong>, such as dates of birth</li>
+        <li><strong>Card and bank numbers</strong>, including credit cards and IBANs</li>
+        <li><strong>ID numbers</strong>, such as Social Security and National Insurance numbers</li>
+        <li><strong>URLs, IP addresses and secrets</strong>, such as passwords and API keys</li>
+        <li><strong>Any words you choose</strong>, such as project code names or client names</li>
+      </ul>
+
+      <h2>Who uses a text redaction tool?</h2>
+      <ul>
+        <li><strong>Support and operations teams</strong> who share customer tickets, logs or chat transcripts with colleagues or vendors.</li>
+        <li><strong>Developers</strong> who paste error logs or data samples into bug reports, forums or AI coding assistants.</li>
+        <li><strong>HR and legal teams</strong> who share complaints, case notes or contracts with names removed.</li>
+        <li><strong>Researchers and teachers</strong> who anonymize interview transcripts, survey answers or student work.</li>
+        <li><strong>Journalists</strong> who protect sources in notes and documents.</li>
+        <li><strong>Anyone who uses AI chatbots</strong> and wants to remove personal data from a prompt before they send it.</li>
+      </ul>
+
+      <h2>Text Redactor vs. manual redaction</h2>
+      <p>Manual redaction means reading every line and deleting or replacing each sensitive word by hand. It works for a short note, but on long text people get tired and miss things, and "find and replace" only catches the exact spelling you search for.</p>
+      <p>The Text Redactor finds data in many formats at once, uses the same label for the same person all through the text, and shows every change so you can check it. It is still good practice to read the result before you share it. For PDF files, use the <a href="/tools/pdf-redactor/">PDF Redactor</a>, and use the <a href="/tools/redaction-checker/">Redaction Checker</a> to test a PDF for black boxes that still have readable text under them.</p>
+
+      <%= partial "partials/tool_faq" %>
+    </article>
   </div>
 </section>
 

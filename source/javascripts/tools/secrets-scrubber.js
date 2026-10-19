@@ -34,7 +34,7 @@ const CATEGORIES = [
   { id: "private", label: "Private keys", on: true },
   { id: "conn", label: "Connection strings", on: true },
   { id: "host", label: "Internal hostnames", on: true },
-  { id: "ip", label: "IP & MAC addresses", on: true },
+  { id: "ip", label: "IP addresses", on: true },
   { id: "email", label: "Emails", on: true },
   { id: "url", label: "All URLs", on: false },
 ];

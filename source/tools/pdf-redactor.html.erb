@@ -1,6 +1,23 @@
 ---
 title: "Free Tool to Redact a PDF Online Privately"
 description: "Black out names, emails, phone and account numbers in a PDF. The text under each bar is removed, not covered. Runs in your browser. No upload."
+faq:
+  - q: "Is the PDF Redactor free?"
+    a: "Yes. The tool is free, with no account, no sign-up, no watermark and no limit on how often you use it."
+  - q: "Is my PDF uploaded to a server?"
+    a: "No. The page has no server code. Your PDF is read, redacted and saved in your browser, and it never leaves your device. The only downloads are the page's code and the optional AI model, which contain no user data."
+  - q: "Can someone remove the black bars and read the text under them?"
+    a: "No. The tool does not draw bars on top of the old text. It makes each page of the new PDF from an image of the page with the bars already in it. The original text, hidden layers and earlier versions are not in the new file, so there is nothing under the bars to recover."
+  - q: "Can I undo a redaction?"
+    a: "Before you download, yes. Click a bar to show the text under it again, or click a bar you drew to remove it. After you download, the redacted PDF cannot be undone. Keep your original file if you need it."
+  - q: "Is automatic redaction 100% accurate?"
+    a: "No automatic tool is perfect. It can miss unusual names or black out words that are not personal. Read every page before you share the PDF, click a bar to show the text under it, and drag on a page to add a bar."
+  - q: "Can I redact a scanned PDF?"
+    a: "Yes, by hand. A scanned PDF has no text that the tool can read, so it does not find personal data automatically. Drag on each page to draw a black bar over the parts you want to hide."
+  - q: "Can I still select or search the text in the redacted PDF?"
+    a: "No. Each page of the new PDF is an image, so its text cannot be selected, copied or searched. Links, bookmarks and form fields are also not kept."
+  - q: "Can I open a PDF that has a password?"
+    a: "No. Remove the password in your PDF app first, then open the PDF in the tool."
 ---
 
 <section class="tool-hero">
@@ -80,6 +97,65 @@ description: "Black out names, emails, phone and account numbers in a PDF. The t
         <p>The page has no server code. <a href="https://mozilla.github.io/pdf.js/" target="_blank" rel="noopener">PDF.js</a> reads the PDF in your browser, and the optional AI model, <a href="https://huggingface.co/onnx-community/bert-small-pii-detection-ONNX" target="_blank" rel="noopener">bert-small-pii-detection</a>, runs on your device. The new PDF does not keep the original's metadata.</p>
       </div>
     </div>
+  </div>
+</section>
+
+<section class="tool-about">
+  <div class="wrap">
+    <article class="prose">
+      <h2>What is PDF redaction?</h2>
+      <p>PDF redaction is the permanent removal of sensitive information from a PDF before you share it. The redacted parts show as black bars, so readers can see that something was removed but cannot see what it was.</p>
+      <p>Real redaction is more than a black shape on the page. Many PDF editors let you draw a black box over text, but the text stays in the file. Anyone can select it, copy it or open the file in another app and read it. A redacted PDF must not contain the hidden text at all.</p>
+
+      <h2>Why use a PDF redaction tool?</h2>
+      <p>Redacting a long PDF by hand is slow, and it is easy to miss things. A contract, a bank statement or a medical letter can show the same name, address and account number on many pages. The PDF Redactor reads the text on every page and puts a bar over each match in seconds.</p>
+      <p>A tool is also safer than drawing boxes yourself. Black boxes added in a PDF editor or a word processor often leave the text under them, and leaked documents of this kind are found in court cases and in the news. This tool makes a new PDF that has no text left under the bars.</p>
+
+      <h2>How does the PDF Redactor work?</h2>
+      <ol>
+        <li><strong>Choose a PDF</strong> or drop it on the page. You can also click "Try an example PDF".</li>
+        <li><strong>Turn on AI</strong> to find names, organizations and places. Choose the language of the PDF first. Without AI, the tool still finds emails, phone numbers, cards and ID numbers.</li>
+        <li><strong>Choose what to hide</strong> with the category buttons, and add any other words to "Always hide these words".</li>
+        <li><strong>Check every page.</strong> Click a bar to show the text under it. Drag on a page to add a bar, for example over a signature, a photo or a handwritten note. Hold "Hold to see original" to compare.</li>
+        <li><strong>Download the redacted PDF.</strong> The tool makes a new file with the bars burned into each page.</li>
+      </ol>
+      <p>The tool uses two kinds of detection. Pattern rules catch data with a fixed format, such as email addresses, card numbers, IBANs, US Social Security numbers, UK National Insurance numbers, IP addresses and API keys. A small AI model for named-entity recognition reads the context of each sentence to find names, organizations and places. To make the download, the tool draws each page as an image at print quality, fills the bars with black, and puts the images into a new PDF.</p>
+
+      <h2>Is my PDF safe?</h2>
+      <p>Yes. Most online PDF redaction tools upload your file to a server. This one does not. The page has no server code: <a href="https://mozilla.github.io/pdf.js/" target="_blank" rel="noopener">PDF.js</a> reads the PDF in your browser, detection runs on your device, and the new PDF is made in your browser too.</p>
+      <p>The optional AI model downloads once from Hugging Face and your browser keeps it in its cache. The English model is 29 MB. The model for Spanish, French, German, Dutch, Chinese and Japanese, and the model for Thai, are larger. The download contains only the model, not your data. Read our <a href="/privacy/">privacy policy</a> for the details.</p>
+
+      <h2>What can the PDF Redactor find and remove?</h2>
+      <ul>
+        <li><strong>Names</strong> of people</li>
+        <li><strong>Organizations</strong>, such as company and school names</li>
+        <li><strong>Places and addresses</strong>, including street addresses and postcodes</li>
+        <li><strong>Emails and phone numbers</strong>, including international formats</li>
+        <li><strong>Dates and ages</strong>, such as dates of birth</li>
+        <li><strong>Card and bank numbers</strong>, including credit cards and IBANs</li>
+        <li><strong>ID numbers</strong>, such as Social Security and National Insurance numbers</li>
+        <li><strong>URLs, IP addresses and secrets</strong>, such as passwords and API keys</li>
+        <li><strong>Any words you choose</strong>, such as project code names or client names</li>
+        <li><strong>Anything you draw a bar over</strong>, such as signatures, photos, stamps and scanned pages</li>
+      </ul>
+      <p>The new PDF also does not keep the original's metadata, such as the author name or the title.</p>
+
+      <h2>Who uses a PDF redaction tool?</h2>
+      <ul>
+        <li><strong>Lawyers and paralegals</strong> who share contracts, court filings and evidence with names and account numbers removed.</li>
+        <li><strong>HR teams</strong> who share complaints, payslips or employee records.</li>
+        <li><strong>Public sector staff</strong> who answer freedom of information requests.</li>
+        <li><strong>Journalists</strong> who publish documents and protect their sources.</li>
+        <li><strong>Small businesses and freelancers</strong> who send invoices, bank statements or ID documents to a third party.</li>
+        <li><strong>Anyone</strong> who wants to share a PDF without their address, phone number or account details in it.</li>
+      </ul>
+
+      <h2>PDF Redactor vs. black boxes in a PDF editor</h2>
+      <p>When you draw a black rectangle in a PDF editor or a word processor, the box is a new layer on top of the page. The text under it is still in the file. Some paid PDF editors have a real redaction feature, but you must apply it in a separate step, and a redaction that is marked but not applied removes nothing.</p>
+      <p>The PDF Redactor avoids this problem. It does not edit the old file. It makes a new PDF from images of the pages, so no text, hidden layers or earlier versions stay in it. The cost is that the text in the new PDF cannot be selected or searched. To test a PDF that someone else redacted, use the <a href="/tools/redaction-checker/">Redaction Checker</a>. For plain text, use the <a href="/tools/text-redactor/">Text Redactor</a>.</p>
+
+      <%= partial "partials/tool_faq" %>
+    </article>
   </div>
 </section>
 

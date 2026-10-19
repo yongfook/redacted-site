@@ -22,6 +22,11 @@
                "browserRequirements" => "Requires a modern web browser with JavaScript and WebAssembly.",
                "isAccessibleForFree" => true, "offers" => free }
     graph << crumb.(tool.name)
+    if current_page.data.faq
+      graph << { "@type" => "FAQPage", "mainEntity" => current_page.data.faq.map { |f|
+        { "@type" => "Question", "name" => f.q, "acceptedAnswer" => { "@type" => "Answer", "text" => f.a } }
+      } }
+    end
   elsif app
     graph << { "@type" => "SoftwareApplication", "name" => app.name, "url" => page_url, "description" => page_description,
                "applicationCategory" => "MultimediaApplication", "operatingSystem" => app.platform,

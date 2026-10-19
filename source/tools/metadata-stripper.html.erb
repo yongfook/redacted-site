@@ -1,6 +1,23 @@
 ---
 title: "Free Tool to Remove Metadata and GPS From Files"
 description: "See and remove hidden details such as GPS location, camera, author and dates from photos, PDFs and videos. Runs in your browser. Nothing is uploaded."
+faq:
+  - q: "Is the Metadata Stripper free?"
+    a: "Yes. The tool is free, with no account, no sign-up and no limit on how often you use it."
+  - q: "Is my file uploaded to a server?"
+    a: "No. The page has no server code. Your file is read and cleaned in your browser and never leaves your device. The only downloads are the open-source libraries that read and write the file, which contain no user data."
+  - q: "What is EXIF data?"
+    a: "EXIF is a standard way for cameras and phones to save details inside a photo: the camera make and model, the lens, the settings, the date and time, and often the GPS location where the photo was taken. You do not see it in the picture, but anyone who has the file can read it."
+  - q: "Does it remove the GPS location from photos?"
+    a: "Yes. The tool shows the GPS coordinates it finds and removes them, together with all other Exif, XMP and IPTC data. It also removes location data that phones save in MP4 and MOV videos."
+  - q: "Does removing metadata lower the quality of my photo or video?"
+    a: "No. The tool does not compress the photo or encode the video again. It removes only the metadata and copies the image, video and sound data as they are. A JPEG photo keeps its rotation and its color profile."
+  - q: "Which file types does it support?"
+    a: "JPEG, PNG and WebP images, PDF documents, and MP4, MOV, WebM and MKV videos. HEIC photos are not supported. Save them as JPEG first. The clean file has the same type as the original."
+  - q: "Does it remove everything that could identify me?"
+    a: "It removes the hidden details that it can read, such as location, device, author, software and dates. It does not change what is visible. A face, a street sign or a name in a PDF's text stays in the file. For a PDF, it also does not clean the metadata of photos placed inside the document. Check what the file shows before you share it."
+  - q: "Do social media sites remove metadata for me?"
+    a: "Some large sites remove much of it when you post a photo, but you cannot always tell what they keep, and many other ways to share do not remove it. Email attachments, cloud storage links, chat apps that send the original file and file transfer services often keep the full file. Clean the file yourself before you send it."
 ---
 
 <section class="tool-hero">
@@ -58,6 +75,63 @@ description: "See and remove hidden details such as GPS location, camera, author
         <p>The page has no server code and uses no AI model. <a href="https://github.com/MikeKovarik/exifr" target="_blank" rel="noopener">exifr</a>, <a href="https://pdf-lib.js.org" target="_blank" rel="noopener">pdf-lib</a> and <a href="https://mediabunny.dev" target="_blank" rel="noopener">Mediabunny</a> read and write the file in your browser.</p>
       </div>
     </div>
+  </div>
+</section>
+
+<section class="tool-about">
+  <div class="wrap">
+    <article class="prose">
+      <h2>What is photo metadata?</h2>
+      <p>Metadata is information that is saved inside a file but is not part of what you see. A photo from a phone can hold the GPS location where it was taken, the date and time, the phone make and model, and sometimes a serial number. A PDF can hold the author's name, the software that made it and the dates it was made and changed. A video can hold the place where it was recorded.</p>
+      <p>This information is saved in standard formats such as Exif, XMP and IPTC. Your photo app may show some of it, but most people never look. When you share the original file, the metadata goes with it, and anyone who gets the file can read it.</p>
+
+      <h2>Why use a metadata removal tool?</h2>
+      <p>One photo with GPS data can show where you live, where you work or where your children go to school. A PDF can show the real name of the person who wrote an anonymous document. A camera serial number can link photos from different accounts to the same person.</p>
+      <p>Phones and computers do not make it easy to see or remove these details, and the steps are different on every device. A metadata stripper shows what is in the file and gives you a clean copy in one step. Use it to remove EXIF data from photos online before you post them, sell something, send a file to a stranger or publish a document.</p>
+
+      <h2>How does the Metadata Stripper work?</h2>
+      <ol>
+        <li><strong>Drop a file</strong> on the page, or click "Choose a file". Click "Try an example photo" to see a photo with a GPS location.</li>
+        <li><strong>See what is hidden in the file.</strong> The tool lists the location it finds first, then other details such as the device, software, author and dates.</li>
+        <li><strong>Click "Download clean file".</strong> You get a copy with "-clean" added to the file name. Your original file does not change.</li>
+        <li><strong>Click "Use another file"</strong> to clean the next one.</li>
+      </ol>
+      <p>For JPEG, PNG and WebP images, the tool removes the metadata blocks from the file and copies the image data as it is, so there is no loss of quality. A JPEG keeps its rotation and its color profile, because the picture needs them to show correctly. For PDFs, it deletes the document details and the XMP metadata and writes a new file, so earlier saved versions of the document are not copied. For videos, it copies the video and sound into a new file without the metadata tags, with no new encoding.</p>
+
+      <h2>Is my file safe?</h2>
+      <p>Yes. Many online metadata removers upload your file to a server to clean it, which means a stranger's computer gets the very details you want to hide. This tool does not upload anything. The page has no server code and uses no AI model. Your file is read and cleaned in your browser and never leaves your device.</p>
+      <p>The tool uses three open-source libraries: <a href="https://github.com/MikeKovarik/exifr" target="_blank" rel="noopener">exifr</a> to read photo metadata, <a href="https://pdf-lib.js.org" target="_blank" rel="noopener">pdf-lib</a> for PDFs and <a href="https://mediabunny.dev" target="_blank" rel="noopener">Mediabunny</a> for videos. Your browser downloads them from a public CDN. They contain no user data. Read our <a href="/privacy/">privacy policy</a> for the details.</p>
+
+      <h2>What can the Metadata Stripper find and remove?</h2>
+      <ul>
+        <li><strong>GPS location</strong> in photos and in phone videos</li>
+        <li><strong>Camera and phone details</strong>, such as the make, model, lens and serial numbers</li>
+        <li><strong>Dates</strong>, such as the date a photo was taken or a file was made and changed</li>
+        <li><strong>Author and owner names</strong>, copyright notes and descriptions</li>
+        <li><strong>Software</strong>, such as the app or computer that made or edited the file</li>
+        <li><strong>Exif, XMP and IPTC data</strong> in JPEG images, and Exif and XMP data in PNG and WebP images</li>
+        <li><strong>PNG text fields</strong>, such as notes that editing or AI image tools save in the file</li>
+        <li><strong>PDF document details</strong>: title, author, subject, keywords, software and dates</li>
+        <li><strong>Earlier saved versions</strong> of a PDF, which can still hold old text and details</li>
+        <li><strong>Video tags</strong>, such as title, artist, comment, date and recording device</li>
+      </ul>
+
+      <h2>Who uses a metadata stripper?</h2>
+      <ul>
+        <li><strong>People who sell things online</strong> and do not want product photos to show their home address.</li>
+        <li><strong>Parents</strong> who share photos of their children with family or in groups.</li>
+        <li><strong>Journalists and activists</strong> who protect their sources and their own location.</li>
+        <li><strong>Lawyers, HR teams and whistleblowers</strong> who send PDFs and do not want the author's name or edit history to go with them.</li>
+        <li><strong>Photographers and designers</strong> who publish work without camera serial numbers or private notes.</li>
+        <li><strong>Anyone who shares files</strong> by email, cloud links or chat apps that send the original file.</li>
+      </ul>
+
+      <h2>Metadata Stripper vs. removing metadata by hand</h2>
+      <p>You can remove some metadata with the tools on your computer or phone, such as the file properties in Windows or the location setting when you share a photo on an iPhone. But each device works in a different way, these tools often remove only some fields, and most of them do not handle PDFs or videos. Taking a screenshot of a photo removes the metadata but also lowers its quality.</p>
+      <p>The Metadata Stripper shows you every detail it finds before you clean the file, handles photos, PDFs and videos in one place, and keeps the full quality. Metadata is only part of what a file can show. To hide faces in the picture itself, use <a href="/tools/face-blur/">Face Blur</a>, and to hide text inside a PDF, use the <a href="/tools/pdf-redactor/">PDF Redactor</a>.</p>
+
+      <%= partial "partials/tool_faq" %>
+    </article>
   </div>
 </section>
 

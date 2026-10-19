@@ -1,6 +1,23 @@
 ---
 title: "Free Tool to Anonymize Chats With Fake Names"
 description: "Replace every person in a chat or chat export with a consistent fake name. Works with WhatsApp, Slack, Teams and Discord. Runs in your browser."
+faq:
+  - q: "Is the Chat Text Anonymizer free?"
+    a: "Yes. The tool is free, with no account, no sign-up and no limit on how often you use it."
+  - q: "Is my chat uploaded to a server?"
+    a: "No. The page has no server code. The tool reads your chat in your browser, and the text never leaves your device. If you turn on AI, the only download is the AI model itself, which contains no user data."
+  - q: "How do I anonymize a WhatsApp chat?"
+    a: "In WhatsApp, open the chat, choose Export chat and choose Without media. Open the exported text file (on iPhone, it is inside a .zip file), copy all the text and paste it into the Original pane. The tool finds each sender and gives them a fake name. Then copy the result or download it as a .txt file."
+  - q: "Which chat apps does it support?"
+    a: "The tool knows the WhatsApp export formats for iPhone and Android, and the text you get when you copy messages from Slack, Microsoft Teams and Discord. It also reads any chat written as Name: message lines, when two or more people write that way."
+  - q: "Does the same person always get the same fake name?"
+    a: "Yes. A full name, the first name alone and an @mention such as @sarah all get the same fake name. Each other person gets a different fake name, so you can still follow who said what."
+  - q: "Is automatic anonymization 100% accurate?"
+    a: "No automatic tool is perfect. Nicknames, misspelled names and details in the messages can still identify people. Turn on AI to find more names, read the result before you share it, and add any missed words to the always-hide list."
+  - q: "Can someone undo the anonymization?"
+    a: "No. In the text that you copy or download, the real names are replaced by fake names or labels. The original names are not stored in the text, so there is nothing to recover."
+  - q: "Can I use it before I paste a chat into ChatGPT or another AI chatbot?"
+    a: "Yes. Fake names keep the conversation natural, so the chatbot can still summarize or analyze it. If you want the chatbot to know the names are not real, choose numbered labels such as [NAME_1] instead."
 ---
 
 <section class="tool-hero">
@@ -91,6 +108,62 @@ description: "Replace every person in a chat or chat export with a consistent fa
         <p>The page has no server code. The optional AI model, <a href="https://huggingface.co/onnx-community/bert-small-pii-detection-ONNX" target="_blank" rel="noopener">bert-small-pii-detection</a>, runs on your device.</p>
       </div>
     </div>
+  </div>
+</section>
+
+<section class="tool-about">
+  <div class="wrap">
+    <article class="prose">
+      <h2>What is chat anonymization?</h2>
+      <p>Chat anonymization removes the details that show who took part in a conversation. Real names are replaced with fake names or labels, and phone numbers, email addresses and other personal data are hidden. The messages themselves stay the same, so readers can still follow the conversation.</p>
+      <p>A chat is harder to anonymize than a normal document. Each message starts with the sender's name, people use first names and @mentions, and they share numbers and addresses in the messages. An anonymized chat must hide all of these and still show which messages came from the same person.</p>
+
+      <h2>Why use a chat anonymizer?</h2>
+      <p>If you delete names from a chat, you lose who said what, and the conversation stops making sense. If you replace them by hand, you must find every first name, full name and @mention in hundreds of lines and replace each one in the same way. One missed line can show a real name.</p>
+      <p>The Chat Text Anonymizer does this for you. It reads the sender name at the start of each message, then finds every other place that name appears in the chat. Each person gets one fake name, such as Alex or Sam, all through the text. The result reads like a real chat, but it does not show the real people.</p>
+
+      <h2>How does the Chat Text Anonymizer work?</h2>
+      <ol>
+        <li><strong>Paste your chat</strong> into the Original pane, or click "Paste an example" to try it. For a WhatsApp export, open the exported text file and copy all the text.</li>
+        <li><strong>Turn on AI</strong> to find other names, organizations and places in the messages. Choose the language of the chat first. Without AI, the tool still finds senders, @mentions, emails, phone numbers, card numbers and IDs.</li>
+        <li><strong>Choose what to hide</strong> with the category buttons. At the start, the tool hides names, places, emails and phones, card and bank numbers, and ID numbers. Dates are not hidden at the start, because each message has a timestamp. Click "Dates &amp; ages", "Organizations" or "URLs, IPs &amp; secrets" to hide more.</li>
+        <li><strong>Choose how to replace names</strong>: fake names, numbered labels, labels, blocks or [REDACTED]. With fake names, other data such as phone numbers gets numbered labels.</li>
+        <li><strong>Check the result.</strong> Click any replacement to keep the original word, or add nicknames and other words to "Always hide these words".</li>
+        <li><strong>Copy or download</strong> the anonymized chat as a .txt file.</li>
+      </ol>
+
+      <h2>Is my chat safe?</h2>
+      <p>Yes. Many online tools upload your chat to a server to process it. This one does not. The page has no server code: the tool reads your chat in your browser, and the text never leaves your device.</p>
+      <p>The AI is optional. If you turn it on, the model downloads once from Hugging Face and your browser keeps it in its cache. The download contains only the model, not your data. Read our <a href="/privacy/">privacy policy</a> for the details.</p>
+
+      <h2>What can the Chat Text Anonymizer find and hide?</h2>
+      <ul>
+        <li><strong>Sender names</strong> in WhatsApp exports (iPhone and Android) and in chats copied from Slack, Microsoft Teams and Discord</li>
+        <li><strong>Names in Name: message lines</strong>, such as meeting notes or chat logs from other apps</li>
+        <li><strong>The same names inside messages</strong>, as full names and as first names</li>
+        <li><strong>@mentions</strong>, such as @miguel (the @ stays, the handle is hidden)</li>
+        <li><strong>Other names and places</strong> in the messages, when AI is on</li>
+        <li><strong>Emails and phone numbers</strong>, including international formats</li>
+        <li><strong>Card and bank numbers and ID numbers</strong>, such as IBANs and Social Security numbers</li>
+        <li><strong>Organizations (with AI), dates, URLs and IP addresses</strong>, when you turn on those categories</li>
+        <li><strong>Any words you choose</strong>, such as nicknames, team names or places</li>
+      </ul>
+
+      <h2>Who anonymizes chats?</h2>
+      <ul>
+        <li><strong>People who ask for advice online</strong> and want to post a chat with a friend, partner or landlord without showing who it is.</li>
+        <li><strong>Researchers</strong> who study WhatsApp groups or team chats and must remove the names of participants.</li>
+        <li><strong>Support and community teams</strong> who share Slack, Teams or Discord threads in bug reports, training material or case studies.</li>
+        <li><strong>Teachers and trainers</strong> who use real conversations as examples.</li>
+        <li><strong>Anyone who uses AI chatbots</strong> and wants a summary or analysis of a group chat without sending real names.</li>
+      </ul>
+
+      <h2>Chat Text Anonymizer vs. find and replace</h2>
+      <p>With find and replace, you must know every way each person is named in the chat, and you must do one search for each spelling. "Sarah O'Connor", "Sarah" and "@sarah" are three searches, and it is easy to forget one, or to give the same person two different replacements.</p>
+      <p>The Chat Text Anonymizer finds the senders on its own and links their full names, first names and @mentions to one fake name. It also shows every change, so you can check it. It is still good practice to read the result before you share it. If you have a picture of the chat and not the text, use the <a href="/tools/chat-screenshot-anonymizer/">Chat Screenshot Anonymizer</a>. For other text, such as emails or documents, use the <a href="/tools/text-redactor/">Text Redactor</a>.</p>
+
+      <%= partial "partials/tool_faq" %>
+    </article>
   </div>
 </section>
 

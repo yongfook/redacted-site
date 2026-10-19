@@ -1,6 +1,23 @@
 ---
 title: "Free Tool to Blur Faces in Photos Online"
 description: "Blur, pixelate or black out faces in a photo. Click a face to keep it visible. Face detection runs in your browser. Your photo is never uploaded."
+faq:
+  - q: "Is the Face Blur tool free?"
+    a: "Yes. The tool is free, with no account, no sign-up, no watermark and no limit on how often you use it."
+  - q: "Is my photo uploaded to a server?"
+    a: "No. The page has no server code. Face detection and blurring run in your browser, and your photo never leaves your device. The only downloads are the small face model and the code that runs it, which contain no user data."
+  - q: "Can someone undo the blur?"
+    a: "No. The tool does not put a filter on top of the face. It shrinks the face area to a few pixels and stretches it back, or fills it with black, and saves a new image. The original detail is not in the downloaded file, so there is nothing to recover. At a low strength, a blur can still show the rough shape of a face, so use a high strength or the Black box style when it matters."
+  - q: "Does it find every face?"
+    a: "No automatic tool is perfect. Very small, turned or partly covered faces can be missed, and sometimes an object is marked as a face. Look at the whole photo before you share it. Drag on the photo to add a box, and click a box to turn it off."
+  - q: "Can I keep some faces visible?"
+    a: "Yes. Click a face box to show that face. Click it again to hide it. This is useful when you want to blur everyone except yourself."
+  - q: "Can I blur things that are not faces, such as a license plate or a name badge?"
+    a: "Yes. Drag on the photo to draw a box over any area. The tool hides it with the same style as the faces."
+  - q: "Which file types does it support?"
+    a: "JPG, PNG and WebP photos. The downloaded photo keeps the same format as the original. Very large photos, over 16 megapixels, are made smaller first."
+  - q: "Does the downloaded photo keep its location data?"
+    a: "No. The downloaded photo is a new file. It does not keep the original's metadata, such as GPS location, camera model and date."
 ---
 
 <section class="tool-hero">
@@ -87,6 +104,59 @@ description: "Blur, pixelate or black out faces in a photo. Click a face to keep
         <p>The downloaded photo is a new file. It does not keep the original's metadata, such as GPS location, camera model and date.</p>
       </div>
     </div>
+  </div>
+</section>
+
+<section class="tool-about">
+  <div class="wrap">
+    <article class="prose">
+      <h2>What is face blurring?</h2>
+      <p>Face blurring hides the faces of people in a photo so that other people cannot recognize them. The face is replaced with a soft blur, large pixels or a black shape, and the rest of the photo stays the same.</p>
+      <p>Blurring is different from cropping. When you blur faces, you keep the scene, the place and what happened, and remove only the part that identifies a person.</p>
+
+      <h2>Why use a face blur tool?</h2>
+      <p>Hiding faces by hand in a photo editor is slow, and it is easy to miss one. A group photo, a street scene or a crowd at an event can have dozens of faces, some of them small and in the background. A face blur tool finds them for you in seconds and hides them all with the same style.</p>
+      <p>People blur faces to protect children, bystanders and anyone who did not agree to be in a public photo. It also matters when you post photos on social media, publish news or reports, sell items online or share evidence of an incident.</p>
+
+      <h2>How does the Face Blur tool work?</h2>
+      <ol>
+        <li><strong>Add a photo.</strong> Drop it on the page, paste it, or click "Choose a photo". Click "Try an example photo" to see how it works.</li>
+        <li><strong>Wait for the scan.</strong> The AI looks for faces and puts a box on each face it finds. All the faces are hidden.</li>
+        <li><strong>Choose a style</strong>: Blur, Pixelate or Black box. Set the strength, and choose an oval or a rectangle shape.</li>
+        <li><strong>Check the result.</strong> Click a box to show that face. Drag on the photo to hide anything that was missed. Hold "Hold to see original" to compare.</li>
+        <li><strong>Download</strong> the new photo. It has the same format as the original: JPG, PNG or WebP.</li>
+      </ol>
+      <p>The tool uses YuNet, a small face detection model from OpenCV. It looks at the whole photo to find large faces. In a large photo, it also looks at smaller parts of the photo, one at a time, to find faces in the background. Each box is made a little larger than the face, so it also covers the hair, ears and chin.</p>
+
+      <h2>Is my photo safe?</h2>
+      <p>Yes. Many online face blur tools upload your photo to a server to process it. This one does not. The page has no server code: face detection and blurring run entirely in your browser, and your photo never leaves your device.</p>
+      <p>The face model is only 230 KB, so it loads quickly when you open the page. The download contains only the model, not your data. Read our <a href="/privacy/">privacy policy</a> for the details.</p>
+
+      <h2>What can the Face Blur tool find and hide?</h2>
+      <ul>
+        <li><strong>Faces</strong> of people who look at the camera</li>
+        <li><strong>Faces in groups and crowds</strong>, including small faces in the background of large photos</li>
+        <li><strong>Many faces turned to the side</strong>, though faces that are turned far away can be missed</li>
+        <li><strong>Any area you choose</strong>, such as a name badge, a license plate, a house number, a screen or a reflection</li>
+        <li><strong>Location and camera data</strong>, which is not copied into the downloaded photo</li>
+      </ul>
+
+      <h2>Who uses a face blur tool?</h2>
+      <ul>
+        <li><strong>Parents and schools</strong> who share photos of events without showing other people's children.</li>
+        <li><strong>Journalists and bloggers</strong> who publish photos of protests, crowds or street scenes and protect the people in them.</li>
+        <li><strong>Social media users</strong> who post photos with friends or strangers who did not agree to be shown.</li>
+        <li><strong>Researchers</strong> who share photos from field work or studies with the participants made anonymous.</li>
+        <li><strong>Sellers and landlords</strong> who post photos of items or rooms with people or family photos in the background.</li>
+        <li><strong>Anyone who reports an incident</strong> and wants to share a photo without showing bystanders.</li>
+      </ul>
+
+      <h2>Face Blur vs. a photo editor</h2>
+      <p>In a photo editor, you select each face by hand and apply a blur filter. It works for one or two faces, but in a group photo people miss faces, and the blur is not always the same on each face. Some apps also only put a blur layer on top, which can be removed if you share the project file instead of a flat image.</p>
+      <p>The Face Blur tool finds all the faces at once, hides them with the same style, and saves a new flat image. It is still good practice to look at the result before you share it. For faces in a video, use the <a href="/tools/video-face-blur/">Video Face Blur</a> tool. To remove location and camera data from a photo without changing it, use the <a href="/tools/metadata-stripper/">Metadata Stripper</a>.</p>
+
+      <%= partial "partials/tool_faq" %>
+    </article>
   </div>
 </section>
 

@@ -1,0 +1,7 @@
+<% if current_page.data.faq %>
+<h2>Frequently asked questions</h2>
+<% current_page.data.faq.each do |item| %>
+<h3><%= item.q %></h3>
+<p><%= item.a %></p>
+<% end %>
+<% end %>

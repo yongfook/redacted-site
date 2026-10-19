@@ -1,6 +1,23 @@
 ---
 title: "Free Tool to Redact Screenshots Online"
 description: "Hide emails, phone numbers, names, API keys, passwords and faces in a screenshot before you share it. Runs in your browser. Nothing is uploaded."
+faq:
+  - q: "Is the Screenshot Redactor free?"
+    a: "Yes. It is free to use, with no account, no sign-up, no watermark and no limit on how many screenshots you redact."
+  - q: "Is my screenshot uploaded to a server?"
+    a: "No. The page has no server code. Text reading, face detection and name detection all run in your browser, so the screenshot stays on your device. The only downloads are the AI models, which contain no user data."
+  - q: "How accurate is the automatic redaction?"
+    a: "It finds most text that is clear and of normal size, but it can miss small, faint or stylized text, and it can hide words that are not private. Look over the whole image before you share it. Click a box to show that item again, and drag on the image to cover anything it missed."
+  - q: "Can someone unblur or undo the redaction?"
+    a: "No. The download is a new, flat PNG image. Under a black box the pixels are black, and blur and pixelate first shrink the area to a few pixels, so the detail is gone. There is no hidden layer with the original text. For the strongest result, use the Black box style."
+  - q: "Which languages can it read?"
+    a: "English, Spanish, French, German, Dutch, Chinese (simplified and traditional), Japanese and Thai. Choose the language of the screenshot in the AI bar. The tool always reads English too, because apps mix it in for times, buttons and links."
+  - q: "Does it work with phone screenshots?"
+    a: "Yes. You can choose a screenshot from your phone, and the tool knows a tall phone screenshot and skips the status bar at the top. On a computer you can also paste a screenshot straight from the clipboard."
+  - q: "Can it hide API keys and passwords in a screenshot of code or a terminal?"
+    a: "Yes. It finds common API keys and tokens, such as AWS, GitHub, Stripe, Slack and OpenAI keys, plus passwords after words like password=, connection strings, private keys and internal host names."
+  - q: "What is the difference between this and the Chat Screenshot Anonymizer?"
+    a: "The Screenshot Redactor is for any screen: apps, dashboards, emails, code and settings pages. The Chat Screenshot Anonymizer is made for chat apps. It also finds sender names in the chat header and in colored names above messages, and it can give people fake names."
 ---
 
 <section class="tool-hero">
@@ -95,6 +112,66 @@ description: "Hide emails, phone numbers, names, API keys, passwords and faces i
         <p>The page has no server code. <a href="https://github.com/naptha/tesseract.js" target="_blank" rel="noopener">Tesseract.js</a> reads the text, <a href="https://github.com/opencv/opencv_zoo/tree/main/models/face_detection_yunet" target="_blank" rel="noopener">YuNet</a> finds faces and <a href="https://huggingface.co/onnx-community/bert-small-pii-detection-ONNX" target="_blank" rel="noopener">bert-small-pii-detection</a> finds names, all on your device.</p>
       </div>
     </div>
+  </div>
+</section>
+
+<section class="tool-about">
+  <div class="wrap">
+    <article class="prose">
+      <h2>What is screenshot redaction?</h2>
+      <p>Screenshot redaction means covering the private parts of a screen capture before you share it. An email address in a sidebar, a customer name in a table, an API key in a terminal or a face in a video call can all end up in a screenshot by accident. Redaction puts a black box, a blur or pixels over those parts and leaves the rest of the image as it was.</p>
+      <p>The difficulty is that a screenshot is a picture, not text. You cannot search it for "@" or for a card number. To redact a screenshot automatically, a tool must first read the text in the image with OCR (optical character recognition), then decide which words are private, then cover them in the right place.</p>
+
+      <h2>Why use a screenshot redaction tool?</h2>
+      <p>People share screenshots all day: in bug reports, support tickets, Slack threads, slide decks, blog posts and social media. Most of them are taken in a hurry, and small details are easy to miss. A browser tab with an account name, a notification in the corner or a token in a log line can stay in the image.</p>
+      <p>A screenshot redactor reads every line of the image for you and covers what it finds in seconds. It does not get tired and it does not skip the small print in a footer. You still check the result, but you start from an image where most of the work is done.</p>
+
+      <h2>How does the Screenshot Redactor work?</h2>
+      <ol>
+        <li><strong>Add a screenshot.</strong> Drop it on the page, paste it from the clipboard or choose a file. You can also click "Try an example screenshot".</li>
+        <li><strong>Choose the text language</strong> in the AI bar. The AI models download once, when you open your first screenshot.</li>
+        <li><strong>Wait for the scan.</strong> The tool looks for faces, reads the text and then looks for names. Boxes show over each item it finds.</li>
+        <li><strong>Choose what to hide</strong> with the category buttons, and choose a style: Black box, Blur or Pixelate. Blur and pixelate have a strength control.</li>
+        <li><strong>Fix the result.</strong> Click a box to show that item. Drag on the image to cover anything else, such as a logo or a map. Add words to "Always hide these words", and hold "Hold to see original" to compare.</li>
+        <li><strong>Download the screenshot</strong> as a PNG file.</li>
+      </ol>
+      <p>To read the image well, the tool reads it three times: once as it is, once with light text turned dark (for dark mode and colored backgrounds) and once with colored text turned dark (for links and labels). It joins the results, then runs pattern rules for emails, phone numbers, cards, keys and links, and a small AI model for names, organizations and places. A separate face model and a shape check find faces and round or rounded-square profile pictures.</p>
+
+      <h2>Is my screenshot safe?</h2>
+      <p>Yes. Many online tools that redact screenshots send the image to a server. This one does not. The page has no server code: <a href="https://github.com/naptha/tesseract.js" target="_blank" rel="noopener">Tesseract.js</a> reads the text, YuNet finds faces and a named-entity model finds names, all inside your browser tab. The screenshot never leaves your device.</p>
+      <p>The models download once and your browser keeps them in its cache. They contain no user data. The redacted image is made on your device too, and it is saved as a new PNG file. Read our <a href="/privacy/">privacy policy</a> for the details.</p>
+
+      <h2>What can the Screenshot Redactor find and hide?</h2>
+      <ul>
+        <li><strong>Names</strong> of people, found by the AI model</li>
+        <li><strong>Faces and profile pictures</strong>, including round and rounded-square avatars</li>
+        <li><strong>Emails and phone numbers</strong>, including international formats</li>
+        <li><strong>Keys, tokens and passwords</strong>, such as AWS, GitHub, Stripe and Slack keys, bearer tokens, private keys and database connection strings</li>
+        <li><strong>Links and usernames</strong>, such as web addresses, @handles, IP addresses and internal host names</li>
+        <li><strong>Places and addresses</strong>, including street addresses and UK postcodes</li>
+        <li><strong>Organizations</strong>, such as company names</li>
+        <li><strong>Card and bank numbers</strong>, including credit cards and IBANs</li>
+        <li><strong>ID numbers</strong>, such as US Social Security and UK National Insurance numbers</li>
+        <li><strong>Dates and times</strong>, off by default</li>
+        <li><strong>Any words you choose</strong>, such as project names, hosts or account IDs</li>
+      </ul>
+
+      <h2>Who uses screenshot redaction?</h2>
+      <ul>
+        <li><strong>Developers</strong> who add screenshots of consoles, dashboards and terminals to bug reports, pull requests and forum posts.</li>
+        <li><strong>Support teams</strong> who send customers or vendors a picture of an account screen with other customers' details covered.</li>
+        <li><strong>Product and marketing teams</strong> who put app screenshots in docs, release notes, slides and landing pages.</li>
+        <li><strong>Writers and bloggers</strong> who show how a tool works without showing their own email or account.</li>
+        <li><strong>Security teams</strong> who share evidence of an issue in a ticket without passing on the keys or passwords in it.</li>
+        <li><strong>Anyone who posts a screenshot</strong> on social media and wants to hide names, faces and phone numbers first.</li>
+      </ul>
+
+      <h2>Screenshot Redactor vs. drawing boxes in an image editor</h2>
+      <p>You can redact a screenshot by hand: open it in an image editor, draw black rectangles and export it. That works for one or two items. On a busy screen it is easy to miss one, and you must draw every box again when you take a new screenshot. Some editors also keep a drawn shape on its own layer, so if you share the project file instead of a flat image, the box can be moved away. A semi-transparent highlighter or a light blur can leave text readable.</p>
+      <p>The Screenshot Redactor reads the whole image, covers every item it finds with a solid box, blur or pixels, and saves one flat PNG. You can still drag to add your own boxes. For chat screenshots, the <a href="/tools/chat-screenshot-anonymizer/">Chat Screenshot Anonymizer</a> also finds sender names and can give people fake names. To redact a screen recording instead of a still image, use the <a href="/tools/screencast-redactor/">Screencast Redactor</a>.</p>
+
+      <%= partial "partials/tool_faq" %>
+    </article>
   </div>
 </section>
 

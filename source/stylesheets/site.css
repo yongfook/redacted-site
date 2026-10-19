@@ -1675,6 +1675,17 @@ textarea:focus {
   overflow-wrap: anywhere;
 }
 
+/* SEO text and FAQ under a tool */
+.tool-about {
+  border-top: 1px solid var(--black);
+  padding: 16px 0 96px;
+}
+
+.prose ol {
+  margin: 0 0 14px;
+  padding-left: 22px;
+}
+
 .prose-summary {
   border: 1px solid var(--black);
   padding: 4px 24px 10px;

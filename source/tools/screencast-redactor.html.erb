@@ -1,6 +1,23 @@
 ---
 title: "Free Tool to Redact Screen Recordings and Demos"
 description: "Hide emails, API keys, passwords, names and faces in a screen recording or product demo. Runs in your browser, so your video is never uploaded."
+faq:
+  - q: "Is the Screencast Redactor free?"
+    a: "Yes. It is free, with no account, no sign-up and no watermark on the video you download."
+  - q: "Is my recording uploaded to a server?"
+    a: "No. The page has no server code. The tool reads the screen, finds faces and names and makes the new video inside your browser. Your recording never leaves your device. The only downloads are the AI models, which contain no user data."
+  - q: "Do the boxes follow text when the screen scrolls?"
+    a: "Yes. For each frame, the tool measures how far the page has scrolled since the text was read and moves the boxes with it. Boxes on parts that do not scroll, such as a fixed header or sidebar, stay where they are."
+  - q: "Will it catch every email, key and name in my video?"
+    a: "Not always. Text reading can miss small, faint or fast-moving text, and it can hide words that are not private. Play the preview to the end before you share it. Click an item in the Found list to show it, and drag on the video to cover an area for the whole video."
+  - q: "Can someone unblur the video or remove the boxes?"
+    a: "No. The boxes are drawn into every frame of a new video file. They are not a layer or a subtitle track that can be turned off. Blur and pixelate first shrink the area to a few pixels, so the detail is gone. Black box gives the strongest result."
+  - q: "Which video files can I use, and how long can they be?"
+    a: "MP4, MOV and WebM files up to 10 minutes long, if your browser can read the video format. The download is an MP4 file. Videos larger than 1080p are made smaller to 1080p."
+  - q: "Does it keep the sound?"
+    a: "Yes, when Keep audio is on. Turn it off to make a silent video, for example when your voice or a call can be heard. If your browser cannot convert the audio, the video is saved without sound and the tool tells you."
+  - q: "Can I hide a part of the screen for the whole video?"
+    a: "Yes. Drag on the video to draw a box. It stays for the whole video, which is good for a sidebar with an account name, a browser tab or a corner where notifications show."
 ---
 
 <section class="tool-hero">
@@ -108,6 +125,66 @@ description: "Hide emails, API keys, passwords, names and faces in a screen reco
         <p>The page has no server code. <a href="https://github.com/naptha/tesseract.js" target="_blank" rel="noopener">Tesseract.js</a> reads the screen, <a href="https://github.com/opencv/opencv_zoo/tree/main/models/face_detection_yunet" target="_blank" rel="noopener">YuNet</a> finds faces and <a href="https://mediabunny.dev" target="_blank" rel="noopener">Mediabunny</a> makes the video, all on your device.</p>
       </div>
     </div>
+  </div>
+</section>
+
+<section class="tool-about">
+  <div class="wrap">
+    <article class="prose">
+      <h2>What is screencast redaction?</h2>
+      <p>Screencast redaction is hiding private details in a screen recording: a product demo, a tutorial, a bug report video or a recorded call. It is harder than redacting a single screenshot. The screen changes all the time. You scroll, type, open new pages and switch apps, and an email address or an API key can show for half a second and then move.</p>
+      <p>To blur sensitive info in a screen recording, a tool has to read the text on the screen as it changes, find the private parts, and cover them in the right place in every frame where they show.</p>
+
+      <h2>Why use a screencast redaction tool?</h2>
+      <p>A short demo has thousands of frames. If you record your real account, it can show your email in a menu, a customer list, a token in a settings page or a notification from a colleague. Many people only see these when they watch the video back, after they have shared it.</p>
+      <p>Doing it by hand means stopping on each scene, drawing a mask and moving it as the page scrolls. A screencast redactor does the reading and the tracking for you. You can then watch the preview and fix what it missed, instead of starting from nothing or recording the demo again with fake data.</p>
+
+      <h2>How does the Screencast Redactor work?</h2>
+      <ol>
+        <li><strong>Add a screen recording.</strong> Drop an MP4, MOV or WebM file on the page or choose one, up to 10 minutes. You can also click "Try an example video".</li>
+        <li><strong>Choose the text language</strong> in the AI bar. The AI models download once, when you open your first video.</li>
+        <li><strong>Wait for the scan.</strong> The tool reads the screen and shows how much time is left. Each private item it finds goes in the Found list, with the times it is on screen.</li>
+        <li><strong>Choose what to hide</strong> with the category buttons, and choose Black box, Blur or Pixelate. Add words to "Always hide these words", such as customer or project names.</li>
+        <li><strong>Check the preview.</strong> Press Play or move the slider. Click an item in the Found list to show it, drag on the video to hide an area for the whole video, and hold "Hold to see original" to compare.</li>
+        <li><strong>Choose Keep audio or not</strong>, then click "Download video" to save a new MP4 file.</li>
+      </ol>
+      <p>A screen recording is mostly still, so the tool does not read every frame. It checks the screen four times a second. Where nothing changed, it keeps what it read before. Where you typed, it reads only the strip that changed. After a scroll or a new page, it reads the whole screen again. When a frame is drawn, the tool measures how far the page has scrolled in that frame, so each box moves with its text and does not lag behind. While you type an email, the start of it ("jord", "jordan@ex") is covered too, before the full address shows.</p>
+
+      <h2>Is my recording safe?</h2>
+      <p>Yes. Most online video redaction services upload your file to their servers. This tool does not. The page has no server code: Tesseract.js reads the screen, YuNet finds faces, a named-entity model finds names and <a href="https://mediabunny.dev" target="_blank" rel="noopener">Mediabunny</a> makes the new video, all in your browser tab. Your recording never leaves your device.</p>
+      <p>The models download once and stay in your browser cache. They contain no user data. The new video does not copy metadata such as the location or the device name from the original file. Read our <a href="/privacy/">privacy policy</a> for the details.</p>
+
+      <h2>What can the Screencast Redactor find and hide?</h2>
+      <ul>
+        <li><strong>Names</strong> of people, such as the name after "Signed in as" or names in a table</li>
+        <li><strong>Emails and phone numbers</strong>, also while you type them</li>
+        <li><strong>Keys, tokens and passwords</strong>, such as AWS, GitHub, Stripe and Slack keys, bearer tokens and connection strings in a terminal or settings page</li>
+        <li><strong>Links and usernames</strong>, including @handles, IP addresses and internal host names</li>
+        <li><strong>Card and bank numbers</strong>, such as card numbers and IBANs</li>
+        <li><strong>ID numbers</strong>, such as US Social Security numbers</li>
+        <li><strong>Places, addresses and organizations</strong></li>
+        <li><strong>Faces</strong>, such as a webcam view in the corner of a demo</li>
+        <li><strong>Dates and times</strong>, off by default</li>
+        <li><strong>Any words or areas you choose</strong>, from the word list or a box you draw</li>
+      </ul>
+      <p>The same text is one item for the whole video. One click in the Found list shows or hides it everywhere it appears.</p>
+
+      <h2>Who uses screen recording redaction?</h2>
+      <ul>
+        <li><strong>Founders and product teams</strong> who record demos of a real app for a launch page, a pitch or a changelog.</li>
+        <li><strong>Sales engineers</strong> who send recorded walkthroughs to prospects without showing other customers' data.</li>
+        <li><strong>Developers</strong> who attach a screen recording to a bug report or pull request, with tokens and test accounts in view.</li>
+        <li><strong>Course makers and YouTubers</strong> who record tutorials in their own accounts, terminals and dashboards.</li>
+        <li><strong>Support teams</strong> who record a fix for a customer from an admin screen full of other people's details.</li>
+        <li><strong>QA testers</strong> who share session recordings with vendors or open source projects.</li>
+      </ul>
+
+      <h2>Screencast Redactor vs. editing a video frame by frame</h2>
+      <p>In a video editor, you hide private text with a mask or a blur effect. You place it by hand, and when the page scrolls you add keyframes so it moves with the text. Each new email or key that shows needs its own mask. A ten-minute demo can take an hour or more, and one missed frame is enough to show a key.</p>
+      <p>The Screencast Redactor reads the screen, places the boxes, moves them with each scroll and lists every item with its times, so you can check them one by one. It does not replace a careful look at the result: play it to the end before you share it. To blur only faces in other kinds of video, use the <a href="/tools/video-face-blur/">Video Face Blur</a>. For a single still image, the <a href="/tools/screenshot-redactor/">Screenshot Redactor</a> is faster.</p>
+
+      <%= partial "partials/tool_faq" %>
+    </article>
   </div>
 </section>
 

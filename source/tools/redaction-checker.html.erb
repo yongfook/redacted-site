@@ -1,6 +1,23 @@
 ---
 title: "Free Tool to Check a Redacted PDF for Leaks"
 description: "Test a redacted PDF for text under black bars, hidden text, redactions that were not applied and metadata. Runs in your browser. Nothing is uploaded."
+faq:
+  - q: "Is the Redaction Checker free?"
+    a: "Yes. The tool is free, with no account, no sign-up and no limit on how often you use it."
+  - q: "Is my PDF uploaded to a server?"
+    a: "No. The page has no server code and uses no AI model. PDF.js reads the PDF and draws the pages in your browser, and your file never leaves your device."
+  - q: "How do I check if a PDF is properly redacted?"
+    a: "Open the PDF in the Redaction Checker. It looks for text that is still in the file under black bars or white boxes, redactions that were marked but not applied, earlier versions saved in the file, comments, form values, attached files and metadata. Each leak shows in a list and is marked on the page."
+  - q: "Can the text under a black box in a PDF be recovered?"
+    a: "Often, yes. If the box was only drawn on top of the page, the text is still in the file. Anyone can select and copy it, or open the file in another app. The Redaction Checker shows you this text so you can fix the file before you share it."
+  - q: "Is the check 100% accurate?"
+    a: "No. The checker reads the text layer of the PDF. It does not read text inside images, so it cannot tell you what a scanned page shows. A clean result means the checks found no leaked text, not that the PDF is safe in every way. Always look at the pages yourself too."
+  - q: "Does the Redaction Checker change my PDF?"
+    a: "No. It only reads the file. To fix a leak, use the PDF Redactor, which makes a new PDF with the text removed under each bar."
+  - q: "Can I save the results?"
+    a: "Yes. Click \"Download report\" to save the findings as a .txt file, with the page number of each item."
+  - q: "Can I check a PDF that has a password?"
+    a: "No. Remove the password in your PDF app first, then open the PDF in the checker."
 ---
 
 <section class="tool-hero">
@@ -58,6 +75,62 @@ description: "Test a redacted PDF for text under black bars, hidden text, redact
         <p>The page has no server code and uses no AI model. <a href="https://mozilla.github.io/pdf.js/" target="_blank" rel="noopener">PDF.js</a> reads the PDF and draws the pages in your browser.</p>
       </div>
     </div>
+  </div>
+</section>
+
+<section class="tool-about">
+  <div class="wrap">
+    <article class="prose">
+      <h2>What is a redaction checker?</h2>
+      <p>A redaction checker is a tool that tests a redacted PDF for information that is still in the file. A PDF can look correctly redacted on the screen and still contain the text under each black bar. Anyone who selects that text, copies it or opens the file in another app can read it.</p>
+      <p>The Redaction Checker compares what the page shows with what the file contains. When a word is in the file but cannot be seen on the page, the checker reports it as a leak.</p>
+
+      <h2>Why use a redaction checker tool?</h2>
+      <p>Bad redaction is a common mistake. People draw black boxes in a PDF editor or a word processor, or they mark text for redaction and forget to apply it. The result looks correct, so the mistake is often found only after the file is shared, sometimes by a journalist or by the other side in a court case.</p>
+      <p>A checker finds these problems before you send the file. It is also useful when you receive a redacted PDF and want to know if it is safe to pass on, or when you must confirm that redaction by another person or another tool worked.</p>
+
+      <h2>How does the Redaction Checker work?</h2>
+      <ol>
+        <li><strong>Choose a PDF</strong> or drop it on the page. You can also click "Try a badly redacted example".</li>
+        <li><strong>Wait for the check.</strong> The tool reads each page and shows its progress.</li>
+        <li><strong>Read the findings.</strong> Leaks show first, then points to check. Click a page number to go to that page, where each leak is marked.</li>
+        <li><strong>Download the report</strong> as a .txt file if you need a record.</li>
+        <li><strong>Fix any leak</strong> with the <a href="/tools/pdf-redactor/">PDF Redactor</a>, then check the new file again.</li>
+      </ol>
+      <p>To find text under bars, the tool draws each page as an image and looks at the pixels behind every word in the text layer. If the area behind a word is one flat color, the word cannot be seen. A dark color means the word is under a black bar. A light color means white text, or text under a white box. The tool also reads the file's annotations, metadata and attachments, and counts how many times the file was saved over.</p>
+
+      <h2>Is my PDF safe?</h2>
+      <p>Yes. Most online tools upload your file to a server. This one does not. The page has no server code and uses no AI model: <a href="https://mozilla.github.io/pdf.js/" target="_blank" rel="noopener">PDF.js</a> reads the PDF and draws the pages in your browser, and your file never leaves your device. The checker only reads your PDF. It does not change it. Read our <a href="/privacy/">privacy policy</a> for the details.</p>
+
+      <h2>What can the Redaction Checker find?</h2>
+      <ul>
+        <li><strong>Text under black bars</strong> that is covered on the page but still in the file</li>
+        <li><strong>Hidden text</strong>, such as white text or text under a white box</li>
+        <li><strong>Redactions marked but not applied</strong>, where the text under the mark is still in the file</li>
+        <li><strong>Text outside the page</strong>, which is in the file but outside the visible area</li>
+        <li><strong>Earlier versions</strong> saved inside the file, and old titles or author names from them</li>
+        <li><strong>Comments and notes</strong>, which often contain names</li>
+        <li><strong>Form fields with values</strong></li>
+        <li><strong>Attached files</strong> inside the PDF</li>
+        <li><strong>Metadata</strong>, such as the title, author, the app that made the file, and the dates it was made and changed</li>
+      </ul>
+      <p>The checker does not read text inside images. On a scanned page, a black bar drawn over the image is part of the image, so there is no text under it to find.</p>
+
+      <h2>Who uses a redaction checker?</h2>
+      <ul>
+        <li><strong>Lawyers and paralegals</strong> who must confirm that court filings and disclosure documents do not leak privileged details.</li>
+        <li><strong>Public sector staff</strong> who check documents before they publish them or answer freedom of information requests.</li>
+        <li><strong>Journalists</strong> who check documents they receive, and protect sources in documents they publish.</li>
+        <li><strong>Compliance and privacy teams</strong> who check files before they leave the company.</li>
+        <li><strong>Anyone who received a redacted PDF</strong> and wants to know what is still in it before they pass it on.</li>
+      </ul>
+
+      <h2>Redaction Checker vs. checking a PDF by hand</h2>
+      <p>To check a redacted PDF by hand, you select the text under each bar, copy it into another app, and look through the document properties, comments and attachments. This works for one page, but it is easy to miss white text, text outside the page or an earlier version saved in the file.</p>
+      <p>The Redaction Checker runs all of these checks on every page at once and marks each leak on the page. If it finds a leak, use the <a href="/tools/pdf-redactor/">PDF Redactor</a> to make a new PDF from images of the pages, so no text, earlier versions or metadata stay in it. To remove only the metadata from a PDF, a photo or a video, use the <a href="/tools/metadata-stripper/">Metadata Stripper</a>.</p>
+
+      <%= partial "partials/tool_faq" %>
+    </article>
   </div>
 </section>
 

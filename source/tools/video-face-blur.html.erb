@@ -1,6 +1,23 @@
 ---
 title: "Free Tool to Blur Faces in a Video Online"
 description: "Find and track every face in a video and blur it. The new video keeps its sound. Runs in your browser, so your video is never uploaded."
+faq:
+  - q: "Is the Video Face Blur tool free?"
+    a: "Yes. The tool is free, with no account, no sign-up, no watermark and no limit on how often you use it."
+  - q: "Is my video uploaded to a server?"
+    a: "No. The page has no server code. Face detection, tracking and making the new video all happen in your browser, and your video never leaves your device. The only downloads are the small face model and the code that runs it, which contain no user data."
+  - q: "Can someone undo the blur?"
+    a: "No. In each frame, the tool shrinks the face area to a few pixels and stretches it back, or fills it with black, before it saves the frame. The new video does not contain the original faces, so there is nothing to recover. At a low strength, a blur can still show the rough shape of a face, so use a high strength or the Black box style when it matters."
+  - q: "Does it blur every face in every frame?"
+    a: "No automatic tool is perfect. Faces that are very small, turned away or moving fast can be missed for a moment. Play the preview to the end before you share the video. You can show or hide each person in the People list."
+  - q: "Does the new video keep its sound?"
+    a: "Yes, when \"Keep audio\" is on. Turn it off to make a video with no sound. If your browser cannot convert the audio, the video is made without sound and the tool tells you."
+  - q: "Can I keep one person's face visible?"
+    a: "Yes. After the scan, the People list shows a picture of each person the tool found. Click a person to show their face in the whole video. Click again to hide it."
+  - q: "Which video formats and lengths does it support?"
+    a: "MP4, MOV and WebM files up to 10 minutes long. Some browsers can also read other formats, such as MKV. The new video is always an MP4 file. Videos larger than 1080p are made smaller to 1080p."
+  - q: "How long does it take?"
+    a: "Scanning and making the video take about one to two times the video's length on a laptop. Phones are slower. The tool shows how much time is left while it scans."
 ---
 
 <section class="tool-hero">
@@ -101,6 +118,59 @@ description: "Find and track every face in a video and blur it. The new video ke
         <p>Scanning and making the video take about one to two times the video's length on a laptop. Phones are slower. Videos larger than 1080p are made smaller to 1080p.</p>
       </div>
     </div>
+  </div>
+</section>
+
+<section class="tool-about">
+  <div class="wrap">
+    <article class="prose">
+      <h2>What is video face blurring?</h2>
+      <p>Video face blurring hides the faces of people in a video so that viewers cannot recognize them. Each face is covered with a blur, large pixels or a black shape that follows the person as they move, and the rest of the video stays the same.</p>
+      <p>It is harder than blurring a photo. A one-minute video has more than a thousand frames, and people walk, turn their heads and go out of the picture. A video face blur tool must find each face and keep it covered from frame to frame.</p>
+
+      <h2>Why use a video face blur tool?</h2>
+      <p>In a video editor, you draw a mask over each face and move it by hand, or set up motion tracking for each person. This can take hours for a short clip, and one missed frame can show a face. A video face blur tool finds and tracks the faces for you and blurs them in every frame.</p>
+      <p>People blur faces in video to protect bystanders, children, witnesses and anyone who did not agree to be filmed. It matters when you post videos on social media, publish news footage, share dashcam or doorbell clips, or send a recording of an incident.</p>
+
+      <h2>How does the Video Face Blur tool work?</h2>
+      <ol>
+        <li><strong>Add a video.</strong> Drop it on the page or click "Choose a video". MP4, MOV and WebM files up to 10 minutes work. Click "Try an example video" to see how it works.</li>
+        <li><strong>Wait for the scan.</strong> The AI looks for faces in the video and joins them into one track for each person. The tool shows the time left.</li>
+        <li><strong>Choose a style</strong>: Blur, Pixelate or Black box. Set the strength, choose an oval or a rectangle shape, and choose if you want to keep the audio.</li>
+        <li><strong>Check the preview.</strong> Click Play or move the slider to see the video with the faces hidden. Hold "Hold to see original" to compare. In the People list, click a person to show or hide their face.</li>
+        <li><strong>Download</strong> the new video as an MP4 file.</li>
+      </ol>
+      <p>The tool uses YuNet, a small face detection model from OpenCV. It looks for faces eight times each second of video. A tracker then joins these detections into one track for each person, and moves the box smoothly between them. The box starts a little before a face is first found and stays a moment after it is last found, so a face that turns away or moves fast stays covered. Each box is also made larger than the face, to cover the hair, ears and chin.</p>
+
+      <h2>Is my video safe?</h2>
+      <p>Yes. Most online video face blur tools upload your video to a server to process it. This one does not. The page has no server code: face detection, tracking and making the new video all run in your browser, and your video never leaves your device.</p>
+      <p>The face model is small and loads when you open the page. The download contains only the model and the code that runs it, not your data. Read our <a href="/privacy/">privacy policy</a> for the details.</p>
+
+      <h2>What can the Video Face Blur tool find and blur?</h2>
+      <ul>
+        <li><strong>Faces</strong> of people who look at the camera</li>
+        <li><strong>Faces that move</strong>, followed from frame to frame</li>
+        <li><strong>Faces turned to the side or partly covered</strong>, which the tool also looks for, though some can be missed for a moment</li>
+        <li><strong>Many people at once</strong>, each with their own track that you can show or hide</li>
+        <li><strong>Location and date data</strong>, which is not copied into the new video</li>
+      </ul>
+
+      <h2>Who uses video face blurring?</h2>
+      <ul>
+        <li><strong>Journalists and video creators</strong> who publish footage of protests, streets or events and protect the people in it.</li>
+        <li><strong>Parents and schools</strong> who share videos of plays, games and trips without showing other people's children.</li>
+        <li><strong>Drivers and home owners</strong> who share dashcam or doorbell clips with bystanders hidden.</li>
+        <li><strong>Researchers</strong> who share recordings of interviews or studies with the participants made anonymous.</li>
+        <li><strong>Teams</strong> who share recordings of meetings, training or product tests outside the company.</li>
+        <li><strong>Anyone who reports an incident</strong> and wants to share a video without showing the people who were there.</li>
+      </ul>
+
+      <h2>Video Face Blur vs. a video editor</h2>
+      <p>In a video editor, you add a blur mask to each face and track it by hand or with a motion tracker. It works, but it takes a long time, it needs a paid app or practice, and a tracker can lose a face when the person turns.</p>
+      <p>The Video Face Blur tool finds every person in one scan, lets you choose who to hide, and makes the new video in your browser. It is still good practice to watch the preview to the end before you share the video. For one photo, use the <a href="/tools/face-blur/">Face Blur</a> tool. To hide text such as names and emails in a screen recording, use the <a href="/tools/screencast-redactor/">Screencast Redactor</a>.</p>
+
+      <%= partial "partials/tool_faq" %>
+    </article>
   </div>
 </section>
 

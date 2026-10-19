@@ -1,6 +1,23 @@
 ---
 title: "Free Tool to Anonymize Chat Screenshots"
 description: "Hide names, profile pictures, phone numbers and links in WhatsApp, Telegram, iMessage, Signal and Slack screenshots. Runs in your browser. No upload."
+faq:
+  - q: "Is the Chat Screenshot Anonymizer free?"
+    a: "Yes. The tool is free, with no account, no sign-up, no watermark and no limit on how often you use it."
+  - q: "Is my screenshot uploaded to a server?"
+    a: "No. The page has no server code. Text reading, face detection and name detection all run in your browser, and your screenshot never leaves your device. The only downloads are the AI models, which contain no user data."
+  - q: "How do I hide names in a WhatsApp screenshot?"
+    a: "Drop, paste or choose the screenshot. The tool reads the text, finds the contact or group name at the top, the colored sender names and names in the messages, and covers profile pictures. Check the boxes, then click Download screenshot."
+  - q: "Which chat apps does it work with?"
+    a: "It works with screenshots from WhatsApp, Telegram, iMessage, Signal, Slack and other chat apps, from a phone or a computer. The tool reads the picture, not the app, so it can also work with other chat layouts."
+  - q: "Does it hide profile pictures?"
+    a: "Yes. The tool looks for round and rounded-square profile pictures and for faces, and covers the whole picture, not only the face. Hair, clothes or initials in a profile picture can also show who someone is."
+  - q: "Is automatic anonymization 100% accurate?"
+    a: "No. Text reading can miss small, faint or stylized text, and names written in lowercase. Look at the whole screenshot before you share it. Click a box to show or hide it, and drag to cover anything the tool missed."
+  - q: "Can someone undo the anonymization?"
+    a: "No. The downloaded screenshot is a new PNG image. Fake names and black boxes paint over the pixels. Blur and pixelate shrink the area to a few pixels and stretch it back, so the detail is gone. The original pixels are not kept in the file."
+  - q: "Is it OK to post an anonymized chat screenshot?"
+    a: "It is much safer than a screenshot with real names and faces, but other details in the messages, such as a place, a job or an event, can still show who people are. Read the messages too, and add such words to Always hide these words."
 ---
 
 <section class="tool-hero">
@@ -96,6 +113,64 @@ description: "Hide names, profile pictures, phone numbers and links in WhatsApp,
         <p>The page has no server code. <a href="https://github.com/naptha/tesseract.js" target="_blank" rel="noopener">Tesseract.js</a> reads the text, <a href="https://github.com/opencv/opencv_zoo/tree/main/models/face_detection_yunet" target="_blank" rel="noopener">YuNet</a> finds faces and <a href="https://huggingface.co/onnx-community/bert-small-pii-detection-ONNX" target="_blank" rel="noopener">bert-small-pii-detection</a> finds names, all on your device.</p>
       </div>
     </div>
+  </div>
+</section>
+
+<section class="tool-about">
+  <div class="wrap">
+    <article class="prose">
+      <h2>What is chat screenshot anonymization?</h2>
+      <p>To anonymize a chat screenshot is to hide everything in the picture that shows who took part: the contact or group name at the top, sender names, profile pictures, phone numbers, email addresses, links and usernames. The messages stay readable, so other people can see what was said but not who said it.</p>
+      <p>A screenshot is a picture, not text. To hide a name, a tool must first read the text in the image, then find the names, and then paint over the right pixels.</p>
+
+      <h2>Why use a chat screenshot anonymizer?</h2>
+      <p>When you hide names by hand, you must find each one in the picture and cover it with a drawing tool. It is easy to miss the name in the header, a small profile picture or a phone number in a message. A scribble with a pen tool can also leave letters visible at the edges.</p>
+      <p>The Chat Screenshot Anonymizer finds these for you in seconds. With fake names, each real name is painted over in the colors of the chat and replaced with a fake name such as Alex or Sam. The same person gets the same fake name everywhere in the screenshot, so the chat still makes sense.</p>
+
+      <h2>How does the Chat Screenshot Anonymizer work?</h2>
+      <ol>
+        <li><strong>Choose the text language</strong> of the chat in the AI bar.</li>
+        <li><strong>Drop, paste or choose a screenshot</strong>, or click "Try an example screenshot". The AI models download once, the first time you open a screenshot.</li>
+        <li><strong>Wait while the tool reads the screenshot.</strong> It looks for faces and profile pictures, reads the text, and then looks for names.</li>
+        <li><strong>Choose what to hide</strong> with the category buttons, and choose a style: fake names, blur, pixelate or black box. For blur and pixelate, set the strength.</li>
+        <li><strong>Check every box.</strong> Click a box to show the original, drag on the screenshot to cover something else, or add words to "Always hide these words". Press and hold "Hold to see original" to compare.</li>
+        <li><strong>Click Download screenshot</strong> to save the anonymized screenshot as a PNG image.</li>
+      </ol>
+      <p>The tool uses three AI models. <a href="https://github.com/naptha/tesseract.js" target="_blank" rel="noopener">Tesseract.js</a> reads the text in the image. It reads the image more than once, also with light text and colored text changed to black, because chat apps put light text on dark or colored bubbles. A name model reads the text to find people, places and organizations, and <a href="https://github.com/opencv/opencv_zoo/tree/main/models/face_detection_yunet" target="_blank" rel="noopener">YuNet</a> finds faces. Pattern rules find phone numbers, emails, links, usernames and card numbers.</p>
+
+      <h2>Is my screenshot safe?</h2>
+      <p>Yes. Many online tools upload your image to a server to process it. This one does not. The page has no server code: the screenshot opens in your browser, all three models run on your device, and the image never leaves it.</p>
+      <p>The models download once and your browser keeps them in its cache. The downloads contain only the models, not your data. Read our <a href="/privacy/">privacy policy</a> for the details.</p>
+
+      <h2>What can the Chat Screenshot Anonymizer find and hide?</h2>
+      <ul>
+        <li><strong>The chat name</strong> in the header at the top of a phone screenshot</li>
+        <li><strong>Sender names</strong> that group chats show in color above each message</li>
+        <li><strong>Names in the messages</strong>, found by the name model</li>
+        <li><strong>Faces and profile pictures</strong>, including round and rounded-square avatars</li>
+        <li><strong>Emails and phone numbers</strong>, also when a number wraps to the next line in a bubble</li>
+        <li><strong>Links and @usernames</strong> (the @ stays visible)</li>
+        <li><strong>Places, addresses and organizations</strong></li>
+        <li><strong>Card and bank numbers and ID numbers</strong></li>
+        <li><strong>Dates and times</strong>, such as 10:43 PM or Yesterday, when you turn this category on</li>
+        <li><strong>Any words you choose</strong>, such as nicknames or team names, and any area you drag over</li>
+      </ul>
+
+      <h2>Who uses a chat screenshot anonymizer?</h2>
+      <ul>
+        <li><strong>People who ask for advice</strong> on Reddit, forums or group chats and want to show a conversation without showing who it is with.</li>
+        <li><strong>Creators and writers</strong> who post funny or interesting chats on social media.</li>
+        <li><strong>People who report harassment or scams</strong> and want to share proof without exposing friends or other people in the chat.</li>
+        <li><strong>Designers and marketers</strong> who use real chat screenshots in slides, case studies or app store images.</li>
+        <li><strong>Support teams</strong> who share a customer's chat screenshot in a bug report.</li>
+      </ul>
+
+      <h2>Chat Screenshot Anonymizer vs. cropping or scribbling over names</h2>
+      <p>Cropping removes the header, but sender names, profile pictures and names in the messages stay. A scribble over a name with a pen tool can leave letters visible, and a semi-transparent marker can let people read the name underneath. Both also make the screenshot hard to read.</p>
+      <p>The Chat Screenshot Anonymizer finds names, faces and numbers all over the screenshot and covers them fully. With fake names, the result still looks like a normal chat. It is still good practice to look at the whole screenshot before you share it. If you have the chat as text, such as a WhatsApp export, use the <a href="/tools/chat-text-anonymizer/">Chat Text Anonymizer</a>. For screenshots that are not chats, use the <a href="/tools/screenshot-redactor/">Screenshot Redactor</a>.</p>
+
+      <%= partial "partials/tool_faq" %>
+    </article>
   </div>
 </section>
 
