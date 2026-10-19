@@ -10,7 +10,7 @@ const k = (...parts) => parts.join("");
 const EXAMPLE = `2026-10-01T09:14:22Z INFO  api-7f9c connecting to ${k("postgres://", "app_user:S3cr3t-pass", "@db-primary.prod.internal:5432/orders")}
 2026-10-01T09:14:23Z DEBUG GET /v1/orders headers={"Authorization": "Bearer ${k("eyJhbGciOiJIUzI1NiJ9", ".eyJzdWIiOiIxMjM0NTY3ODkwIn0", ".dozjgNryP4J3jVmNHl0w5N_XgL0n3I9PlFUP0THsR8U")}"}
 2026-10-01T09:14:25Z WARN  retrying payment call with ${k("sk_", "live_", "51HqLyjWDarjtT1zdp7dcXyzExample")} (attempt 2)
-2026-10-01T09:14:26Z ERROR upload failed for sarah.oconnor@acme-legal.com from 10.0.4.17 to ${k("https://admin:", "hunter2", "@backup.corp/upload")}
+2026-10-01T09:14:26Z ERROR upload failed for sarah.oconnor@acme-legal.com from 10.0.4.17 (mac 3c:22:fb:9a:01:7e) to ${k("https://admin:", "hunter2", "@backup.corp/upload")}
 
 # .env
 OPENAI_API_KEY=${k("sk-", "proj-", "AbCdEfGhIjKlMnOpQrStUvWxYz0123456789")}
@@ -34,7 +34,7 @@ const CATEGORIES = [
   { id: "private", label: "Private keys", on: true },
   { id: "conn", label: "Connection strings", on: true },
   { id: "host", label: "Internal hostnames", on: true },
-  { id: "ip", label: "IP addresses", on: true },
+  { id: "ip", label: "IP & MAC addresses", on: true },
   { id: "email", label: "Emails", on: true },
   { id: "url", label: "All URLs", on: false },
 ];

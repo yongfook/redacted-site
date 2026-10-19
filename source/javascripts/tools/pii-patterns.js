@@ -58,6 +58,12 @@ const PATTERNS = [
     re: /\b(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)\b|\b(?:[0-9a-f]{1,4}:){7}[0-9a-f]{1,4}\b/gi,
   },
   {
+    // MAC address: 00:1A:2B:3C:4D:5E, 00-1A-2B-3C-4D-5E or 001a.2b3c.4d5e.
+    // Not a part of a longer run of hex pairs, such as a key fingerprint.
+    tag: "MAC",
+    re: /(?<!\b[0-9a-f]{2}[:-])\b[0-9a-f]{2}([:-])(?:[0-9a-f]{2}\1){4}[0-9a-f]{2}\b(?![:-][0-9a-f]{2}\b)|(?<![\w.])[0-9a-f]{4}\.[0-9a-f]{4}\.[0-9a-f]{4}\b(?!\.\w)/gi,
+  },
+  {
     tag: "DATE",
     re: new RegExp(
       `\\b\\d{4}[-/.]\\d{1,2}[-/.]\\d{1,2}\\b|\\b\\d{1,2}[/.-]\\d{1,2}[/.-]\\d{2,4}\\b|\\b\\d{1,2}(?:st|nd|rd|th)? (?:${MONTHS})\\.?,? \\d{4}\\b|\\b(?:${MONTHS})\\.? \\d{1,2}(?:st|nd|rd|th)?,? \\d{4}\\b`,
